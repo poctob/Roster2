@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.CreateClockEventTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h:form>
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="#{bundle.CreateClockEventLabel_pkid}" for="pkid" />
+                    <h:inputText id="pkid" value="#{clockEventController.selected.pkid}" title="#{bundle.CreateClockEventTitle_pkid}" required="true" requiredMessage="#{bundle.CreateClockEventRequiredMessage_pkid}"/>
+                    <h:outputLabel value="#{bundle.CreateClockEventLabel_name}" for="name" />
+                    <h:inputText id="name" value="#{clockEventController.selected.name}" title="#{bundle.CreateClockEventTitle_name}" required="true" requiredMessage="#{bundle.CreateClockEventRequiredMessage_name}"/>
+                    <h:outputLabel value="#{bundle.CreateClockEventLabel_description}" for="description" />
+                    <h:inputText id="description" value="#{clockEventController.selected.description}" title="#{bundle.CreateClockEventTitle_description}" />
+                </h:panelGrid>
+                <br />
+                <h:commandLink action="#{clockEventController.create}" value="#{bundle.CreateClockEventSaveLink}" />
+                <br />
+                <br />
+                <h:commandLink action="#{clockEventController.prepareList}" value="#{bundle.CreateClockEventShowAllLink}" immediate="true"/>
+                <br />
+                <br />
+                <h:link outcome="/index" value="#{bundle.CreateClockEventIndexLink}"/>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+
+</html>

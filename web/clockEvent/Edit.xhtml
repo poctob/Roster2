@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.EditClockEventTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h:form>
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="#{bundle.EditClockEventLabel_pkid}" for="pkid" />
+                    <h:inputText id="pkid" value="#{clockEventController.selected.pkid}" title="#{bundle.EditClockEventTitle_pkid}" required="true" requiredMessage="#{bundle.EditClockEventRequiredMessage_pkid}"/>
+                    <h:outputLabel value="#{bundle.EditClockEventLabel_name}" for="name" />
+                    <h:inputText id="name" value="#{clockEventController.selected.name}" title="#{bundle.EditClockEventTitle_name}" required="true" requiredMessage="#{bundle.EditClockEventRequiredMessage_name}"/>
+                    <h:outputLabel value="#{bundle.EditClockEventLabel_description}" for="description" />
+                    <h:inputText id="description" value="#{clockEventController.selected.description}" title="#{bundle.EditClockEventTitle_description}" />
+                </h:panelGrid>
+                <h:commandLink action="#{clockEventController.update}" value="#{bundle.EditClockEventSaveLink}"/>
+                <br />
+                <br />
+                <h:link outcome="View" value="#{bundle.EditClockEventViewLink}"/>
+                <br />
+                <h:commandLink action="#{clockEventController.prepareList}" value="#{bundle.EditClockEventShowAllLink}" immediate="true"/>
+                <br />
+                <br />
+                <h:link outcome="/index" value="#{bundle.EditClockEventIndexLink}" />
+            </h:form>
+        </ui:define>
+    </ui:composition>
+
+</html>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ListClockEventTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <h:form styleClass="jsfcrud_list_form">
+                <h:panelGroup id="messagePanel" layout="block">
+                    <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+                </h:panelGroup>
+                <h:outputText escape="false" value="#{bundle.ListClockEventEmpty}" rendered="#{clockEventController.items.rowCount == 0}"/>
+                <h:panelGroup rendered="#{clockEventController.items.rowCount > 0}">
+                    <h:outputText value="#{clockEventController.pagination.pageFirstItem + 1}..#{clockEventController.pagination.pageLastItem + 1}/#{clockEventController.pagination.itemsCount}"/>&nbsp;
+                    <h:commandLink action="#{clockEventController.previous}" value="#{bundle.Previous} #{clockEventController.pagination.pageSize}" rendered="#{clockEventController.pagination.hasPreviousPage}"/>&nbsp;
+                    <h:commandLink action="#{clockEventController.next}" value="#{bundle.Next} #{clockEventController.pagination.pageSize}" rendered="#{clockEventController.pagination.hasNextPage}"/>&nbsp;
+                    <h:dataTable value="#{clockEventController.items}" var="item" border="0" cellpadding="2" cellspacing="0" rowClasses="jsfcrud_odd_row,jsfcrud_even_row" rules="all" style="border:solid 1px">
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListClockEventTitle_pkid}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.pkid}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListClockEventTitle_name}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.name}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListClockEventTitle_description}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.description}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="&nbsp;"/>
+                            </f:facet>
+                            <h:commandLink action="#{clockEventController.prepareView}" value="#{bundle.ListClockEventViewLink}"/>
+                            <h:outputText value=" "/>
+                            <h:commandLink action="#{clockEventController.prepareEdit}" value="#{bundle.ListClockEventEditLink}"/>
+                            <h:outputText value=" "/>
+                            <h:commandLink action="#{clockEventController.destroy}" value="#{bundle.ListClockEventDestroyLink}"/>
+                        </h:column>
+                    </h:dataTable>
+                </h:panelGroup>
+                <br />
+                <h:commandLink action="#{clockEventController.prepareCreate}" value="#{bundle.ListClockEventCreateLink}"/>
+                <br />
+                <br />
+                <h:link outcome="/index" value="#{bundle.ListClockEventIndexLink}"/>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+
+</html>

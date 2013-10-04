@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.EditConfigurationTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h:form>
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="#{bundle.EditConfigurationLabel_configID}" for="configID" />
+                    <h:inputText id="configID" value="#{configurationController.selected.configID}" title="#{bundle.EditConfigurationTitle_configID}" required="true" requiredMessage="#{bundle.EditConfigurationRequiredMessage_configID}"/>
+                    <h:outputLabel value="#{bundle.EditConfigurationLabel_configValue}" for="configValue" />
+                    <h:inputText id="configValue" value="#{configurationController.selected.configValue}" title="#{bundle.EditConfigurationTitle_configValue}" />
+                </h:panelGrid>
+                <h:commandLink action="#{configurationController.update}" value="#{bundle.EditConfigurationSaveLink}"/>
+                <br />
+                <br />
+                <h:link outcome="View" value="#{bundle.EditConfigurationViewLink}"/>
+                <br />
+                <h:commandLink action="#{configurationController.prepareList}" value="#{bundle.EditConfigurationShowAllLink}" immediate="true"/>
+                <br />
+                <br />
+                <h:link outcome="/index" value="#{bundle.EditConfigurationIndexLink}" />
+            </h:form>
+        </ui:define>
+    </ui:composition>
+
+</html>

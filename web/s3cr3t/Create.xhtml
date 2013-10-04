@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.CreateS3cr3tTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h:form>
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="#{bundle.CreateS3cr3tLabel_s3cr3tPK_salt}" for="s3cr3tPK_salt" />
+                    <h:inputText id="s3cr3tPK_salt" value="#{s3cr3tController.selected.s3cr3tPK.salt}" title="#{bundle.CreateS3cr3tTitle_s3cr3tPK_salt}" required="true" requiredMessage="#{bundle.CreateS3cr3tRequiredMessage_s3cr3tPK_salt}"/>
+                    <h:outputLabel value="#{bundle.CreateS3cr3tLabel_s3cr3tPK_pass}" for="s3cr3tPK_pass" />
+                    <h:inputText id="s3cr3tPK_pass" value="#{s3cr3tController.selected.s3cr3tPK.pass}" title="#{bundle.CreateS3cr3tTitle_s3cr3tPK_pass}" required="true" requiredMessage="#{bundle.CreateS3cr3tRequiredMessage_s3cr3tPK_pass}"/>
+                    <h:outputLabel value="#{bundle.CreateS3cr3tLabel_employee}" for="employee" />
+                    <h:selectOneMenu id="employee" value="#{s3cr3tController.selected.employee}" title="#{bundle.CreateS3cr3tTitle_employee}" required="true" requiredMessage="#{bundle.CreateS3cr3tRequiredMessage_employee}">
+                        <f:selectItems value="#{employeeController.itemsAvailableSelectOne}"/>
+                    </h:selectOneMenu>
+                </h:panelGrid>
+                <br />
+                <h:commandLink action="#{s3cr3tController.create}" value="#{bundle.CreateS3cr3tSaveLink}" />
+                <br />
+                <br />
+                <h:commandLink action="#{s3cr3tController.prepareList}" value="#{bundle.CreateS3cr3tShowAllLink}" immediate="true"/>
+                <br />
+                <br />
+                <h:link outcome="/index" value="#{bundle.CreateS3cr3tIndexLink}"/>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+
+</html>

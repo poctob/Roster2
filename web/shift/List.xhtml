@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:a4j="http://richfaces.org/a4j"
+      xmlns:rich="http://richfaces.org/rich"
+      xmlns:r="http://java.sun.com/jsf/composite/ezcomp">
+
+    <ui:composition template="./../resources/appTemplate.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ListShiftTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="top">
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: white" layout="table"/>
+            </h:panelGroup>
+        </ui:define>   
+
+        <ui:define name="content">
+            <a4j:status onstart="#{rich:component('statPane')}.show()" onstop="#{rich:component('statPane')}.hide()" />
+            <h:form styleClass="jsfcrud_list_form">
+                <h:panelGrid columns="1">
+                    <a4j:outputPanel id="panel" layout="block">
+                        <a4j:repeat value="#{shiftController.colHeading}" var="col_head" rows="20" id="repeat">
+                            <rich:panel style="float:left; width:200px; padding:5px;">
+                                <f:facet name="header">
+                                    <h:panelGroup>                                
+                                        <h:outputText value="#{col_head}" style="font-weight:bold" />
+                                    </h:panelGroup>
+                                </f:facet>
+                            </rich:panel>
+                        </a4j:repeat>
+                    </a4j:outputPanel>
+                    <a4j:outputPanel layout="block">
+                        <rich:dataScroller for="repeat" render="panel" />
+                    </a4j:outputPanel>
+                </h:panelGrid>
+                <r:messages />
+                <a4j:outputPanel ajaxRendered="true">
+                    <h:outputText value="#{shiftController.status}" 
+                                  id="out" 
+                                  rendered="#{facesContext.maximumSeverity == null}" />
+                </a4j:outputPanel>
+                <a4j:jsFunction name="remove" 
+                                action="#{shiftController.destroy}" 
+                                render="table" 
+                                execute="@this" 
+                                oncomplete="#{rich:component('confirmPane')}.hide();" />
+
+                <rich:popupPanel id="statPane" autosized="true">
+                    <h:graphicImage value="../resources/images/ai.gif" alt="ai" />
+                    Please wait...
+                </rich:popupPanel>
+
+                <rich:popupPanel id="confirmPane" autosized="true">
+                    Are you sure you want to delete the row?
+                    <a4j:commandButton value="Cancel" onclick="#{rich:component('confirmPane')}.hide();
+                            return false;" />
+                    <a4j:commandButton value="Delete" onclick="remove();
+                            return false;" />
+                </rich:popupPanel>
+
+                <h:outputText escape="false" value="#{bundle.ListShiftEmpty}" rendered="#{shiftController.items.rowCount == 0}"/>
+                <br />
+                <br />
+                <h:link outcome="/index" value="#{bundle.ListShiftIndexLink}"/>
+            </h:form>
+        </ui:define>
+        <ui:define name="right">
+
+            <a4j:outputPanel layout="block">
+                <h:form styleClass="jsfcrud_list_form">
+                    <a4j:commandLink styleClass="no-decor" 
+                                     execute="@this" 
+                                     render="edit_text" 
+                                     action="#{shiftController.prepareCreate}"
+                                     onclick="javascript:hideSelection('edit_div', false);">
+                        <h:graphicImage value="../resources/images/icons/Create.png" alt="create" />
+                    </a4j:commandLink>
+                    <br />
+                    <div id="edit_div" class="invisible">
+                        <a4j:outputPanel id="edit_text" layout="block">
+                            <h:panelGrid columns="2" styleClass="editPanel">
+                                <h:outputLabel value="#{bundle.CreateShiftLabel_start}" for="start" />
+                                <rich:calendar value="#{shiftController.selected.start}"
+                                               id="start"
+                                               datePattern="MM/dd/yyyy hh:mm:ss a"
+                                               popup="false"
+                                               required="true" 
+                                               requiredMessage="#{bundle.CreateShiftRequiredMessage_start}"
+                                               />
+
+                                <h:outputLabel value="#{bundle.CreateShiftLabel_end}" for="end" />                    
+                                <rich:calendar value="#{shiftController.selected.end}"
+                                               id="end"
+                                               datePattern="MM/dd/yyyy hh:mm:ss a"
+                                               popup="false"
+                                               required="true" 
+                                               requiredMessage="#{bundle.CreateShiftRequiredMessage_end}"
+                                               />
+
+                                <h:outputLabel value="#{bundle.CreateShiftLabel_positionID}" for="positionid" />
+                                <h:selectOneMenu id="positionid" 
+                                                 value="#{shiftController.selected.positionID}" 
+                                                 title="#{bundle.CreateShiftTitle_positionID}" 
+                                                 required="true" 
+                                                 requiredMessage="#{bundle.CreateShiftRequiredMessage_positionID}">
+                                    <f:selectItems value="#{positionController.allItems}"
+                                                   var="pos"
+                                                   itemValue="#{pos.pkID}"
+                                                   itemLabel="#{pos.name}"/>
+                                    
+                                </h:selectOneMenu>
+                                
+                                <h:outputLabel value="#{bundle.CreateShiftLabel_employeeID}" for="employeeid" />
+                                <h:selectOneMenu id="employeeid" value="#{shiftController.selected.employeeID}"
+                                                 title="#{bundle.CreateShiftTitle_employeeID}" 
+                                                 required="true" 
+                                                 requiredMessage="#{bundle.CreateShiftRequiredMessage_employeeID}">
+                                    <f:selectItems value="#{employeeController.allItems}"
+                                                   var ="emp"
+                                                   itemValue="#{emp.pkID}"
+                                                   itemLabel="#{emp.name}"/>
+                                    
+                                </h:selectOneMenu>                            
+                            </h:panelGrid>
+                            <a4j:commandButton value="Update" 
+                                               rendered="#{not empty shiftController.selected.start}"
+                                               action="#{shiftController.update}"
+                                               render="table"
+                                               onclick="javascript:hideSelection('edit_div', true);"/>
+                            <a4j:commandButton value="Add" 
+                                               rendered="#{empty shiftController.selected.start}"
+                                               action="#{shiftController.create}"
+                                               render="table"
+                                               onclick="javascript:hideSelection('edit_div', true);"/>
+                        </a4j:outputPanel>
+                    </div>
+                </h:form>
+            </a4j:outputPanel>
+        </ui:define>
+    </ui:composition>
+
+</html>
+
+
