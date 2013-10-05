@@ -1,10 +1,13 @@
 package net.xpresstek.roster2.web;
 
+import com.gzlabs.utils.DateUtils;
 import net.xpresstek.roster2.ejb.Configuration;
 import net.xpresstek.roster2.web.util.JsfUtil;
 import net.xpresstek.roster2.web.util.PaginationHelper;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -21,6 +24,10 @@ import javax.faces.model.SelectItem;
 @SessionScoped
 public class ConfigurationController implements Serializable {
 
+    private static final String TIMESTART="ShiftStart";
+    private static final String TIMEEND="ShiftEnd";
+    private static final String INTERVAL="ShiftInterval";
+    
     private Configuration current;
     private DataModel items = null;
     @EJB
@@ -75,6 +82,29 @@ public class ConfigurationController implements Serializable {
         current = new Configuration();
         selectedItemIndex = -1;
         return "Create";
+    }
+    
+    public List getTimeSlots()
+    {        
+        Configuration conf=ejbFacade.find(TIMESTART);
+        if(conf==null)
+        {
+            return null;
+        }
+        String start=conf.getConfigValue();
+        conf=ejbFacade.find(TIMEEND);
+        if(conf==null)
+        {
+            return null;
+        }
+        String end=conf.getConfigValue();
+        conf=ejbFacade.find(INTERVAL);
+        if(conf==null)
+        {
+            return null;
+        }
+        String interval=conf.getConfigValue();
+        return DateUtils.getTimeSpan(start, end, interval);
     }
 
     public String create() {
@@ -203,6 +233,12 @@ public class ConfigurationController implements Serializable {
             return controller.getConfiguration(getKey(value));
         }
 
+        public static ConfigurationController getController()
+        {
+            FacesContext facesContext=FacesContext.getCurrentInstance();
+            return (ConfigurationController)facesContext.getApplication().getELResolver().
+                    getValue(facesContext.getELContext(), null, "configurationController");
+        }
         java.lang.String getKey(String value) {
             java.lang.String key;
             key = value;

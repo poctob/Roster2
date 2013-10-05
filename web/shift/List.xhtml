@@ -6,7 +6,8 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:a4j="http://richfaces.org/a4j"
       xmlns:rich="http://richfaces.org/rich"
-      xmlns:r="http://java.sun.com/jsf/composite/ezcomp">
+      xmlns:r="http://java.sun.com/jsf/composite/ezcomp"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
     <ui:composition template="./../resources/appTemplate.xhtml">
         <ui:define name="title">
@@ -21,22 +22,37 @@
         <ui:define name="content">
             <a4j:status onstart="#{rich:component('statPane')}.show()" onstop="#{rich:component('statPane')}.hide()" />
             <h:form styleClass="jsfcrud_list_form">
-                <h:panelGrid columns="1">
-                    <a4j:outputPanel id="panel" layout="block">
-                        <a4j:repeat value="#{shiftController.colHeading}" var="col_head" rows="20" id="repeat">
-                            <rich:panel style="float:left; width:200px; padding:5px;">
-                                <f:facet name="header">
-                                    <h:panelGroup>                                
-                                        <h:outputText value="#{col_head}" style="font-weight:bold" />
-                                    </h:panelGroup>
-                                </f:facet>
-                            </rich:panel>
-                        </a4j:repeat>
-                    </a4j:outputPanel>
-                    <a4j:outputPanel layout="block">
-                        <rich:dataScroller for="repeat" render="panel" />
-                    </a4j:outputPanel>
-                </h:panelGrid>
+
+              <rich:extendedDataTable value="#{configurationController.timeSlots}" 
+                                      var="times"
+                                      frozenColumns="1">
+                    <f:facet name="header">
+                        <h:outputText value="Schedule"/>
+                    </f:facet>
+                    <rich:column>
+                        <f:facet name="header">
+                            <h:outputText value="Time"/>
+                        </f:facet>
+                        <h:outputText value="#{times}"/>
+                    </rich:column>
+                    
+                    <c:forEach items="#{shiftController.colHeading}" 
+                               var="col_head"
+                               varStatus="iter">
+                         <rich:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{col_head}" />
+                            </f:facet>
+                            <h:outputText value="None"/>
+                        </rich:column>
+                    </c:forEach>    
+                    
+                </rich:extendedDataTable>
+
+
+
+
+
                 <r:messages />
                 <a4j:outputPanel ajaxRendered="true">
                     <h:outputText value="#{shiftController.status}" 
@@ -111,9 +127,9 @@
                                                    var="pos"
                                                    itemValue="#{pos.pkID}"
                                                    itemLabel="#{pos.name}"/>
-                                    
+
                                 </h:selectOneMenu>
-                                
+
                                 <h:outputLabel value="#{bundle.CreateShiftLabel_employeeID}" for="employeeid" />
                                 <h:selectOneMenu id="employeeid" value="#{shiftController.selected.employeeID}"
                                                  title="#{bundle.CreateShiftTitle_employeeID}" 
@@ -123,7 +139,7 @@
                                                    var ="emp"
                                                    itemValue="#{emp.pkID}"
                                                    itemLabel="#{emp.name}"/>
-                                    
+
                                 </h:selectOneMenu>                            
                             </h:panelGrid>
                             <a4j:commandButton value="Update" 

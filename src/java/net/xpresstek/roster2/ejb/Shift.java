@@ -4,6 +4,7 @@
  */
 package net.xpresstek.roster2.ejb;
 
+import com.gzlabs.utils.DateUtils;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Basic;
@@ -12,7 +13,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -36,6 +36,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Shift.findByStart", query = "SELECT s FROM Shift s WHERE s.start = :start"),
     @NamedQuery(name = "Shift.findByEnd", query = "SELECT s FROM Shift s WHERE s.end = :end")})
 public class Shift implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,7 +46,7 @@ public class Shift implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "Employee_ID")
-    private int employeeID;    
+    private int employeeID;
     @Basic(optional = false)
     @NotNull
     @Column(name = "Position_ID")
@@ -91,8 +92,7 @@ public class Shift implements Serializable {
     public void setEmployeeID(int employeeID) {
         this.employeeID = employeeID;
     }
-    
-   
+
     public int getPositionID() {
         return positionID;
     }
@@ -100,7 +100,6 @@ public class Shift implements Serializable {
     public void setPositionID(int positionID) {
         this.positionID = positionID;
     }
-    
 
     public Date getStart() {
         return start;
@@ -142,5 +141,19 @@ public class Shift implements Serializable {
     public String toString() {
         return "net.xpresstek.roster2.ejb.Shift[ pkid=" + pkid + " ]";
     }
-    
+
+    /**
+     * Checks if a person is scheduled to work on specified date
+     *
+     * @param position Positions id
+     * @param date Date
+     * @return Person id if it's found, 0 if not
+     */
+    public int isEmployeeOn(int position, String date) {
+        boolean start_b = DateUtils.isCalendarBetween(start, end, date, null, true);
+        if (positionID > 0 && employeeID >0 && positionID==position && start_b) {
+            return positionID;
+        }
+        return 0;
+    }
 }

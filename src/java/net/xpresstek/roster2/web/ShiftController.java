@@ -1,9 +1,11 @@
 package net.xpresstek.roster2.web;
 
+import com.gzlabs.utils.DateUtils;
 import net.xpresstek.roster2.ejb.Shift;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import javax.ejb.EJB;
@@ -13,7 +15,10 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import net.xpresstek.roster2.ejb.Employee;
 import net.xpresstek.roster2.ejb.Position;
+import net.xpresstek.roster2.web.ConfigurationController.ConfigurationControllerConverter;
+import net.xpresstek.roster2.web.EmployeeController.EmployeeControllerConverter;
 import net.xpresstek.roster2.web.PositionController.PositionControllerConverter;
 
 @Named("shiftController")
@@ -21,11 +26,15 @@ import net.xpresstek.roster2.web.PositionController.PositionControllerConverter;
 public class ShiftController extends ControllerBase {
 
     private Shift current;
+    private Date current_date;
+   
     @EJB
     private net.xpresstek.roster2.web.ShiftFacade ejbFacade;
 
 
+    
     public ShiftController() {
+        current_date=new Date();
     }
 
      @Override
@@ -53,9 +62,17 @@ public class ShiftController extends ControllerBase {
         current=new Shift();
     }
     
+     public Date getCurrent_date() {
+        return current_date;
+    }
+
+    public void setCurrent_date(Date current_date) {
+        this.current_date = current_date;
+    }
+    
     public List<String> getColHeading()
     {
-        Set<String> headings=new HashSet();               
+        Set<String> headings=new LinkedHashSet(); 
         for(Shift s : ejbFacade.findAll())
         {
             Position pos=PositionControllerConverter.getAsObject(s.getPositionID());
@@ -63,9 +80,53 @@ public class ShiftController extends ControllerBase {
             {
                 headings.add(pos.getName());
             }
-        }
-        headings.add("Time");
+        }        
         return new ArrayList(headings);
+    }
+    
+    public String getShiftName(String position, int time_index)
+    {
+        String retval=null;
+        ConfigurationController cc=ConfigurationControllerConverter.getController();
+        List times=cc.getTimeSlots();
+        String time_slot=(String)times.get(time_index);
+        time_slot+="00.0";
+        Position pos=PositionControllerConverter.getController().
+                getPositionByName(position);
+        int pos_idx=0;
+        if(pos!=null)
+        {
+            pos_idx=pos.getPkID();
+        }
+        String strdate=DateUtils.DateToString(current_date);
+        strdate=strdate.substring(0, 11);
+        strdate+=time_slot;
+        
+        List<Shift> shifts=getAllItems();
+        
+        for(Shift s: shifts)
+        {
+           int employeeid=s.isEmployeeOn(pos_idx, strdate);
+           if(employeeid>0)
+           {
+               Employee empl=EmployeeControllerConverter.getController().
+                       getEmployee(employeeid);
+               if(empl!=null)
+               {
+                   retval+=empl.getName()+",";
+               }
+           }
+        }
+        if(retval!=null)
+        {
+            retval = retval.substring(0, retval.length() - 1);
+        }
+        return retval;
+    }
+    
+    public List<Shift> getAllItems()
+    {
+        return ejbFacade.findAll();
     }
 
     @FacesConverter(forClass = Shift.class)

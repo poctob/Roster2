@@ -35,6 +35,23 @@ public class PositionController extends ControllerBase {
     public Position getPosition(Integer id) {
         return (Position) getObject(id);
     }
+    
+    public Position getPositionByName(String name)
+    {
+        if(name==null)
+        {
+            return null;
+        }
+        List<Position> pos=getAllItems();
+        for(Position p : pos)
+        {
+            if(p.getName().equals(name))
+            {
+                return p;
+            }
+        }
+        return null;
+    }
 
     @Override
     void setCurrent(Object obj) {
@@ -69,6 +86,13 @@ public class PositionController extends ControllerBase {
             PositionController controller = (PositionController) fc.getApplication().getELResolver().
                     getValue(fc.getELContext(), null, "positionController");
             return controller.getPosition(key);
+        }
+        
+        public static PositionController getController()
+        {
+            FacesContext fc=FacesContext.getCurrentInstance();
+            return (PositionController) fc.getApplication().getELResolver().
+                    getValue(fc.getELContext(), null, "positionController");
         }
 
         java.lang.Integer getKey(String value) {

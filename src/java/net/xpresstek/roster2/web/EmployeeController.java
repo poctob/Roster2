@@ -64,6 +64,13 @@ public class EmployeeController extends ControllerBase {
                     getValue(facesContext.getELContext(), null, "employeeController");
             return controller.getEmployee(getKey(value));
         }
+        
+         public static EmployeeController getController()
+        {
+            FacesContext fc=FacesContext.getCurrentInstance();
+            return (EmployeeController) fc.getApplication().getELResolver().
+                    getValue(fc.getELContext(), null, "employeeController");
+        }
 
         java.lang.Integer getKey(String value) {
             java.lang.Integer key;
