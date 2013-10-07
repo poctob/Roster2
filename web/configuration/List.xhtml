@@ -7,28 +7,28 @@
 
     <ui:composition template="/template.xhtml">
         <ui:define name="title">
-            <h:outputText value="#{bundle.ListConfigurationTitle}"></h:outputText>
+            <h:outputText value="#{config_bundle.ListConfigurationTitle}"></h:outputText>
         </ui:define>
         <ui:define name="body">
             <h:form styleClass="jsfcrud_list_form">
                 <h:panelGroup id="messagePanel" layout="block">
                     <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
                 </h:panelGroup>
-                <h:outputText escape="false" value="#{bundle.ListConfigurationEmpty}" rendered="#{configurationController.items.rowCount == 0}"/>
+                <h:outputText escape="false" value="#{config_bundle.ListConfigurationEmpty}" rendered="#{configurationController.items.rowCount == 0}"/>
                 <h:panelGroup rendered="#{configurationController.items.rowCount > 0}">
                     <h:outputText value="#{configurationController.pagination.pageFirstItem + 1}..#{configurationController.pagination.pageLastItem + 1}/#{configurationController.pagination.itemsCount}"/>&nbsp;
-                    <h:commandLink action="#{configurationController.previous}" value="#{bundle.Previous} #{configurationController.pagination.pageSize}" rendered="#{configurationController.pagination.hasPreviousPage}"/>&nbsp;
-                    <h:commandLink action="#{configurationController.next}" value="#{bundle.Next} #{configurationController.pagination.pageSize}" rendered="#{configurationController.pagination.hasNextPage}"/>&nbsp;
+                    <h:commandLink action="#{configurationController.previous}" value="#{config_bundle.Previous} #{configurationController.pagination.pageSize}" rendered="#{configurationController.pagination.hasPreviousPage}"/>&nbsp;
+                    <h:commandLink action="#{configurationController.next}" value="#{config_bundle.Next} #{configurationController.pagination.pageSize}" rendered="#{configurationController.pagination.hasNextPage}"/>&nbsp;
                     <h:dataTable value="#{configurationController.items}" var="item" border="0" cellpadding="2" cellspacing="0" rowClasses="jsfcrud_odd_row,jsfcrud_even_row" rules="all" style="border:solid 1px">
                         <h:column>
                             <f:facet name="header">
-                                <h:outputText value="#{bundle.ListConfigurationTitle_configID}"/>
+                                <h:outputText value="#{config_bundle.ListConfigurationTitle_configID}"/>
                             </f:facet>
                             <h:outputText value="#{item.configID}"/>
                         </h:column>
                         <h:column>
                             <f:facet name="header">
-                                <h:outputText value="#{bundle.ListConfigurationTitle_configValue}"/>
+                                <h:outputText value="#{config_bundle.ListConfigurationTitle_configValue}"/>
                             </f:facet>
                             <h:outputText value="#{item.configValue}"/>
                         </h:column>
@@ -36,19 +36,19 @@
                             <f:facet name="header">
                                 <h:outputText value="&nbsp;"/>
                             </f:facet>
-                            <h:commandLink action="#{configurationController.prepareView}" value="#{bundle.ListConfigurationViewLink}"/>
+                            <h:commandLink action="#{configurationController.prepareView}" value="#{config_bundle.ListConfigurationViewLink}"/>
                             <h:outputText value=" "/>
-                            <h:commandLink action="#{configurationController.prepareEdit}" value="#{bundle.ListConfigurationEditLink}"/>
+                            <h:commandLink action="#{configurationController.prepareEdit}" value="#{config_bundle.ListConfigurationEditLink}"/>
                             <h:outputText value=" "/>
-                            <h:commandLink action="#{configurationController.destroy}" value="#{bundle.ListConfigurationDestroyLink}"/>
+                            <h:commandLink action="#{configurationController.destroy}" value="#{config_bundle.ListConfigurationDestroyLink}"/>
                         </h:column>
                     </h:dataTable>
                 </h:panelGroup>
                 <br />
-                <h:commandLink action="#{configurationController.prepareCreate}" value="#{bundle.ListConfigurationCreateLink}"/>
+                <h:commandLink action="#{configurationController.prepareCreate}" value="#{config_bundle.ListConfigurationCreateLink}"/>
                 <br />
                 <br />
-                <h:link outcome="/index" value="#{bundle.ListConfigurationIndexLink}"/>
+                <h:link outcome="/index" value="#{config_bundle.ListConfigurationIndexLink}"/>
             </h:form>
         </ui:define>
     </ui:composition>

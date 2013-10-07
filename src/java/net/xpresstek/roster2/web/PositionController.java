@@ -80,13 +80,6 @@ public class PositionController extends ControllerBase {
                     getValue(facesContext.getELContext(), null, "positionController");
             return controller.getPosition(getKey(value));
         }
-
-        public static Position getAsObject(int key) {    
-            FacesContext fc=FacesContext.getCurrentInstance();
-            PositionController controller = (PositionController) fc.getApplication().getELResolver().
-                    getValue(fc.getELContext(), null, "positionController");
-            return controller.getPosition(key);
-        }
         
         public static PositionController getController()
         {

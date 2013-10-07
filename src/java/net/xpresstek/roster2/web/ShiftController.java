@@ -15,6 +15,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import javax.faces.event.ValueChangeEvent;
 import net.xpresstek.roster2.ejb.Employee;
 import net.xpresstek.roster2.ejb.Position;
 import net.xpresstek.roster2.web.ConfigurationController.ConfigurationControllerConverter;
@@ -27,12 +28,16 @@ public class ShiftController extends ControllerBase {
 
     private Shift current;
     private Date current_date;
-   
+    private String start_time;
+    private String end_time;
+    private Position position;
+    private Employee employee;
+    private String positionName;
+    private String employeeName;
+    
     @EJB
     private net.xpresstek.roster2.web.ShiftFacade ejbFacade;
 
-
-    
     public ShiftController() {
         current_date=new Date();
     }
@@ -40,6 +45,58 @@ public class ShiftController extends ControllerBase {
      @Override
     AbstractFacade getFacade() {
         return ejbFacade;
+    }
+
+    public String getPositionName() {
+        return positionName;
+    }
+
+    public void setPositionName(String positionName) {
+        this.positionName = positionName;
+        position=PositionControllerConverter.getController().
+                getPositionByName(positionName);
+        this.employee = null;
+    }
+
+    public String getEmployeeName() {
+        return employeeName;
+    }
+
+    public void setEmployeeName(String employeeName) {
+        this.employeeName = employeeName;
+        employee=EmployeeControllerConverter.getController().
+                getEmployeeByName(employeeName);
+    }
+     
+    public String getStart_time() {
+        return start_time;
+    }
+
+    public void setStart_time(String start_time) {
+        this.start_time = start_time;
+        this.end_time = null;
+        this.position = null;
+        this.employee = null;
+    }
+
+    public String getEnd_time() {
+        return end_time;
+    }
+
+    public void setEnd_time(String end_time) {
+        this.end_time = end_time;
+        this.position = null;
+        this.employee = null;
+    }
+
+    public void positionValueChanged(ValueChangeEvent event)
+    {
+       setPositionName((String)event.getNewValue());
+    }
+    
+    public void employeeValueChanged(ValueChangeEvent event)
+    {
+       setEmployeeName((String)event.getNewValue());
     }
 
     @Override
@@ -51,7 +108,6 @@ public class ShiftController extends ControllerBase {
         return (Shift)getObject(id);
     }
     
-
     @Override
     void setCurrent(Object obj) {
         current=(Shift)obj;
@@ -75,7 +131,9 @@ public class ShiftController extends ControllerBase {
         Set<String> headings=new LinkedHashSet(); 
         for(Shift s : ejbFacade.findAll())
         {
-            Position pos=PositionControllerConverter.getAsObject(s.getPositionID());
+            Position pos=PositionControllerConverter.getController().
+                    getPosition(s.getPositionID());
+                    
             if(pos!=null)
             {
                 headings.add(pos.getName());
@@ -90,7 +148,7 @@ public class ShiftController extends ControllerBase {
         ConfigurationController cc=ConfigurationControllerConverter.getController();
         List times=cc.getTimeSlots();
         String time_slot=(String)times.get(time_index);
-        time_slot+="00.0";
+        time_slot+=":00.0";
         Position pos=PositionControllerConverter.getController().
                 getPositionByName(position);
         int pos_idx=0;
@@ -127,6 +185,38 @@ public class ShiftController extends ControllerBase {
     public List<Shift> getAllItems()
     {
         return ejbFacade.findAll();
+    }
+    
+    public List getStartTimes()
+    {
+        return ConfigurationControllerConverter.getController().getTimeSlots();
+    }
+    
+    public List getEndTimes()
+    {
+        List startTimes=
+                ConfigurationControllerConverter.getController().getTimeSlots();
+        int index=startTimes.indexOf(start_time);
+        index=index<0?0:index;
+        if(index>=startTimes.size())
+        {
+            return null;
+        }
+        return startTimes.subList(index+1, startTimes.size());
+    }
+    
+    public List getAvailableEmployees()
+    {
+        String startdate=DateUtils.DateToString(current_date);
+        startdate=startdate.substring(0, 11);
+        startdate+=start_time+":00.0";
+        
+        String enddate=DateUtils.DateToString(current_date);
+        enddate=enddate.substring(0, 11);
+        enddate+=end_time+":00.0";
+        
+        return EmployeeControllerConverter.getController().
+                getAllowedItems(position, startdate, enddate);
     }
 
     @FacesConverter(forClass = Shift.class)

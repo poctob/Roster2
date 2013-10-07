@@ -23,9 +23,9 @@
             <a4j:status onstart="#{rich:component('statPane')}.show()" onstop="#{rich:component('statPane')}.hide()" />
             <h:form styleClass="jsfcrud_list_form">
 
-              <rich:extendedDataTable value="#{configurationController.timeSlots}" 
-                                      var="times"
-                                      frozenColumns="1">
+                <rich:extendedDataTable value="#{configurationController.timeSlots}" 
+                                        var="times"
+                                        frozenColumns="1">
                     <f:facet name="header">
                         <h:outputText value="Schedule"/>
                     </f:facet>
@@ -35,30 +35,20 @@
                         </f:facet>
                         <h:outputText value="#{times}"/>
                     </rich:column>
-                    
+
                     <c:forEach items="#{shiftController.colHeading}" 
                                var="col_head"
                                varStatus="iter">
-                         <rich:column>
+                        <rich:column>
                             <f:facet name="header">
                                 <h:outputText value="#{col_head}" />
                             </f:facet>
                             <h:outputText value="None"/>
                         </rich:column>
                     </c:forEach>    
-                    
+
                 </rich:extendedDataTable>
 
-
-
-
-
-                <r:messages />
-                <a4j:outputPanel ajaxRendered="true">
-                    <h:outputText value="#{shiftController.status}" 
-                                  id="out" 
-                                  rendered="#{facesContext.maximumSeverity == null}" />
-                </a4j:outputPanel>
                 <a4j:jsFunction name="remove" 
                                 action="#{shiftController.destroy}" 
                                 render="table" 
@@ -88,70 +78,79 @@
 
             <a4j:outputPanel layout="block">
                 <h:form styleClass="jsfcrud_list_form">
-                    <a4j:commandLink styleClass="no-decor" 
-                                     execute="@this" 
-                                     render="edit_text" 
-                                     action="#{shiftController.prepareCreate}"
-                                     onclick="javascript:hideSelection('edit_div', false);">
-                        <h:graphicImage value="../resources/images/icons/Create.png" alt="create" />
-                    </a4j:commandLink>
+                    <rich:calendar value="#{shiftController.current_date}"
+                                   id="current_date"
+                                   datePattern="MM/dd/yyyy"
+                                   popup="false"
+                                   required="true" 
+                                   requiredMessage="#{bundle.CreateShiftRequiredMessage_start}"
+                                   ondateselect="dateChanged()"
+                                   />
+
+                    <a4j:jsFunction 
+                        name="dateChanged"                                 
+                        execute="current_date"
+                        immediate="true">                                                             
+                    </a4j:jsFunction>
+                    
                     <br />
-                    <div id="edit_div" class="invisible">
+                    <div id="edit_div">
                         <a4j:outputPanel id="edit_text" layout="block">
-                            <h:panelGrid columns="2" styleClass="editPanel">
-                                <h:outputLabel value="#{bundle.CreateShiftLabel_start}" for="start" />
-                                <rich:calendar value="#{shiftController.selected.start}"
-                                               id="start"
-                                               datePattern="MM/dd/yyyy hh:mm:ss a"
-                                               popup="false"
-                                               required="true" 
-                                               requiredMessage="#{bundle.CreateShiftRequiredMessage_start}"
-                                               />
 
-                                <h:outputLabel value="#{bundle.CreateShiftLabel_end}" for="end" />                    
-                                <rich:calendar value="#{shiftController.selected.end}"
-                                               id="end"
-                                               datePattern="MM/dd/yyyy hh:mm:ss a"
-                                               popup="false"
-                                               required="true" 
-                                               requiredMessage="#{bundle.CreateShiftRequiredMessage_end}"
-                                               />
+                            <rich:panel style="width:220px;">
+                                <f:facet name="header">
+                                    <h:outputText value="#{bundle.CreateShiftLabel_start}"></h:outputText>
+                                </f:facet>
+                                <rich:select id="start_time" 
+                                             value="#{shiftController.start_time}">
+                                    <f:selectItems value="#{shiftController.startTimes}"/> 
+                                    <a4j:ajax event="selectitem" render="end_time" execute="@this" />
+                                </rich:select>
+                            </rich:panel>
 
-                                <h:outputLabel value="#{bundle.CreateShiftLabel_positionID}" for="positionid" />
-                                <h:selectOneMenu id="positionid" 
-                                                 value="#{shiftController.selected.positionID}" 
-                                                 title="#{bundle.CreateShiftTitle_positionID}" 
-                                                 required="true" 
-                                                 requiredMessage="#{bundle.CreateShiftRequiredMessage_positionID}">
-                                    <f:selectItems value="#{positionController.allItems}"
-                                                   var="pos"
-                                                   itemValue="#{pos.pkID}"
-                                                   itemLabel="#{pos.name}"/>
+                            <rich:panel style="width:220px;">
+                                <f:facet name="header">
+                                    <h:outputText value="#{bundle.CreateShiftLabel_end}"></h:outputText>
+                                </f:facet>
+                                <rich:select id="end_time" 
+                                             value="#{shiftController.end_time}">
+                                    <f:selectItems value="#{shiftController.endTimes}"/>
+                                    <a4j:ajax event="selectitem" render="positionName" execute="@this" />
+                                </rich:select>
+                            </rich:panel>
 
-                                </h:selectOneMenu>
+                            <rich:panel style="width:220px;">
+                                <f:facet name="header">
+                                    <h:outputText value="#{bundle.CreateShiftLabel_positionID}"></h:outputText>
+                                </f:facet>
+                                <rich:select id="positionName" 
+                                             value="#{shiftController.positionName}"
+                                             valueChangeListener="#{shiftController.positionValueChanged}">
+                                    <f:selectItems value="#{positionController.allItems}"/>
+                                    <a4j:ajax event="selectitem" render="employeeName" execute="@this"/>
+                                </rich:select>
+                            </rich:panel>
 
-                                <h:outputLabel value="#{bundle.CreateShiftLabel_employeeID}" for="employeeid" />
-                                <h:selectOneMenu id="employeeid" value="#{shiftController.selected.employeeID}"
-                                                 title="#{bundle.CreateShiftTitle_employeeID}" 
-                                                 required="true" 
-                                                 requiredMessage="#{bundle.CreateShiftRequiredMessage_employeeID}">
-                                    <f:selectItems value="#{employeeController.allItems}"
-                                                   var ="emp"
-                                                   itemValue="#{emp.pkID}"
-                                                   itemLabel="#{emp.name}"/>
+                            <rich:panel style="width:220px;">
+                                <f:facet name="header">
+                                    <h:outputText value="#{bundle.CreateShiftLabel_employeeID}"></h:outputText>
+                                </f:facet>
+                                <rich:select id="employeeName"                                             
+                                             value="#{shiftController.employeeName}"
+                                             valueChangeListener="#{shiftController.employeeValueChanged}">
+                                    <f:selectItems value="#{shiftController.availableEmployees}"/>
+                                    <a4j:ajax event="selectitem" execute="@this"/>
+                                </rich:select>
+                            </rich:panel>     
 
-                                </h:selectOneMenu>                            
-                            </h:panelGrid>
                             <a4j:commandButton value="Update" 
                                                rendered="#{not empty shiftController.selected.start}"
                                                action="#{shiftController.update}"
-                                               render="table"
-                                               onclick="javascript:hideSelection('edit_div', true);"/>
+                                               render="table"/>
                             <a4j:commandButton value="Add" 
                                                rendered="#{empty shiftController.selected.start}"
                                                action="#{shiftController.create}"
-                                               render="table"
-                                               onclick="javascript:hideSelection('edit_div', true);"/>
+                                               render="table"/>                            
                         </a4j:outputPanel>
                     </div>
                 </h:form>

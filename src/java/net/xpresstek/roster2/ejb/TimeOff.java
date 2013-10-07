@@ -4,8 +4,8 @@
  */
 package net.xpresstek.roster2.ejb;
 
+import com.gzlabs.utils.DateUtils;
 import java.io.Serializable;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 import javax.persistence.Basic;
@@ -37,6 +37,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "TimeOff.findByStart", query = "SELECT t FROM TimeOff t WHERE t.start = :start"),
     @NamedQuery(name = "TimeOff.findByEnd", query = "SELECT t FROM TimeOff t WHERE t.end = :end")})
 public class TimeOff implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -69,7 +70,7 @@ public class TimeOff implements Serializable {
 
     public TimeOff(Integer pkid, Date start, Date end) {
         this.pkid = pkid;
-        this.start = start;        
+        this.start = start;
         this.end = end;
     }
 
@@ -86,7 +87,7 @@ public class TimeOff implements Serializable {
     }
 
     public void setStart(Date start) {
-        this.start=start;        
+        this.start = start;
     }
 
     public Date getEnd() {
@@ -112,10 +113,9 @@ public class TimeOff implements Serializable {
     public void setEmployeeid(Employee employeeid) {
         this.employeeid = employeeid;
     }
-    
-    public TimeZone getTimezone()
-    {
-        return TimeZone.getDefault();        
+
+    public TimeZone getTimezone() {
+        return TimeZone.getDefault();
     }
 
     @Override
@@ -142,5 +142,21 @@ public class TimeOff implements Serializable {
     public String toString() {
         return "net.xpresstek.roster2.ejb.TimeOff[ pkid=" + pkid + " ]";
     }
-    
+
+    /**
+     * Checks if supplied dates conflict with this object
+     *
+     * @param start Beginning of the period
+     * @param end End of the period
+     * @return True if there is a conflict, false otherwise
+     */
+    public boolean isConflicting(String start, String end) {
+        if (timeOffStatusid != null) {
+            return timeOffStatusid.getName().equals("Approved")
+                    && DateUtils.isCalendarBetween
+                    (this.start, this.end, start, end, true);
+        }
+        return false;
+
+    }
 }

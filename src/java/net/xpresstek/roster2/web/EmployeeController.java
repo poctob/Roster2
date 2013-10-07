@@ -1,5 +1,6 @@
 package net.xpresstek.roster2.web;
 
+import java.util.ArrayList;
 import java.util.List;
 import net.xpresstek.roster2.ejb.Employee;
 
@@ -12,6 +13,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import net.xpresstek.roster2.ejb.Position;
 
 @Named("employeeController")
 @SessionScoped
@@ -37,6 +39,23 @@ public class EmployeeController extends ControllerBase {
     public Employee getEmployee(Integer id) {
         return (Employee) getObject(id);
     }
+    
+    public Employee getEmployeeByName(String name)
+    {
+        if(name==null)
+        {
+            return null;
+        }
+        List<Employee> pos=getAllItems();
+        for(Employee p : pos)
+        {
+            if(p.getName().equals(name))
+            {
+                return p;
+            }
+        }
+        return null;
+    }
 
     @Override
     void setCurrent(Object obj) {
@@ -50,6 +69,22 @@ public class EmployeeController extends ControllerBase {
 
     public List<Employee> getAllItems() {
         return ejbFacade.findAll();
+    }
+    
+    public List<Employee> getAllowedItems(Position position, String start, String end)
+    {
+        List<Employee> employees=new ArrayList();
+        for(Employee e : ejbFacade.findAll())
+        {
+            if(e!=null && 
+                    e.getIsActive() &&
+                    e.isPositionAllowed(position) &&
+                    e.isTimeAllowed(start, end))
+            {
+                employees.add(e);
+            }
+        }
+        return employees;
     }
 
     @FacesConverter(forClass = Employee.class, value = "employeeControllerConverter")

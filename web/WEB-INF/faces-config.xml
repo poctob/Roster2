@@ -10,7 +10,7 @@
         </resource-bundle>
         <resource-bundle>
             <base-name>/config_bundle</base-name>
-            <var>bundle</var>
+            <var>config_bundle</var>
         </resource-bundle>
     </application>
     <managed-bean>

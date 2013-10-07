@@ -43,6 +43,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Employee.findByEmail", query = "SELECT e FROM Employee e WHERE e.email = :email"),
     @NamedQuery(name = "Employee.findByComment", query = "SELECT e FROM Employee e WHERE e.comment = :comment")})
 public class Employee implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,7 +56,7 @@ public class Employee implements Serializable {
     @Size(max = 200)
     @Column(name = "Address")
     private String address;
-    @Pattern(regexp="^\\(?(\\d{3})\\)?[- ]?(\\d{3})[- ]?(\\d{4})$", message="Invalid phone/fax format, should be as xxx-xxx-xxxx")//if the field contains phone or fax number consider using this annotation to enforce field validation
+    @Pattern(regexp = "^\\(?(\\d{3})\\)?[- ]?(\\d{3})[- ]?(\\d{4})$", message = "Invalid phone/fax format, should be as xxx-xxx-xxxx")//if the field contains phone or fax number consider using this annotation to enforce field validation
     @Size(max = 15)
     @Column(name = "Phone")
     private String phone;
@@ -63,27 +64,23 @@ public class Employee implements Serializable {
     @NotNull
     @Column(name = "IsActive")
     private boolean isActive;
-    @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
+    @Pattern(regexp = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message = "Invalid email")//if the field contains email address consider using this annotation to enforce field validation
     @Size(max = 320)
     @Column(name = "Email")
     private String email;
     @Size(max = 500)
     @Column(name = "Comment")
     private String comment;
-    
     @JoinTable(name = "EmployeeToPrivilege", joinColumns = {
         @JoinColumn(name = "EmployeeID", referencedColumnName = "pkID")}, inverseJoinColumns = {
         @JoinColumn(name = "PrivilegeID", referencedColumnName = "pkid")})
     @ManyToMany
     private Collection<Privilege> privilegeCollection;
-        
-     @JoinTable(name = "EmployeeToPosition", joinColumns = {
+    @JoinTable(name = "EmployeeToPosition", joinColumns = {
         @JoinColumn(name = "EmployeeID", referencedColumnName = "pkID")}, inverseJoinColumns = {
         @JoinColumn(name = "PositionID", referencedColumnName = "pkID")})
     @ManyToMany
     private Collection<Position> positionCollection;
-    
-    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "employeeid")
     private Collection<TimeOff> timeOffCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "employeeid")
@@ -228,5 +225,45 @@ public class Employee implements Serializable {
     public String toString() {
         return name;
     }
-    
+
+    /**
+     * Checks if this person is allowed to work on the position
+     *
+     * @param pos_id Position to compare
+     * @return True is this person is allowed to work this position
+     */
+    public boolean isPositionAllowed(Position position) {
+        if (positionCollection != null && positionCollection.size() > 0) {
+            for (Position pos : positionCollection) {
+                if (pos != null && pos.equals(position)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks if this employee is allowed to work at the specified time period
+     *
+     * @param start_time Starting time of a shift
+     * @param end_time Ending time of a shift
+     * @return True if this person is allowed to work this shift
+     */
+    public boolean isTimeAllowed(String start_time, String end_time) {
+
+        if (start_time != null
+                && end_time != null
+                && timeOffCollection != null
+                && timeOffCollection.size() > 0) {
+            for (TimeOff to : timeOffCollection) {
+                if (to != null) {
+                    if (to.isConflicting(start_time, end_time)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
 }
