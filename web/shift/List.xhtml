@@ -25,7 +25,8 @@
 
                 <rich:extendedDataTable value="#{configurationController.timeSlots}" 
                                         var="times"
-                                        frozenColumns="1">
+                                        frozenColumns="1"
+                                        id="shift_table">
                     <f:facet name="header">
                         <h:outputText value="Schedule"/>
                     </f:facet>
@@ -43,7 +44,9 @@
                             <f:facet name="header">
                                 <h:outputText value="#{col_head}" />
                             </f:facet>
-                            <h:outputText value="None"/>
+                            <a4j:commandLink
+                                value="#{shiftController.getShiftName(col_head, times).employeeObject}"
+                                />
                         </rich:column>
                     </c:forEach>    
 
@@ -82,17 +85,18 @@
                                    id="current_date"
                                    datePattern="MM/dd/yyyy"
                                    popup="false"
-                                   required="true" 
-                                   requiredMessage="#{bundle.CreateShiftRequiredMessage_start}"
-                                   ondateselect="dateChanged()"
-                                   />
-
-                    <a4j:jsFunction 
-                        name="dateChanged"                                 
-                        execute="current_date"
-                        immediate="true">                                                             
-                    </a4j:jsFunction>
+                                   required="true"                                    
+                                   requiredMessage="#{bundle.CreateShiftRequiredMessage_start}"                              
+                                   >
+                        <a4j:ajax event="change" 
+                                  execute="@this"
+                                  oncomplete="renderShiftTable();"
+                                   />   
+                    </rich:calendar>
                     
+                    <a4j:jsFunction name="renderShiftTable"
+                                    render="shift_table"/>
+
                     <br />
                     <div id="edit_div">
                         <a4j:outputPanel id="edit_text" layout="block">
@@ -149,8 +153,15 @@
                                                render="table"/>
                             <a4j:commandButton value="Add" 
                                                rendered="#{empty shiftController.selected.start}"
-                                               action="#{shiftController.create}"
+                                               action="#{shiftController.addShift}"
                                                render="table"/>                            
+                        </a4j:outputPanel>
+
+                        <r:messages />
+                        <a4j:outputPanel ajaxRendered="true">
+                            <h:outputText value="#{shiftController.status}" 
+                                          id="out" 
+                                          rendered="#{facesContext.maximumSeverity == null}" />
                         </a4j:outputPanel>
                     </div>
                 </h:form>
