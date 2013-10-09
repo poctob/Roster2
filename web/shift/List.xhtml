@@ -26,7 +26,8 @@
                 <rich:extendedDataTable value="#{configurationController.timeSlots}" 
                                         var="times"
                                         frozenColumns="1"
-                                        id="shift_table">
+                                        id="shift_table"
+                                        iterationStatusVar="table_iter">
                     <f:facet name="header">
                         <h:outputText value="Schedule"/>
                     </f:facet>
@@ -37,18 +38,19 @@
                         <h:outputText value="#{times}"/>
                     </rich:column>
 
-                    <c:forEach items="#{shiftController.colHeading}" 
-                               var="col_head"
+                  
+                    <c:forEach items="#{shiftController.shiftColumns}" 
+                               var="shift_column"
                                varStatus="iter">
                         <rich:column>
                             <f:facet name="header">
-                                <h:outputText value="#{col_head}" />
+                                <h:outputText value="#{shift_column.positionName}" />
                             </f:facet>
                             <a4j:commandLink
-                                value="#{shiftController.getShiftName(col_head, times).employeeObject}"
+                                value="#{shift_column.getEmployeeName(times)}"
                                 />
                         </rich:column>
-                    </c:forEach>    
+                    </c:forEach>      
 
                 </rich:extendedDataTable>
 

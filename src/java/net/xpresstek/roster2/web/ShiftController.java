@@ -16,8 +16,10 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.faces.event.ValueChangeEvent;
+import javax.persistence.TypedQuery;
 import net.xpresstek.roster2.ejb.Employee;
 import net.xpresstek.roster2.ejb.Position;
+import net.xpresstek.roster2.ejb.ShiftColumn;
 import net.xpresstek.roster2.web.ConfigurationController.ConfigurationControllerConverter;
 import net.xpresstek.roster2.web.EmployeeController.EmployeeControllerConverter;
 import net.xpresstek.roster2.web.PositionController.PositionControllerConverter;
@@ -159,6 +161,26 @@ public class ShiftController extends ControllerBase {
             }
         }
         return new ArrayList(headings);
+    }
+    
+    public List<ShiftColumn> getShiftColumns()
+    {
+        List<Position> pos=
+                PositionControllerConverter.getController().getAllItems();
+        
+        ArrayList<ShiftColumn> columns=new ArrayList();
+        
+       for(Position p:pos)
+       {
+           List<Shift> shifts=ejbFacade.
+                   findByPositionIdAndStart(p.getPkID(), current_date);
+           if(shifts!=null && shifts.size()>0)
+           {
+               columns.add(new ShiftColumn(shifts,p));
+           }
+       }
+       return columns;
+        
     }
 
     public Shift getShiftName(String position, String time) {

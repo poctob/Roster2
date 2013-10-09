@@ -35,7 +35,9 @@ import net.xpresstek.roster2.web.EmployeeController.EmployeeControllerConverter;
     @NamedQuery(name = "Shift.findByEmployeeID", query = "SELECT s FROM Shift s WHERE s.employeeID = :employeeID"),
     @NamedQuery(name = "Shift.findByPositionID", query = "SELECT s FROM Shift s WHERE s.positionID = :positionID"),
     @NamedQuery(name = "Shift.findByStart", query = "SELECT s FROM Shift s WHERE s.start = :start"),
+    @NamedQuery(name = "Shift.findByPositionIDAndStart", query = "SELECT s FROM Shift s WHERE s.positionID = :positionID AND s.start >= :start1 AND s.start < :start2"),
     @NamedQuery(name = "Shift.findByEnd", query = "SELECT s FROM Shift s WHERE s.end = :end")})
+    
 public class Shift implements Serializable {
 
     private static final long serialVersionUID = 1L;
