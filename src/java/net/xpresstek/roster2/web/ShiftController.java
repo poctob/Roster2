@@ -16,7 +16,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.faces.event.ValueChangeEvent;
-import javax.persistence.TypedQuery;
 import net.xpresstek.roster2.ejb.Employee;
 import net.xpresstek.roster2.ejb.Position;
 import net.xpresstek.roster2.ejb.ShiftColumn;
@@ -38,18 +37,55 @@ public class ShiftController extends ControllerBase {
     private Employee employee;
     private String positionName;
     private String employeeName;
-    private int rowindex;
+    private int current_pkid;
+    private String selected_time;
+    private String selected_position;
+    private String selected_employee;
+    
     @EJB
     private net.xpresstek.roster2.web.ShiftFacade ejbFacade;
 
     public ShiftController() {
         current_date = new Date();
-        rowindex = 0;
+        current_pkid = 0;
     }
 
     @Override
     AbstractFacade getFacade() {
         return ejbFacade;
+    }
+
+    public String getSelected_employee() {
+        return selected_employee;
+    }
+
+    public void setSelected_employee(String selected_employee) {
+        this.selected_employee = selected_employee;
+    }
+
+    public String getSelected_position() {
+        return selected_position;
+    }
+
+    public void setSelected_position(String selected_position) {
+        this.selected_position = selected_position;
+    }
+    
+    public String getSelected_time() {
+        return selected_time;
+    }
+
+    public void setSelected_time(String selected_time) {
+        this.selected_time = selected_time;
+    }
+    
+     public int getCurrent_pkid() {
+        return current_pkid;
+    }
+
+    public void setCurrent_pkid(int current_pkid) {
+        this.current_pkid = current_pkid;
+        this.current=ejbFacade.find(current_pkid);
     }
 
     public String getPositionName() {
@@ -124,7 +160,7 @@ public class ShiftController extends ControllerBase {
     }
 
     @Override
-    Object getCurrent() {
+    public Object getCurrent() {
         return current;
     }
 
@@ -133,7 +169,7 @@ public class ShiftController extends ControllerBase {
     }
 
     @Override
-    void setCurrent(Object obj) {
+    public void setCurrent(Object obj) {
         current = (Shift) obj;
     }
 

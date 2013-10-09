@@ -48,10 +48,25 @@
                             </f:facet>
                             <a4j:commandLink
                                 value="#{shift_column.getEmployeeName(times)}"
+                                render="edit_text"
+                                execute="@this"
+                                >
+                            <a4j:param 
+                                value="#{times}"
+                                assignTo="#{shiftController.selected_time}"
                                 />
+                            <a4j:param 
+                                value="#{shift_column.positionName}"
+                                assignTo="#{shiftController.selected_position}"
+                                />
+                             <a4j:param 
+                                value="#{shift_column.getEmployeeName(times)}"
+                                assignTo="#{shiftController.selected_employee}"
+                                />
+                            </a4j:commandLink>
                         </rich:column>
                     </c:forEach>      
-
+ 
                 </rich:extendedDataTable>
 
                 <a4j:jsFunction name="remove" 

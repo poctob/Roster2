@@ -49,7 +49,17 @@ public class ShiftColumn {
     
     public String getEmployeeName(String time)
     {
-        if(shifts==null)
+       Shift s=getShiftByTime(time);
+       if(s!=null)
+       {
+           return s.getEmployeeObject().getName();
+       }
+       return null;
+    }
+    
+    public Shift getShiftByTime(String time)
+    {
+         if(shifts==null)
         {
             return null;
         }
@@ -61,10 +71,20 @@ public class ShiftColumn {
             c_strdate += time_slot;
             int employeeid = s.isEmployeeOn(position.getPkID(), c_strdate);
             if (employeeid > 0) {
-                return s.getEmployeeObject().getName();
+                return s;
             }            
         }
         return null;
+    }
+    
+    public int getShiftIdByTimeAsString(String time)
+    {
+       Shift s=getShiftByTime(time);
+       if(s!=null)
+       {
+           return s.getPkid(); 
+       }
+       return 0;
     }
     
 }
