@@ -21,6 +21,7 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 import net.xpresstek.roster2.web.EmployeeController.EmployeeControllerConverter;
+import net.xpresstek.roster2.web.PositionController.PositionControllerConverter;
 
 /**
  *
@@ -36,6 +37,7 @@ import net.xpresstek.roster2.web.EmployeeController.EmployeeControllerConverter;
     @NamedQuery(name = "Shift.findByPositionID", query = "SELECT s FROM Shift s WHERE s.positionID = :positionID"),
     @NamedQuery(name = "Shift.findByStart", query = "SELECT s FROM Shift s WHERE s.start = :start"),
     @NamedQuery(name = "Shift.findByPositionIDAndStart", query = "SELECT s FROM Shift s WHERE s.positionID = :positionID AND s.start >= :start1 AND s.start < :start2"),
+    @NamedQuery(name = "Shift.findByPositionIDAndEmployeeIDAndStart", query = "SELECT s FROM Shift s WHERE s.positionID = :positionID AND s.start <= :start1 AND s.end >= :start1 AND s.employeeID = :employeeID"),
     @NamedQuery(name = "Shift.findByEnd", query = "SELECT s FROM Shift s WHERE s.end = :end")})
     
 public class Shift implements Serializable {
@@ -80,6 +82,7 @@ public class Shift implements Serializable {
         this.end = end;
     }
 
+    
     public Integer getPkid() {
         return pkid;
     }
@@ -102,6 +105,35 @@ public class Shift implements Serializable {
 
     public void setPositionID(int positionID) {
         this.positionID = positionID;
+    }
+    
+    public Position getPosition()
+    {
+        return PositionControllerConverter.
+                getController().getPosition(positionID);
+        
+    }
+    
+    public void setPosition(Position position)
+    {
+        if(position!=null)
+        {
+            this.positionID=position.getPkID();
+        }
+    }
+    
+    public Employee getEmployee()
+    {
+        return EmployeeControllerConverter.getController().
+                getEmployee(employeeID);
+    }
+    
+    public void setEmployee(Employee employee)
+    {
+        if(employee!=null)
+        {
+            this.employeeID=employee.getPkID();
+        }
     }
 
     public Date getStart() {

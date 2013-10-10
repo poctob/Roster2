@@ -7,6 +7,7 @@ import net.xpresstek.roster2.web.util.PaginationHelper;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 import javax.ejb.EJB;
@@ -104,7 +105,24 @@ public class ConfigurationController implements Serializable {
             return null;
         }
         String interval=conf.getConfigValue();
+        
         return DateUtils.getTimeSpan(start, end, interval);
+    }
+    
+    public List getTimeSlotsDate (String date)
+    {
+        List time_strings=getTimeSlots();
+        ArrayList<Date> retval=new ArrayList();
+        for(Object str : time_strings)
+        {
+            if(str!=null)
+            {
+                String fulldate=date+" "+(String)str+":00.0";
+                Date dt=DateUtils.StringToDate(fulldate);
+                retval.add(dt);
+            }
+        }
+        return retval;
     }
 
     public String create() {

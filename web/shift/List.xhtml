@@ -38,7 +38,7 @@
                         <h:outputText value="#{times}"/>
                     </rich:column>
 
-                  
+
                     <c:forEach items="#{shiftController.shiftColumns}" 
                                var="shift_column"
                                varStatus="iter">
@@ -51,22 +51,22 @@
                                 render="edit_text"
                                 execute="@this"
                                 >
-                            <a4j:param 
-                                value="#{times}"
-                                assignTo="#{shiftController.selected_time}"
-                                />
-                            <a4j:param 
-                                value="#{shift_column.positionName}"
-                                assignTo="#{shiftController.selected_position}"
-                                />
-                             <a4j:param 
-                                value="#{shift_column.getEmployeeName(times)}"
-                                assignTo="#{shiftController.selected_employee}"
-                                />
+                                <a4j:param 
+                                    value="#{times}"
+                                    assignTo="#{shiftController.selected_time}"
+                                    />
+                                <a4j:param 
+                                    value="#{shift_column.positionName}"
+                                    assignTo="#{shiftController.selected_position}"
+                                    />
+                                <a4j:param 
+                                    value="#{shift_column.getEmployeeName(times)}"
+                                    assignTo="#{shiftController.selected_employee}"
+                                    />
                             </a4j:commandLink>
                         </rich:column>
                     </c:forEach>      
- 
+
                 </rich:extendedDataTable>
 
                 <a4j:jsFunction name="remove" 
@@ -108,9 +108,9 @@
                         <a4j:ajax event="change" 
                                   execute="@this"
                                   oncomplete="renderShiftTable();"
-                                   />   
+                                  />   
                     </rich:calendar>
-                    
+
                     <a4j:jsFunction name="renderShiftTable"
                                     render="shift_table"/>
 
@@ -123,8 +123,11 @@
                                     <h:outputText value="#{bundle.CreateShiftLabel_start}"></h:outputText>
                                 </f:facet>
                                 <rich:select id="start_time" 
-                                             value="#{shiftController.start_time}">
-                                    <f:selectItems value="#{shiftController.startTimes}"/> 
+                                             value="#{shiftController.current.start}">
+                                    <f:selectItems value="#{shiftController.startTimes}" 
+                                                   var="startTime"
+                                                   itemValue="#{startTime}"
+                                                   itemLabel="#{shiftController.convertDateToTimeLabel(startTime)}"/> 
                                     <a4j:ajax event="selectitem" render="end_time" execute="@this" />
                                 </rich:select>
                             </rich:panel>
@@ -134,8 +137,11 @@
                                     <h:outputText value="#{bundle.CreateShiftLabel_end}"></h:outputText>
                                 </f:facet>
                                 <rich:select id="end_time" 
-                                             value="#{shiftController.end_time}">
-                                    <f:selectItems value="#{shiftController.endTimes}"/>
+                                             value="#{shiftController.current.end}">
+                                     <f:selectItems value="#{shiftController.endTimes}" 
+                                                   var="endTime"
+                                                   itemValue="#{endTime}"
+                                                   itemLabel="#{shiftController.convertDateToTimeLabel(endTime)}"/>                                     
                                     <a4j:ajax event="selectitem" render="positionName" execute="@this" />
                                 </rich:select>
                             </rich:panel>
@@ -145,7 +151,7 @@
                                     <h:outputText value="#{bundle.CreateShiftLabel_positionID}"></h:outputText>
                                 </f:facet>
                                 <rich:select id="positionName" 
-                                             value="#{shiftController.positionName}"
+                                             value="#{shiftController.current.position}"
                                              valueChangeListener="#{shiftController.positionValueChanged}">
                                     <f:selectItems value="#{positionController.allItems}"/>
                                     <a4j:ajax event="selectitem" render="employeeName" execute="@this"/>
@@ -157,7 +163,7 @@
                                     <h:outputText value="#{bundle.CreateShiftLabel_employeeID}"></h:outputText>
                                 </f:facet>
                                 <rich:select id="employeeName"                                             
-                                             value="#{shiftController.employeeName}"
+                                             value="#{shiftController.current.employee}"
                                              valueChangeListener="#{shiftController.employeeValueChanged}">
                                     <f:selectItems value="#{shiftController.availableEmployees}"/>
                                     <a4j:ajax event="selectitem" execute="@this"/>

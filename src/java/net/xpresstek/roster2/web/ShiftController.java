@@ -28,11 +28,8 @@ import net.xpresstek.roster2.web.PositionController.PositionControllerConverter;
 public class ShiftController extends ControllerBase {
 
     private Shift current;
+    
     private Date current_date;
-    private String start_time;
-    private String start_date;
-    private String end_date;
-    private String end_time;
     private Position position;
     private Employee employee;
     private String positionName;
@@ -41,13 +38,13 @@ public class ShiftController extends ControllerBase {
     private String selected_time;
     private String selected_position;
     private String selected_employee;
-    
     @EJB
     private net.xpresstek.roster2.web.ShiftFacade ejbFacade;
 
     public ShiftController() {
         current_date = new Date();
         current_pkid = 0;
+        current=new Shift(0,0,0,current_date, current_date);
     }
 
     @Override
@@ -55,12 +52,15 @@ public class ShiftController extends ControllerBase {
         return ejbFacade;
     }
 
+  
+
     public String getSelected_employee() {
         return selected_employee;
     }
 
     public void setSelected_employee(String selected_employee) {
         this.selected_employee = selected_employee;
+        
     }
 
     public String getSelected_position() {
@@ -69,23 +69,25 @@ public class ShiftController extends ControllerBase {
 
     public void setSelected_position(String selected_position) {
         this.selected_position = selected_position;
+        
     }
-    
+
     public String getSelected_time() {
         return selected_time;
     }
 
     public void setSelected_time(String selected_time) {
         this.selected_time = selected_time;
+      
     }
-    
-     public int getCurrent_pkid() {
+
+    public int getCurrent_pkid() {
         return current_pkid;
     }
 
     public void setCurrent_pkid(int current_pkid) {
         this.current_pkid = current_pkid;
-        this.current=ejbFacade.find(current_pkid);
+        this.current = ejbFacade.find(current_pkid);
     }
 
     public String getPositionName() {
@@ -109,33 +111,7 @@ public class ShiftController extends ControllerBase {
                 getEmployeeByName(employeeName);
     }
 
-    public String getStart_time() {
-        return start_time;
-    }
-
-    public void setStart_time(String start_time) {
-        this.start_time = start_time;
-        start_date = DateUtils.DateToString(current_date);
-        start_date = start_date.substring(0, 11);
-        start_date += start_time + ":00.0";
-
-        this.end_time = null;
-        this.position = null;
-        this.employee = null;
-    }
-
-    public String getEnd_time() {
-        return end_time;
-    }
-
-    public void setEnd_time(String end_time) {
-        this.end_time = end_time;
-        end_date = DateUtils.DateToString(current_date);
-        end_date = end_date.substring(0, 11);
-        end_date += end_time + ":00.0";
-        this.position = null;
-        this.employee = null;
-    }
+  
 
     public void positionValueChanged(ValueChangeEvent event) {
         setPositionName((String) event.getNewValue());
@@ -148,19 +124,16 @@ public class ShiftController extends ControllerBase {
     public void addShift() {
         if (position != null
                 && employee != null
-                && start_date.length() > 0
-                && end_date.length() > 0) {
+             ) {
             prepareCreate();
             current.setEmployeeID(employee.getPkID());
             current.setPositionID(position.getPkID());
-            current.setStart(DateUtils.StringToDate(start_date));
-            current.setEnd(DateUtils.StringToDate(end_date));
             create();
         }
     }
 
     @Override
-    public Object getCurrent() {
+    public Shift getCurrent() {
         return current;
     }
 
@@ -198,25 +171,22 @@ public class ShiftController extends ControllerBase {
         }
         return new ArrayList(headings);
     }
-    
-    public List<ShiftColumn> getShiftColumns()
-    {
-        List<Position> pos=
+
+    public List<ShiftColumn> getShiftColumns() {
+        List<Position> pos =
                 PositionControllerConverter.getController().getAllItems();
-        
-        ArrayList<ShiftColumn> columns=new ArrayList();
-        
-       for(Position p:pos)
-       {
-           List<Shift> shifts=ejbFacade.
-                   findByPositionIdAndStart(p.getPkID(), current_date);
-           if(shifts!=null && shifts.size()>0)
-           {
-               columns.add(new ShiftColumn(shifts,p));
-           }
-       }
-       return columns;
-        
+
+        ArrayList<ShiftColumn> columns = new ArrayList();
+
+        for (Position p : pos) {
+            List<Shift> shifts = ejbFacade.
+                    findByPositionIdAndStart(p.getPkID(), current_date);
+            if (shifts != null && shifts.size() > 0) {
+                columns.add(new ShiftColumn(shifts, p));
+            }
+        }
+        return columns;
+
     }
 
     public Shift getShiftName(String position, String time) {
@@ -248,19 +218,34 @@ public class ShiftController extends ControllerBase {
         }
         return null;
     }
+    
+    public String convertDateToTimeLabel(Date date)
+    {
+        String strdate=DateUtils.DateToString(date);
+        if(strdate!=null)
+        {
+            return strdate.substring(11, 16);
+        }
+        return null;
+    }
 
     public List<Shift> getAllItems() {
         return ejbFacade.findAll();
     }
 
     public List getStartTimes() {
-        return ConfigurationControllerConverter.getController().getTimeSlots();
+        String strdate = DateUtils.DateToString(current_date);
+        strdate = strdate.substring(0, 10);
+        return ConfigurationControllerConverter.getController().getTimeSlotsDate(strdate);
     }
 
     public List getEndTimes() {
-        List startTimes =
-                ConfigurationControllerConverter.getController().getTimeSlots();
-        int index = startTimes.indexOf(start_time);
+        if(current==null)
+        {
+            return null;
+        }
+        List startTimes =  getStartTimes();
+        int index = startTimes.indexOf(current.getStart());
         index = index < 0 ? 0 : index;
         if (index >= startTimes.size()) {
             return null;
@@ -269,10 +254,11 @@ public class ShiftController extends ControllerBase {
     }
 
     public List getAvailableEmployees() {
-        return EmployeeControllerConverter.getController().
-                getAllowedItems(position, start_date, end_date);
+      /*  return EmployeeControllerConverter.getController().
+                getAllowedItems(position, start_date, end_date);*/
+        return null;
     }
-    
+
     public void processShiftClick(String position, String time) {
         int i;
     }
