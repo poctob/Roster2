@@ -123,7 +123,9 @@
                                     <h:outputText value="#{bundle.CreateShiftLabel_start}"></h:outputText>
                                 </f:facet>
                                 <rich:select id="start_time" 
-                                             value="#{shiftController.current.start}">
+                                             value="#{shiftController.current.start}"
+                                             converter="shiftDateConverter">
+                                    
                                     <f:selectItems value="#{shiftController.startTimes}" 
                                                    var="startTime"
                                                    itemValue="#{startTime}"

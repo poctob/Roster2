@@ -134,6 +134,10 @@ public class ShiftController extends ControllerBase {
 
     @Override
     public Shift getCurrent() {
+        if(current==null)
+        {
+            current=new Shift();
+        }
         return current;
     }
 
@@ -299,6 +303,25 @@ public class ShiftController extends ControllerBase {
             } else {
                 throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + Shift.class.getName());
             }
+        }
+    }    
+    @FacesConverter(forClass = java.util.Date.class, value="shiftDateConverter")
+    public static class ShiftControllerDateConverter implements Converter {
+
+        @Override
+        public Object getAsObject(FacesContext facesContext, UIComponent component, String value) {
+            if (value == null || value.length() == 0) {
+                return null;
+            }
+            return DateUtils.StringToDate(value);
+        }      
+
+        @Override
+        public String getAsString(FacesContext facesContext, UIComponent component, Object object) {
+            if (object == null) {
+                return null;
+            }
+            return DateUtils.DateToString((Date)object);
         }
     }
 }

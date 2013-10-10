@@ -138,7 +138,7 @@ public class Shift implements Serializable {
 
     public Date getStart() {
         return start;
-    }
+    }    
 
     public void setStart(Date start) {
         this.start = start;
