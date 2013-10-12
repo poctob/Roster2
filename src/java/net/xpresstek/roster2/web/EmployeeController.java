@@ -13,7 +13,6 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
-import net.xpresstek.roster2.ejb.Position;
 
 @Named("employeeController")
 @SessionScoped
@@ -71,8 +70,13 @@ public class EmployeeController extends ControllerBase {
         return ejbFacade.findAll();
     }
     
-    public List<Employee> getAllowedItems(Position position, String start, String end)
+    public List<Employee> getAllowedItems(int position, String start, String end)
     {
+        if(position<=0 || start==null || end==null)
+        {
+            return null;
+        } 
+        
         List<Employee> employees=new ArrayList();
         for(Employee e : ejbFacade.findAll())
         {

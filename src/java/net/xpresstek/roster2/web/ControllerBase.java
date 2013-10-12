@@ -108,6 +108,10 @@ public abstract class ControllerBase implements Serializable {
     public Object getObject(Integer id) {
         return getFacade().find(id);
     }
+    
+    public Object getObject(String id) {
+        return getFacade().find(id);
+    }
 
     public String next() {
         getPagination().nextPage();

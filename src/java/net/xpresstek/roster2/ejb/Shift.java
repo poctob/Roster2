@@ -105,36 +105,7 @@ public class Shift implements Serializable {
 
     public void setPositionID(int positionID) {
         this.positionID = positionID;
-    }
-    
-    public Position getPosition()
-    {
-        return PositionControllerConverter.
-                getController().getPosition(positionID);
-        
-    }
-    
-    public void setPosition(Position position)
-    {
-        if(position!=null)
-        {
-            this.positionID=position.getPkID();
-        }
-    }
-    
-    public Employee getEmployee()
-    {
-        return EmployeeControllerConverter.getController().
-                getEmployee(employeeID);
-    }
-    
-    public void setEmployee(Employee employee)
-    {
-        if(employee!=null)
-        {
-            this.employeeID=employee.getPkID();
-        }
-    }
+    }        
 
     public Date getStart() {
         return start;

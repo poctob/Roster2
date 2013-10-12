@@ -29,6 +29,16 @@ public class ShiftColumn {
     public void setShifts(List<Shift> shifts) {
         this.shifts = shifts;
     }
+    
+    public int getShiftID(String time)
+    {
+        Shift s=getShiftByTime(time);
+        if(s!=null)
+        {
+            return s.getPkid();
+        }
+        return -1;
+    }
 
     public Position getPosition() {
         return position;

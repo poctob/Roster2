@@ -232,10 +232,10 @@ public class Employee implements Serializable {
      * @param pos_id Position to compare
      * @return True is this person is allowed to work this position
      */
-    public boolean isPositionAllowed(Position position) {
+    public boolean isPositionAllowed(int position) {
         if (positionCollection != null && positionCollection.size() > 0) {
             for (Position pos : positionCollection) {
-                if (pos != null && pos.equals(position)) {
+                if (pos != null && pos.getPkID()==position) {
                     return true;
                 }
             }
