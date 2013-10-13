@@ -5,6 +5,7 @@
 package net.xpresstek.roster2.ejb;
 
 import com.gzlabs.utils.DateUtils;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,7 +13,7 @@ import java.util.List;
  * @author alex
  */
 public class ShiftColumn {
-    
+
     List<Shift> shifts;
     Position position;
 
@@ -21,7 +22,6 @@ public class ShiftColumn {
         this.position = position;
     }
 
-    
     public List<Shift> getShifts() {
         return shifts;
     }
@@ -29,13 +29,12 @@ public class ShiftColumn {
     public void setShifts(List<Shift> shifts) {
         this.shifts = shifts;
     }
-    
-    public int getShiftID(String time)
-    {
-        Shift s=getShiftByTime(time);
-        if(s!=null)
-        {
-            return s.getPkid();
+
+    public int getShiftID(String time) {
+        for (Shift s : getShiftByTime(time)) {
+            if (s != null) {
+                return s.getPkid();
+            }
         }
         return -1;
     }
@@ -47,54 +46,47 @@ public class ShiftColumn {
     public void setPosition(Position position) {
         this.position = position;
     }
-    
-    public String getPositionName()
-    {
-        if(position!=null)
-        {
+
+    public String getPositionName() {
+        if (position != null) {
             return position.getName();
         }
         return null;
     }
-    
-    public String getEmployeeName(String time)
-    {
-       Shift s=getShiftByTime(time);
-       if(s!=null)
-       {
-           return s.getEmployeeObject().getName();
-       }
-       return null;
+
+    public String getEmployeeName(String time) {
+        String retval = "";
+        for (Shift s : getShiftByTime(time)) {
+            if (s != null) {
+                retval += s.getEmployeeObject().getName() + " ";
+            }
+        }
+        return retval;
     }
-    
-    public Shift getShiftByTime(String time)
-    {
-         if(shifts==null)
+
+    public List<Shift> getShiftByTime(String time) {
+
+        if(time == null || time.length()==0)
         {
             return null;
         }
-        for(Shift s : shifts)
-        {
-            String strdate = DateUtils.DateToString(s.getStart());
-            String c_strdate = strdate.substring(0, 11);
-            String time_slot = time + ":00.0";
-            c_strdate += time_slot;
-            int employeeid = s.isEmployeeOn(position.getPkID(), c_strdate);
-            if (employeeid > 0) {
-                return s;
-            }            
+        ArrayList<Shift> retval = new ArrayList();
+        if (shifts == null) {
+            return null;
         }
-        return null;
+        for (Shift s : shifts) {
+
+            if (s != null) {
+                String strdate = DateUtils.DateToString(s.getStart());
+                String c_strdate = strdate.substring(0, 11);
+                String time_slot = time + ":00.0";
+                c_strdate += time_slot;
+                int employeeid = s.isEmployeeOn(position.getPkID(), c_strdate);
+                if (employeeid > 0) {
+                    retval.add(s);
+                }
+            }
+        }
+        return retval;
     }
-    
-    public int getShiftIdByTimeAsString(String time)
-    {
-       Shift s=getShiftByTime(time);
-       if(s!=null)
-       {
-           return s.getPkid(); 
-       }
-       return 0;
-    }
-    
 }

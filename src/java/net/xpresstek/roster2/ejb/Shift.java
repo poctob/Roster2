@@ -21,7 +21,6 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 import net.xpresstek.roster2.web.EmployeeController.EmployeeControllerConverter;
-import net.xpresstek.roster2.web.PositionController.PositionControllerConverter;
 
 /**
  *
@@ -37,6 +36,7 @@ import net.xpresstek.roster2.web.PositionController.PositionControllerConverter;
     @NamedQuery(name = "Shift.findByPositionID", query = "SELECT s FROM Shift s WHERE s.positionID = :positionID"),
     @NamedQuery(name = "Shift.findByStart", query = "SELECT s FROM Shift s WHERE s.start = :start"),
     @NamedQuery(name = "Shift.findByPositionIDAndStart", query = "SELECT s FROM Shift s WHERE s.positionID = :positionID AND s.start >= :start1 AND s.start < :start2"),
+    @NamedQuery(name = "Shift.findByEmployeeIDAndStart", query = "SELECT s FROM Shift s WHERE s.employeeID = :employeeID AND (s.start >= :start1 AND s.start <= :start2) OR (s.end >= :start1 AND s.end <= :start2)"),
     @NamedQuery(name = "Shift.findByPositionIDAndEmployeeIDAndStart", query = "SELECT s FROM Shift s WHERE s.positionID = :positionID AND s.start <= :start1 AND s.end >= :start1 AND s.employeeID = :employeeID"),
     @NamedQuery(name = "Shift.findByEnd", query = "SELECT s FROM Shift s WHERE s.end = :end")})
     

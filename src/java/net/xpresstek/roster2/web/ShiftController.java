@@ -27,21 +27,19 @@ import net.xpresstek.roster2.web.PositionController.PositionControllerConverter;
 public class ShiftController extends ControllerBase {
 
     private Shift current;
-    
     private Date current_date;
     private int current_pkid;
-    
     @EJB
     private net.xpresstek.roster2.web.ShiftFacade ejbFacade;
 
     public ShiftController() {
         Date dt = new Date();
-        String str_dt=DateUtils.DateToString(dt);
+        String str_dt = DateUtils.DateToString(dt);
         str_dt = str_dt.substring(0, 11);
-        str_dt+="00:00:00.0";
-        
-        current_date=DateUtils.StringToDate(str_dt);
-        
+        str_dt += "00:00:00.0";
+
+        current_date = DateUtils.StringToDate(str_dt);
+
         current_pkid = 0;
         prepareCreate();
     }
@@ -80,19 +78,7 @@ public class ShiftController extends ControllerBase {
 
     public void setCurrent_date(Date current_date) {
         this.current_date = current_date;
-    }
-
-    public List<String> getColHeading() {
-        Set<String> headings = new LinkedHashSet();
-        for (Shift s : ejbFacade.findAll()) {
-            Position pos = PositionControllerConverter.getController().
-                    getPosition(s.getPositionID());
-
-            if (pos != null) {
-                headings.add(pos.getName());
-            }
-        }
-        return new ArrayList(headings);
+        prepareCreate();
     }
 
     public List<ShiftColumn> getShiftColumns() {
@@ -110,30 +96,42 @@ public class ShiftController extends ControllerBase {
         }
         return columns;
     }
-   
+
     public Object addShift() {
-        if(current!=null)
-        {
+        if (current != null) {
             super.create();
         }
         prepareCreate();
-        return null;     
+        return null;
     }
     
-     public Object deleteShift() {
-        if(current!=null)
-        {
-            super.destroy();
+       public Object reset() {
+        
+        prepareCreate();
+        current_pkid=0;
+        return null;
+    }
+
+    public Object updateShift() {
+        if (current != null) {
+            super.update();
         }
         prepareCreate();
-        return null;     
+        return null;
     }
-    
-    public String convertDateToTimeLabel(Date date)
-    {
-        String strdate=DateUtils.DateToString(date);
-        if(strdate!=null)
-        {
+
+    public Object deleteShift() {
+        if (current != null) {
+            super.destroy();
+        }
+        current_pkid=0;
+        prepareCreate();
+        return null;
+    }
+
+    public String convertDateToTimeLabel(Date date) {
+        String strdate = DateUtils.DateToString(date);
+        if (strdate != null) {
             return strdate.substring(11, 16);
         }
         return null;
@@ -150,11 +148,10 @@ public class ShiftController extends ControllerBase {
     }
 
     public List getEndTimes() {
-        if(current==null)
-        {
+        if (current == null) {
             return null;
         }
-        List startTimes =  getStartTimes();
+        List startTimes = getStartTimes();
         int index = startTimes.indexOf(current.getStart());
         index = index < 0 ? 0 : index;
         if (index >= startTimes.size()) {
@@ -164,10 +161,28 @@ public class ShiftController extends ControllerBase {
     }
 
     public List<Employee> getAvailableEmployees() {
-        return EmployeeControllerConverter.getController().
-                getAllowedItems(current.getPositionID(), 
+        List<Employee> empl =
+                EmployeeControllerConverter.getController().
+                getAllowedItems(current.getPositionID(),
                 DateUtils.DateToString(current.getStart()),
-                DateUtils.DateToString(current.getEnd()));        
+                DateUtils.DateToString(current.getEnd()));
+        if (empl == null) {
+            return null;
+        }
+        ArrayList<Employee> retval = new ArrayList();
+        for (Employee e : empl) {
+            if (e != null && current != null) {
+                List<Shift> s = ejbFacade.findByEmployeeIDAndStart(e.getPkID(), current.getStart(), current.getEnd());
+                if (s == null || s.isEmpty()) {
+                    retval.add(e);
+                }
+                else if(current_pkid>0 && current!=null)
+                {
+                    retval.add(current.getEmployeeObject());
+                }
+            }
+        }
+        return retval;
     }
 
     public void processShiftClick(String position, String time) {
@@ -216,8 +231,9 @@ public class ShiftController extends ControllerBase {
                 throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + Shift.class.getName());
             }
         }
-    }    
-    @FacesConverter(forClass = java.util.Date.class, value="shiftDateConverter")
+    }
+
+    @FacesConverter(forClass = java.util.Date.class, value = "shiftDateConverter")
     public static class ShiftControllerDateConverter implements Converter {
 
         @Override
@@ -225,15 +241,16 @@ public class ShiftController extends ControllerBase {
             if (value == null || value.length() == 0) {
                 return null;
             }
+            Date test = DateUtils.StringToDate(value);
             return DateUtils.StringToDate(value);
-        }      
+        }
 
         @Override
         public String getAsString(FacesContext facesContext, UIComponent component, Object object) {
             if (object == null) {
                 return null;
             }
-            return DateUtils.DateToString((Date)object);
+            return DateUtils.DateToString((Date) object);
         }
     }
 }

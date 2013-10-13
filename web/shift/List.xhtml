@@ -27,7 +27,8 @@
                                         var="times"
                                         frozenColumns="1"
                                         id="shift_table"
-                                        iterationStatusVar="table_iter">
+                                        iterationStatusVar="table_iter"
+                                        rowClass="shiftTable">
                     <f:facet name="header">
                         <h:outputText value="Schedule"/>
                     </f:facet>
@@ -45,18 +46,17 @@
                         <rich:column>
                             <f:facet name="header">
                                 <h:outputText value="#{shift_column.positionName}" />
-                            </f:facet>
+                            </f:facet>                             
                             <a4j:commandLink
-                                value="#{shift_column.getEmployeeName(times)}"
+                                value="#{shift_column.getEmployeeName(times)}"                                
                                 render="edit_text"
                                 execute="@this"
                                 >
                                 <a4j:param 
                                     value="#{shift_column.getShiftID(times)}"
                                     assignTo="#{shiftController.current_pkid}"
-                                    />                                
+                                    />                                 
                             </a4j:commandLink>
-
                         </rich:column>
                     </c:forEach>      
 
@@ -134,7 +134,7 @@
                     </rich:calendar>
 
                     <a4j:jsFunction name="renderShiftTable"
-                                    render="shift_table"/>
+                                    render="shift_table, weekly_panel, edit_text"/>
 
                     <br />
                     <div id="edit_div">
@@ -209,28 +209,36 @@
                                                    var="empl"
                                                    itemValue="#{empl.pkID}"
                                                    itemLabel="#{empl.name}"/>
-                                    <a4j:ajax event="selectitem" execute="@this"/>
+                                    <a4j:ajax event="selectitem" execute="@this" />
                                 </rich:select>
                             </rich:panel>     
 
-                            <a4j:commandButton value="Update" 
-                                               rendered="#{shiftController.selected.employeeID gt 0}"
-                                               action="#{shiftController.update}"
-                                               render="shift_table,edit_text,weekly_panel"/>
+                            <!--
+                                <a4j:commandButton value="Update" 
+                                                   rendered="#{shiftController.selected.employeeID gt 0}"
+                                                   action="#{shiftController.updateShift}"
+                                                   render="shift_table,edit_text,weekly_panel"/>
+                            -->
+                            <a4j:commandButton value="Add"                                
+                                               execute="@form"
+                                               action="#{shiftController.addShift}"
+                                               id="addButton"
+                                               rendered="#{(empty shiftController.current_pkid) or 
+                                                          (shiftController.current_pkid eq 0)}"
+                                               render="shift_table,edit_text,weekly_panel"/>        
 
-                            <a4j:commandButton value="Add"                         
-                                               rendered="#{shiftController.selected.employeeID le 0}"
-                                               action="#{shiftController.addShift}"                                               
-                                               render="shift_table,edit_text,weekly_panel"/>                                
+                            <a4j:commandButton    value="Delete"  
+                                                  execute="@this"
+                                                  onclick="#{rich:component('confirmPane')}.show();"
+                                                  rendered="#{(not empty shiftController.current_pkid) and 
+                                                          (shiftController.current_pkid gt 0)}"
+                                                  id="deleteButton"
+                                                  />                                
 
-                            <a4j:commandButton value="Delete"
-                                               rendered="#{shiftController.selected.employeeID gt 0}"
-                                               onclick="#{rich:component('confirmPane')}.show();"
-                                               />                                
-
-                            <a4j:commandButton value="Reset"                                                
-                                               action="#{shiftController.prepareCreate}"
-                                               render="edit_text"/>            
+                            <a4j:commandButton value="Reset"                                                                                               
+                                               render="edit_text"
+                                               execute="@this"
+                                               action="#{shiftController.reset}"/>            
                         </a4j:outputPanel>
 
                         <r:messages />
