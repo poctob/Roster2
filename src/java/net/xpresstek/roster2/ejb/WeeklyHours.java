@@ -38,6 +38,11 @@ public class WeeklyHours implements Serializable {
 
     public WeeklyHours() {
     }
+    
+    public WeeklyHours(String employee, BigInteger totalMinutes) {
+        this.employee=employee;
+        this.totalMinutes=totalMinutes;
+    }
 
     public String getEmployee() {
         return employee;

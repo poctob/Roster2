@@ -1,5 +1,10 @@
 package net.xpresstek.roster2.web;
 
+import com.gzlabs.utils.DateUtils;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
 import net.xpresstek.roster2.ejb.WeeklyHours;
 
 import javax.ejb.EJB;
@@ -13,27 +18,26 @@ import javax.faces.model.DataModel;
 
 @Named("weeklyHoursController")
 @SessionScoped
-public class WeeklyHoursController extends ControllerBase  {
+public class WeeklyHoursController extends ControllerBase {
 
     private WeeklyHours current;
     @EJB
     private net.xpresstek.roster2.web.WeeklyHoursFacade ejbFacade;
-
 
     public WeeklyHoursController() {
     }
 
     @Override
     public DataModel getItems() {
-        if(ejbFacade!=null)
-        {
+        if (ejbFacade != null) {
             ejbFacade.refreshData();
         }
         recreatePagination();
         recreateModel();
         return super.getItems();
     }
-     @Override
+
+    @Override
     AbstractFacade getFacade() {
         return ejbFacade;
     }
@@ -42,19 +46,43 @@ public class WeeklyHoursController extends ControllerBase  {
     Object getCurrent() {
         return current;
     }
- 
+
     @Override
     void setCurrent(Object obj) {
-        current=(WeeklyHours)obj;
+        current = (WeeklyHours) obj;
     }
 
     @Override
     void createNewCurrent() {
-        current=new WeeklyHours();
+        current = new WeeklyHours();
     }
 
     public WeeklyHours getWeeklyHours(String id) {
-        return (WeeklyHours)getObject(id);
+        return (WeeklyHours) getObject(id);
+    }
+
+    public List<WeeklyHours> getWeeklyHoursByDate(Date date) {
+        Calendar cdate = new GregorianCalendar();
+        cdate.setTime(date);
+
+        Calendar start = DateUtils.getWeekStart(false, cdate);
+        Calendar end = new GregorianCalendar();
+        end.set(Calendar.DAY_OF_MONTH, start.get(Calendar.DAY_OF_MONTH));
+        end.add(Calendar.DAY_OF_MONTH, 6);
+        end.set(Calendar.HOUR, 23);
+        end.set(Calendar.MINUTE, 59);
+        end.set(Calendar.SECOND, 59);
+
+        Date st_date = start.getTime();
+        Date en_date = end.getTime();
+
+        if (ejbFacade != null) {
+            ejbFacade.refreshData();
+        }
+        recreatePagination();
+        recreateModel();
+
+        return ejbFacade.findTotalForPeriod(start.getTime(), end.getTime());
     }
 
     @FacesConverter(forClass = WeeklyHours.class)
@@ -70,7 +98,6 @@ public class WeeklyHoursController extends ControllerBase  {
             return controller.getWeeklyHours(value);
         }
 
-  
         @Override
         public String getAsString(FacesContext facesContext, UIComponent component, Object object) {
             if (object == null) {

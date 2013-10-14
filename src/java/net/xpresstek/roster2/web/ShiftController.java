@@ -5,9 +5,7 @@ import net.xpresstek.roster2.ejb.Shift;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
@@ -54,7 +52,7 @@ public class ShiftController extends ControllerBase {
     }
 
     public void setCurrent_pkid(int current_pkid) {
-        this.current_pkid = current_pkid;
+        this.current_pkid = current_pkid;       
         this.current = ejbFacade.find(current_pkid);
     }
 
@@ -114,8 +112,10 @@ public class ShiftController extends ControllerBase {
 
     public Object updateShift() {
         if (current != null) {
+            current.setPkid(current_pkid);
             super.update();
         }
+        current_pkid=0;
         prepareCreate();
         return null;
     }
@@ -184,6 +184,7 @@ public class ShiftController extends ControllerBase {
         }
         return retval;
     }
+       
 
     public void processShiftClick(String position, String time) {
         int i;
