@@ -4,7 +4,9 @@ import com.gzlabs.utils.DateUtils;
 import net.xpresstek.roster2.ejb.Shift;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -189,6 +191,13 @@ public class ShiftController extends ControllerBase {
     public void processShiftClick(String position, String time) {
         int i;
     }
+    
+    public List<Shift> getItemsFromTheWeekStart()
+    {
+        Calendar start=new GregorianCalendar();
+        Date dt_start=DateUtils.getWeekStart(true, start).getTime();
+        return ejbFacade.findByStart(dt_start);
+    }
 
     @Override
     Object getCurrent() {
@@ -212,6 +221,13 @@ public class ShiftController extends ControllerBase {
             java.lang.Integer key;
             key = Integer.valueOf(value);
             return key;
+        }
+        
+        public static ShiftController getController()
+        {
+            FacesContext fc=FacesContext.getCurrentInstance();
+            return (ShiftController) fc.getApplication().getELResolver().
+                    getValue(fc.getELContext(), null, "shiftController");
         }
 
         String getStringKey(java.lang.Integer value) {

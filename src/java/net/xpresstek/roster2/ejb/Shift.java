@@ -21,6 +21,7 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 import net.xpresstek.roster2.web.EmployeeController.EmployeeControllerConverter;
+import net.xpresstek.roster2.web.PositionController.PositionControllerConverter;
 
 /**
  *
@@ -168,5 +169,11 @@ public class Shift implements Serializable {
     {
         return EmployeeControllerConverter.getController().
                 getEmployee(employeeID);
+    }
+    
+     public Position getPositionObject()
+    {
+        return PositionControllerConverter.getController().
+                getPosition(positionID);
     }
 }
