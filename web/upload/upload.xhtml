@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:a4j="http://richfaces.org/a4j"
+      xmlns:rich="http://richfaces.org/rich"
+      xmlns:r="http://java.sun.com/jsf/composite/ezcomp">
+
+    <ui:composition template="./../resources/appTemplate.xhtml">
+        <ui:define name="title">
+            <h:outputText value="Upload Form"></h:outputText>
+        </ui:define>   
+
+        <ui:define name="content">
+            <a4j:status onstart="#{rich:component('statPane')}.show()" onstop="#{rich:component('statPane')}.hide()" />
+            <h:form styleClass="jsfcrud_list_form">
+                <rich:panel>
+                    <f:facet name="header">
+                        <h:outputText value="Connection Parameters"></h:outputText>
+                    </f:facet>
+                    <h:panelGrid columns="2">
+                        <h:outputText value="URL: " />
+                        <rich:inplaceInput defaultLabel="click to enter your url"
+                                           value="#{uploadController.url}"/>
+                        <h:outputText value="User name:" />
+                        <rich:inplaceInput defaultLabel="click to enter your user name" 
+                                           value="#{uploadController.db_user}"/>
+                        <h:outputText value="Password:" />
+                        <rich:inplaceInput defaultLabel="click to enter your password"
+                                           value="#{uploadController.db_pass}"/>
+                    </h:panelGrid>
+                </rich:panel>
+                
+
+                <rich:popupPanel id="statPane" autosized="true">
+                    <h:graphicImage value="../resources/images/ai.gif" alt="ai" />
+                    Please wait...
+                </rich:popupPanel>
+                
+                <a4j:commandButton value="Upload"
+                                   action="#{uploadController.upload}"
+                                   execute="@form" 
+                                   oncomplete="getResponse();"/>
+                    
+                <a4j:jsFunction name="getResponse"
+                                render="outputText"
+                                execute="@this" 
+                                />
+                
+                <a4j:outputPanel id="outputText" layout="block">
+                    <h:outputText value="#{uploadController.response}" />
+                </a4j:outputPanel>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
+
