@@ -195,7 +195,10 @@ public class ShiftController extends ControllerBase {
     public List<Shift> getItemsFromTheWeekStart()
     {
         Calendar start=new GregorianCalendar();
-        Date dt_start=DateUtils.getWeekStart(true, start).getTime();
+        start.set(Calendar.HOUR_OF_DAY, 0);
+        start.set(Calendar.MINUTE, 0); 
+        start.set(Calendar.SECOND, 0);
+        Date dt_start=DateUtils.getWeekStart(false, start).getTime();
         return ejbFacade.findByStart(dt_start);
     }
 

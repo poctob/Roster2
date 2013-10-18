@@ -66,7 +66,7 @@ public class ShiftFacade extends AbstractFacade<Shift> {
        
      public List<Shift> findByStart(Date start) {
         TypedQuery<Shift> query = getEntityManager().
-                createNamedQuery("Shift.findByStart", Shift.class);
+                createNamedQuery("Shift.findFromStart", Shift.class);
         query.setParameter("start", start);        
         return query.getResultList();
     }
