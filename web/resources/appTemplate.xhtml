@@ -12,7 +12,7 @@
         <link href="../resources/css/cssLayout.css" rel="stylesheet" type="text/css" />        
         <script>
             function hideSelection(selectionid, hide) {
-                if (document.getElementById) {                  
+                if (document.getElementById) {
                     if (hide) {
                         document.getElementById(selectionid).className = "invisible";
                     }
@@ -29,7 +29,7 @@
 
         <div id="top">
             <ui:insert name="top">
-             Top
+                Top
             </ui:insert>
         </div>
         <div>
@@ -45,7 +45,18 @@
                 </div>
 
             </div>
-        </div>        
+        </div>  
+        <h:form id="menu_form">
+        <p:dock>
+            <p:menuitem value="Scheduler" icon="../resources/images/icons/Calendar.png" url="/faces/shift/List.xhtml"/> 
+            <p:menuitem value="Employees" icon="../resources/images/icons/Users.png" url="/faces/employee/List.xhtml"/>  
+            <p:menuitem value="Positions" icon="../resources/images/icons/Clipboard.png" url="/faces/position/List.xhtml"/>
+            <p:menuitem value="Privileges" icon="../resources/images/icons/Unlock.png" url="/faces/privilege/List.xhtml"/>
+            <p:menuitem value="Time Off" icon="../resources/images/icons/Person.png" url="/faces/timeOff/List.xhtml"/>
+            <p:menuitem value="Configuration" icon="../resources/images/icons/Wrench.png" url="/faces/configuration/List.xhtml"/>
+            <p:menuitem value="Upload" icon="../resources/images/icons/Update.png" url="/faces/upload/upload.xhtml"/>
+        </p:dock>
+        </h:form>
     </h:body>
 
 </html>

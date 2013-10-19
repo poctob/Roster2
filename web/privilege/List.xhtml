@@ -6,8 +6,7 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:a4j="http://richfaces.org/a4j"
       xmlns:rich="http://richfaces.org/rich"
-      xmlns:r="http://java.sun.com/jsf/composite/ezcomp"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:r="http://java.sun.com/jsf/composite/ezcomp">
 
     <ui:composition template="./../resources/appTemplate.xhtml">
         <ui:define name="title">
@@ -79,15 +78,6 @@
                 </rich:popupPanel>
 
                 <h:outputText escape="false" value="#{bundle.ListPrivilegeEmpty}" rendered="#{privilegeController.items.rowCount == 0}"/>
-                       <p:dock>
-                        <p:menuitem value="Scheduler" icon="../resources/images/icons/Calendar.png" url="/faces/shift/List.xhtml"/> 
-                        <p:menuitem value="Employees" icon="../resources/images/icons/Users.png" url="/faces/employee/List.xhtml"/>  
-                        <p:menuitem value="Positions" icon="../resources/images/icons/Clipboard.png" url="/faces/position/List.xhtml"/>
-                        <p:menuitem value="Privileges" icon="../resources/images/icons/Unlock.png" url="/faces/privilege/List.xhtml"/>
-                        <p:menuitem value="Time Off" icon="../resources/images/icons/Person.png" url="/faces/timeOff/List.xhtml"/>
-                        <p:menuitem value="Configuration" icon="../resources/images/icons/Wrench.png" url="/faces/configuration/List.xhtml"/>
-                        <p:menuitem value="Upload" icon="../resources/images/icons/Update.png" url="/faces/upload/upload.xhtml"/>
-                    </p:dock>
             </h:form>
         </ui:define>
         <ui:define name="right">

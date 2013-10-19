@@ -7,8 +7,7 @@
       xmlns:a4j="http://richfaces.org/a4j"
       xmlns:rich="http://richfaces.org/rich"
       xmlns:r="http://java.sun.com/jsf/composite/ezcomp"
-      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
     <ui:composition template="./../resources/appTemplate.xhtml">
         <ui:define name="title">
@@ -23,8 +22,8 @@
         <ui:define name="content">                             
 
             <a4j:status onstart="#{rich:component('statPane')}.show()" onstop="#{rich:component('statPane')}.hide()" />
-            <h:form styleClass="jsfcrud_list_form">
- 
+            <h:form styleClass="jsfcrud_list_form" id="table_form">
+
 
                 <rich:extendedDataTable value="#{configurationController.timeSlots}" 
                                         var="times"
@@ -46,21 +45,21 @@
                                var="shift_column"
                                varStatus="iter">
                         <rich:column>
-                            
-                                <f:facet name="header">
-                                    <h:outputText value="#{shift_column.positionName}" />
-                                </f:facet>  
-                                <a4j:commandLink
-                                    value="#{shift_column.getEmployeeName(times)}"                                
-                                    render="edit_text"
-                                    execute="@this"
-                                    >
-                                    <a4j:param 
-                                        value="#{shift_column.getShiftID(times)}"
-                                        assignTo="#{shiftController.current_pkid}"
-                                        />                                 
-                                </a4j:commandLink>
-                      
+
+                            <f:facet name="header">
+                                <h:outputText value="#{shift_column.positionName}" />
+                            </f:facet>  
+                            <a4j:commandLink
+                                value="#{shift_column.getEmployeeName(times)}"                                
+                                render="edit_text"
+                                execute="@this"
+                                >
+                                <a4j:param 
+                                    value="#{shift_column.getShiftID(times)}"
+                                    assignTo="#{shiftController.current_pkid}"
+                                    />                                 
+                            </a4j:commandLink>
+
                         </rich:column>
                     </c:forEach>      
 
@@ -87,14 +86,14 @@
                 </rich:popupPanel>
 
                 <h:outputText escape="false" value="#{bundle.ListShiftEmpty}" rendered="#{shiftController.items.rowCount == 0}"/>
-    
-                  
+
+
             </h:form>
         </ui:define>
 
         <ui:define name="left">
             <a4j:outputPanel layout="block" id="weekly_panel">
-                <h:form>
+                <h:form id="weekly_form">
                     <rich:dataTable value="#{weeklyHoursController.getWeeklyHoursByDate(shiftController.current_date)}" 
                                     var="weeklys"                
                                     id="weekly_table">
@@ -123,7 +122,7 @@
         <ui:define name="right">
 
             <a4j:outputPanel layout="block">
-                <h:form styleClass="jsfcrud_list_form">
+                <h:form styleClass="jsfcrud_list_form" id="edit_form">
                     <rich:calendar value="#{shiftController.current_date}"
                                    id="current_date"
                                    datePattern="MM/dd/yyyy"
@@ -222,12 +221,12 @@
                                                rendered="#{(not empty shiftController.current_pkid) and 
                                                            (shiftController.current_pkid gt 0)}"
                                                action="#{shiftController.updateShift}"
-                                               execute="@form"
+                                               execute="edit_form"
                                                id="editButton"
                                                render="shift_table,edit_text,weekly_panel"/>
 
                             <a4j:commandButton value="Add"                                
-                                               execute="@form"
+                                               execute="edit_form"
                                                action="#{shiftController.addShift}"
                                                id="addButton"
                                                rendered="#{(empty shiftController.current_pkid) or 
@@ -259,17 +258,8 @@
                 </h:form>
             </a4j:outputPanel>
         </ui:define>
-        
+
     </ui:composition>
-                              <p:dock>
-                        <p:menuitem value="Scheduler" icon="../resources/images/icons/Calendar.png" url="/faces/shift/List.xhtml"/> 
-                        <p:menuitem value="Employees" icon="../resources/images/icons/Users.png" url="/faces/employee/List.xhtml"/>  
-                        <p:menuitem value="Positions" icon="../resources/images/icons/Clipboard.png" url="/faces/position/List.xhtml"/>
-                        <p:menuitem value="Privileges" icon="../resources/images/icons/Unlock.png" url="/faces/privilege/List.xhtml"/>
-                        <p:menuitem value="Time Off" icon="../resources/images/icons/Person.png" url="/faces/timeOff/List.xhtml"/>
-                        <p:menuitem value="Configuration" icon="../resources/images/icons/Wrench.png" url="/faces/configuration/List.xhtml"/>
-                        <p:menuitem value="Upload" icon="../resources/images/icons/Update.png" url="/faces/upload/upload.xhtml"/>
-                    </p:dock>
 </html>
 
 

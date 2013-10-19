@@ -21,6 +21,9 @@ import net.xpresstek.roster2.ejb.ShiftColumn;
 import net.xpresstek.roster2.web.ConfigurationController.ConfigurationControllerConverter;
 import net.xpresstek.roster2.web.EmployeeController.EmployeeControllerConverter;
 import net.xpresstek.roster2.web.PositionController.PositionControllerConverter;
+import org.primefaces.model.DefaultScheduleEvent;
+import org.primefaces.model.DefaultScheduleModel;
+import org.primefaces.model.ScheduleModel;
 
 @Named("shiftController")
 @SessionScoped
@@ -29,6 +32,7 @@ public class ShiftController extends ControllerBase {
     private Shift current;
     private Date current_date;
     private int current_pkid;
+    private ScheduleModel shiftModel;
     @EJB
     private net.xpresstek.roster2.web.ShiftFacade ejbFacade;
 
@@ -49,12 +53,26 @@ public class ShiftController extends ControllerBase {
         return ejbFacade;
     }
 
+    private void buildModel() {
+        List<Shift> shifts = ejbFacade.findAll();
+        shiftModel = new DefaultScheduleModel();
+        for (Shift s : shifts) {
+            String title = s.getEmployeeObject().getName();
+            shiftModel.addEvent(new DefaultScheduleEvent(title, s.getStart(), s.getEnd()));
+        }
+    }
+
+    public ScheduleModel getEventModel() {
+        buildModel();
+        return shiftModel;
+    }
+
     public int getCurrent_pkid() {
         return current_pkid;
     }
 
     public void setCurrent_pkid(int current_pkid) {
-        this.current_pkid = current_pkid;       
+        this.current_pkid = current_pkid;
         this.current = ejbFacade.find(current_pkid);
     }
 
@@ -78,6 +96,7 @@ public class ShiftController extends ControllerBase {
 
     public void setCurrent_date(Date current_date) {
         this.current_date = current_date;
+        current_pkid = 0;
         prepareCreate();
     }
 
@@ -104,11 +123,11 @@ public class ShiftController extends ControllerBase {
         prepareCreate();
         return null;
     }
-    
-       public Object reset() {
-        
+
+    public Object reset() {
+
         prepareCreate();
-        current_pkid=0;
+        current_pkid = 0;
         return null;
     }
 
@@ -117,7 +136,7 @@ public class ShiftController extends ControllerBase {
             current.setPkid(current_pkid);
             super.update();
         }
-        current_pkid=0;
+        current_pkid = 0;
         prepareCreate();
         return null;
     }
@@ -126,7 +145,7 @@ public class ShiftController extends ControllerBase {
         if (current != null) {
             super.destroy();
         }
-        current_pkid=0;
+        current_pkid = 0;
         prepareCreate();
         return null;
     }
@@ -177,28 +196,24 @@ public class ShiftController extends ControllerBase {
                 List<Shift> s = ejbFacade.findByEmployeeIDAndStart(e.getPkID(), current.getStart(), current.getEnd());
                 if (s == null || s.isEmpty()) {
                     retval.add(e);
-                }
-                else if(current_pkid>0 && current!=null)
-                {
+                } else if (current_pkid > 0 && current != null) {
                     retval.add(current.getEmployeeObject());
                 }
             }
         }
         return retval;
     }
-       
 
     public void processShiftClick(String position, String time) {
         int i;
     }
-    
-    public List<Shift> getItemsFromTheWeekStart()
-    {
-        Calendar start=new GregorianCalendar();
+
+    public List<Shift> getItemsFromTheWeekStart() {
+        Calendar start = new GregorianCalendar();
         start.set(Calendar.HOUR_OF_DAY, 0);
-        start.set(Calendar.MINUTE, 0); 
+        start.set(Calendar.MINUTE, 0);
         start.set(Calendar.SECOND, 0);
-        Date dt_start=DateUtils.getWeekStart(false, start).getTime();
+        Date dt_start = DateUtils.getWeekStart(false, start).getTime();
         return ejbFacade.findByStart(dt_start);
     }
 
@@ -225,10 +240,9 @@ public class ShiftController extends ControllerBase {
             key = Integer.valueOf(value);
             return key;
         }
-        
-        public static ShiftController getController()
-        {
-            FacesContext fc=FacesContext.getCurrentInstance();
+
+        public static ShiftController getController() {
+            FacesContext fc = FacesContext.getCurrentInstance();
             return (ShiftController) fc.getApplication().getELResolver().
                     getValue(fc.getELContext(), null, "shiftController");
         }
