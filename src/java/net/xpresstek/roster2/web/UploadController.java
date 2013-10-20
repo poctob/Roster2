@@ -14,7 +14,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
+import net.xpresstek.roster2.ejb.Configuration;
 import net.xpresstek.roster2.ejb.Shift;
+import net.xpresstek.roster2.web.ConfigurationController.ConfigurationControllerConverter;
 import net.xpresstek.roster2.web.ShiftController.ShiftControllerConverter;
 import net.xpresstek.roster2.web.util.HttpUtil;
 import org.json.simple.JSONValue;
@@ -65,6 +67,14 @@ public class UploadController implements Serializable{
     }
 
     public String getUrl() {
+        if(url==null || url.length()==0)
+        {
+           Configuration conf=
+                   (Configuration)ConfigurationControllerConverter.getController().
+                   getObject("UploadHost");
+           
+           url=conf.getConfigValue();
+        }
         return url;
     }
 
@@ -73,6 +83,14 @@ public class UploadController implements Serializable{
     }
 
     public String getDb_user() {
+        if(db_user==null || db_user.length()==0)
+        {
+           Configuration conf=
+                   (Configuration)ConfigurationControllerConverter.getController().
+                   getObject("UploadUser");
+           
+           db_user=conf.getConfigValue();
+        }
         return db_user;
     }
 
@@ -81,6 +99,14 @@ public class UploadController implements Serializable{
     }
 
     public String getDb_pass() {
+         if(db_pass==null || db_pass.length()==0)
+        {
+           Configuration conf=
+                   (Configuration)ConfigurationControllerConverter.getController().
+                   getObject("UploadPassword");
+           
+           db_pass=conf.getConfigValue();
+        }
         return db_pass;
     }
 

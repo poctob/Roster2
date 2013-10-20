@@ -3,43 +3,30 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:r="http://java.sun.com/jsf/composite/ezcomp"
-      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
       xmlns:p="http://primefaces.org/ui">
 
     <ui:composition template="./../resources/appTemplate.xhtml">
         <ui:define name="title">
             <h:outputText value="#{bundle.ListShiftTitle}"></h:outputText>
         </ui:define>
-        <ui:define name="top">
-            <h:panelGroup id="messagePanel" layout="block">
-                <h:messages errorStyle="color: red" infoStyle="color: white" layout="table"/>
-            </h:panelGroup>
-        </ui:define>   
 
         <ui:define name="content">                             
-        <p:growl id="messages" showDetail="true" />  
-        <p:schedule id="schedule" 
-                    value="#{shiftController.eventModel}"
-                    draggable="false"
-                    resizable="false"
-                    view="agendaWeek"
-                    firstHour="8">
-            
-        </p:schedule>
-        
+
+            <p:growl id="messages" showDetail="true" />  
+            <p:schedule id="schedule" 
+                        value="#{shiftController.eventModel}"
+                        draggable="false"
+                        resizable="false"
+                        view="agendaWeek"
+                        firstHour="8">
+
+            </p:schedule>
         </ui:define>
 
-        <ui:define name="left">
-         
-        </ui:define>
-
-        <ui:define name="right">
-
-        </ui:define>
 
     </ui:composition>
+
 </html>
 
 

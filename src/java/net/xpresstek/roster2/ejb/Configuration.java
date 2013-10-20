@@ -35,7 +35,7 @@ public class Configuration implements Serializable {
     @Size(min = 1, max = 200)
     @Column(name = "ConfigID")
     private String configID;
-    @Size(max = 45)
+    @Size(max = 500)
     @Column(name = "ConfigValue")
     private String configValue;
 

@@ -35,6 +35,7 @@ public class ShiftController extends ControllerBase {
     private ScheduleModel shiftModel;
     @EJB
     private net.xpresstek.roster2.web.ShiftFacade ejbFacade;
+    private List<ShiftColumn> columns;
 
     public ShiftController() {
         Date dt = new Date();
@@ -96,21 +97,25 @@ public class ShiftController extends ControllerBase {
 
     public void setCurrent_date(Date current_date) {
         this.current_date = current_date;
+        columns = null;
         current_pkid = 0;
         prepareCreate();
     }
 
     public List<ShiftColumn> getShiftColumns() {
-        List<Position> pos =
-                PositionControllerConverter.getController().getAllItems();
 
-        ArrayList<ShiftColumn> columns = new ArrayList();
+        if (columns == null || columns.isEmpty()) {
+            List<Position> pos =
+                    PositionControllerConverter.getController().getAllItems();
 
-        for (Position p : pos) {
-            List<Shift> shifts = ejbFacade.
-                    findByPositionIdAndStart(p.getPkID(), current_date);
-            if (shifts != null && shifts.size() > 0) {
-                columns.add(new ShiftColumn(shifts, p));
+            columns = new ArrayList();
+
+            for (Position p : pos) {
+                List<Shift> shifts = ejbFacade.
+                        findByPositionIdAndStart(p.getPkID(), current_date);
+                if (shifts != null && shifts.size() > 0) {
+                    columns.add(new ShiftColumn(shifts, p));
+                }
             }
         }
         return columns;
@@ -126,7 +131,7 @@ public class ShiftController extends ControllerBase {
 
     public Object reset() {
 
-        prepareCreate();
+        prepareCreate();        
         current_pkid = 0;
         return null;
     }
@@ -136,6 +141,7 @@ public class ShiftController extends ControllerBase {
             current.setPkid(current_pkid);
             super.update();
         }
+        columns = null;
         current_pkid = 0;
         prepareCreate();
         return null;
@@ -145,6 +151,7 @@ public class ShiftController extends ControllerBase {
         if (current != null) {
             super.destroy();
         }
+        columns = null;
         current_pkid = 0;
         prepareCreate();
         return null;
