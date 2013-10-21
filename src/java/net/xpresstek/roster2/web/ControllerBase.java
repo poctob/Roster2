@@ -6,7 +6,6 @@ package net.xpresstek.roster2.web;
 
 import java.io.Serializable;
 import java.util.ResourceBundle;
-import javax.ejb.EJB;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
@@ -23,6 +22,8 @@ public abstract class ControllerBase implements Serializable {
     protected PaginationHelper pagination;
     protected int selectedItemIndex;
     private String status;
+    private int page = 1;
+    private int clientRows;
 
     public void create() {
         try {
@@ -36,6 +37,22 @@ public abstract class ControllerBase implements Serializable {
                     getString("PersistenceErrorOccured");
             JsfUtil.addErrorMessage(e, status);
         }
+    }
+
+    public int getPage() {
+        return page;
+    }
+
+    public void setPage(int page) {
+        this.page = page;
+    }
+
+    public int getClientRows() {
+        return clientRows;
+    }
+
+    public void setClientRows(int clientRows) {
+        this.clientRows = clientRows;
     }
 
     public Object getSelected() {

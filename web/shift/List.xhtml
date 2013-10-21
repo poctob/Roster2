@@ -122,24 +122,26 @@
         <ui:define name="right">
 
             <a4j:outputPanel layout="block">
+                <h:form styleClass="jsfcrud_list_form" id="date_picker_form">
+                <rich:calendar value="#{shiftController.current_date}"
+                               id="current_date"
+                               datePattern="MM/dd/yyyy"
+                               popup="false"
+                               required="true"                                    
+                               requiredMessage="#{bundle.CreateShiftRequiredMessage_start}"                              
+                               >
+                    <a4j:ajax event="change" 
+                              execute="@this"
+                              oncomplete="renderShiftTable();"
+                              />   
+                </rich:calendar>
+
+                <a4j:jsFunction name="renderShiftTable"
+                                render="shift_table, weekly_panel, edit_text"/>
+                </h:form>
+
+                <br />
                 <h:form styleClass="jsfcrud_list_form" id="edit_form">
-                    <rich:calendar value="#{shiftController.current_date}"
-                                   id="current_date"
-                                   datePattern="MM/dd/yyyy"
-                                   popup="false"
-                                   required="true"                                    
-                                   requiredMessage="#{bundle.CreateShiftRequiredMessage_start}"                              
-                                   >
-                        <a4j:ajax event="change" 
-                                  execute="@this"
-                                  oncomplete="renderShiftTable();"
-                                  />   
-                    </rich:calendar>
-
-                    <a4j:jsFunction name="renderShiftTable"
-                                    render="shift_table, weekly_panel, edit_text"/>
-
-                    <br />
                     <div id="edit_div">
                         <a4j:outputPanel 
                             id="edit_text" 

@@ -131,7 +131,7 @@ public class ShiftController extends ControllerBase {
 
     public Object reset() {
 
-        prepareCreate();        
+        prepareCreate();
         current_pkid = 0;
         return null;
     }
@@ -203,10 +203,11 @@ public class ShiftController extends ControllerBase {
                 List<Shift> s = ejbFacade.findByEmployeeIDAndStart(e.getPkID(), current.getStart(), current.getEnd());
                 if (s == null || s.isEmpty()) {
                     retval.add(e);
-                } else if (current_pkid > 0 && current != null) {
-                    retval.add(current.getEmployeeObject());
                 }
             }
+        }
+        if (current_pkid > 0 && current != null) {
+            retval.add(current.getEmployeeObject());
         }
         return retval;
     }
