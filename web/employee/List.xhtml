@@ -18,7 +18,7 @@
 
         <ui:define name="content">
             <h:form prependId="false" id="dataForm">
-                <p:dataTable id="dataTable" var="item" value="#{employeeController.allItems}"  
+                <p:dataTable id="dataTable" var="item" value="#{employeeController.items}"  
                              paginator="true" rows="10"  
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
                              rowsPerPageTemplate="5,10,15">  
@@ -59,7 +59,8 @@
                      <p:column>
                         <p:commandLink styleClass="no-decor"                                                             
                                        action="#{employeeController.prepareEdit}"
-                                       onclick="javascript:hideSelection('edit_div', true);">
+                                       onclick="javascript:hideSelection('edit_div', true);"
+                                       oncomplete="doDelete()">
                             <p:confirm header="Confirmation" message="Are you sure you want to delete this item?" 
                                        icon="ui-icon-alert" />
                             <h:graphicImage value="../resources/images/icons/Delete.png" alt="delete" />
@@ -72,6 +73,12 @@
                         </p:commandLink>
                     </p:column>
                 </p:dataTable>
+                <p:messages />
+
+                <p:remoteCommand name="doDelete" 
+                                 actionListener="#{employeeController.destroy}"
+                                 update=":editForm, :dataForm:dataTable" />  
+                   
             </h:form>
 
             <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px"> 
@@ -85,26 +92,21 @@
             </p:ajaxStatus> 
 
             <h:form styleClass="jsfcrud_list_form">
-                <p:outputPanel>
-                    <h:outputText value="#{employeeController.status}" 
-                                  id="out" 
-                                  rendered="#{facesContext.maximumSeverity == null}" />
-                </p:outputPanel>          
 
                 <p:confirmDialog global="true" showEffect="fade" hideEffect="explode">  
-                    
+
                     <p:commandButton 
                         value="Yes" 
                         type="button" 
                         styleClass="ui-confirmdialog-yes" 
                         icon="ui-icon-check" 
-                        action="#{privilegeController.destroy}"
-                        update=":dataForm:dataTable" />  
-                    
+                        />  
+
                     <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"/>       
                 </p:confirmDialog>  
 
                 <h:outputText escape="false" value="#{bundle.ListEmployeeEmpty}" rendered="#{employeeController.items.rowCount == 0}"/>
+                <p:messages />
             </h:form>
         </ui:define>
         <ui:define name="right">
@@ -112,9 +114,9 @@
             <p:outputPanel layout="block">
                 <h:form styleClass="jsfcrud_list_form" id="editForm">
                     <p:commandLink styleClass="no-decor"                                      
-                                     update="edit_text" 
-                                     action="#{employeeController.prepareCreate}"
-                                     onclick="javascript:hideSelection('edit_div', false);">
+                                   update="edit_text" 
+                                   action="#{employeeController.prepareCreate}"
+                                   onclick="javascript:hideSelection('edit_div', false);">
                         <h:graphicImage value="../resources/images/icons/Create.png" alt="create" />
                     </p:commandLink>
                     <br />
@@ -123,15 +125,18 @@
                             <h:panelGrid columns="2" styleClass="editPanel"> 
 
                                 <h:outputLabel value="#{bundle.EditEmployeeLabel_name}" for="name" />
-                                <h:inputText id="name" value="#{employeeController.selected.name}" title="#{bundle.EditEmployeeTitle_name}" />
+                                <p:inputText id="name" value="#{employeeController.selected.name}" title="#{bundle.EditEmployeeTitle_name}" />
                                 <h:outputLabel value="#{bundle.EditEmployeeLabel_address}" for="address" />
-                                <h:inputText id="address" value="#{employeeController.selected.address}" title="#{bundle.EditEmployeeTitle_address}" />
+                                <p:inputText id="address" value="#{employeeController.selected.address}" title="#{bundle.EditEmployeeTitle_address}" />
                                 <h:outputLabel value="#{bundle.EditEmployeeLabel_phone}" for="phone" />
-                                <h:inputText id="phone" value="#{employeeController.selected.phone}" title="#{bundle.EditEmployeeTitle_phone}" />
+                                <p:inputText id="phone" 
+                                             value="#{employeeController.selected.phone}" 
+                                             title="#{bundle.EditEmployeeTitle_phone}" 
+                                             required="false"/>
                                 <h:outputLabel value="#{bundle.EditEmployeeLabel_isActive}" for="isActive" />
                                 <h:selectBooleanCheckbox id="isActive" value="#{employeeController.selected.isActive}" title="#{bundle.EditEmployeeTitle_isActive}" required="true" requiredMessage="#{bundle.EditEmployeeRequiredMessage_isActive}"/>
                                 <h:outputLabel value="#{bundle.EditEmployeeLabel_email}" for="email" />
-                                <h:inputText id="email" value="#{employeeController.selected.email}" title="#{bundle.EditEmployeeTitle_email}" />
+                                <p:inputText id="email" value="#{employeeController.selected.email}" title="#{bundle.EditEmployeeTitle_email}" />
                                 <h:outputLabel value="#{bundle.EditEmployeeLabel_comment}" for="comment" />
                                 <h:inputTextarea cols="23" rows="5" id="comment" value="#{employeeController.selected.comment}" title="#{bundle.EditEmployeeTitle_comment}" />
                             </h:panelGrid>
@@ -150,19 +155,21 @@
                                 </h:selectManyCheckbox>
                             </h:panelGrid>
                             <p:commandButton value="Update" 
-                                               rendered="#{not empty employeeController.selected.name}"
-                                               action="#{employeeController.update}"
-                                               update=":dataForm:dataTable"
-                                               onclick="javascript:hideSelection('edit_div', true);"/>
+                                             rendered="#{not empty employeeController.selected.name}"
+                                             action="#{employeeController.update}"
+                                             update="editForm, :dataForm:dataTable"
+                                             onclick="javascript:hideSelection('edit_div', true);"/>
 
                             <p:commandButton value="Add" 
-                                               rendered="#{empty employeeController.selected.name}"
-                                               action="#{employeeController.create}"
-                                               update=":dataForm:dataTable"
-                                               onclick="javascript:hideSelection('edit_div', true);"/>
+                                             rendered="#{(empty employeeController.selected.pkID) 
+                                                         or (employeeController.selected.pkID eq 0)}"
+                                             actionListener="#{employeeController.create}"
+                                             update="editForm, :dataForm:dataTable"
+                                             onclick="javascript:hideSelection('edit_div', true);"/>
 
                         </p:outputPanel>
                     </div>
+                    <p:messages />
                 </h:form>
             </p:outputPanel>
         </ui:define>

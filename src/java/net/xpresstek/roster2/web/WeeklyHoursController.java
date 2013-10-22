@@ -32,7 +32,6 @@ public class WeeklyHoursController extends ControllerBase {
         if (ejbFacade != null) {
             ejbFacade.refreshData();
         }
-        recreatePagination();
         recreateModel();
         return super.getItems();
     }
@@ -79,7 +78,6 @@ public class WeeklyHoursController extends ControllerBase {
         if (ejbFacade != null) {
             ejbFacade.refreshData();
         }
-        recreatePagination();
         recreateModel();
 
         return ejbFacade.findTotalForPeriod(start.getTime(), end.getTime());

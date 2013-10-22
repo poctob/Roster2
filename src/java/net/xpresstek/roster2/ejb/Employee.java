@@ -56,7 +56,7 @@ public class Employee implements Serializable {
     @Size(max = 200)
     @Column(name = "Address")
     private String address;
-    @Pattern(regexp = "^\\(?(\\d{3})\\)?[- ]?(\\d{3})[- ]?(\\d{4})$", message = "Invalid phone/fax format, should be as xxx-xxx-xxxx")//if the field contains phone or fax number consider using this annotation to enforce field validation
+    //@Pattern(regexp = "^\\(?(\\d{3})\\)?[- ]?(\\d{3})[- ]?(\\d{4})$", message = "Invalid phone/fax format, should be as xxx-xxx-xxxx")//if the field contains phone or fax number consider using this annotation to enforce field validation
     @Size(max = 15)
     @Column(name = "Phone")
     private String phone;
@@ -64,7 +64,7 @@ public class Employee implements Serializable {
     @NotNull
     @Column(name = "IsActive")
     private boolean isActive;
-    @Pattern(regexp = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message = "Invalid email")//if the field contains email address consider using this annotation to enforce field validation
+   // @Pattern(regexp = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message = "Invalid email")//if the field contains email address consider using this annotation to enforce field validation
     @Size(max = 320)
     @Column(name = "Email")
     private String email;
@@ -126,7 +126,7 @@ public class Employee implements Serializable {
 
     public String getPhone() {
         return phone;
-    }
+    } 
 
     public void setPhone(String phone) {
         this.phone = phone;

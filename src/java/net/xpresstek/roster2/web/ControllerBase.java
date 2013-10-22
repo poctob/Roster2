@@ -10,7 +10,6 @@ import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 import net.xpresstek.roster2.web.util.JsfUtil;
-import net.xpresstek.roster2.web.util.PaginationHelper;
 
 /**
  *
@@ -19,16 +18,12 @@ import net.xpresstek.roster2.web.util.PaginationHelper;
 public abstract class ControllerBase implements Serializable {
 
     protected DataModel items = null;
-    protected PaginationHelper pagination;
     protected int selectedItemIndex;
     private String status;
-    private int page = 1;
-    private int clientRows;
 
     public void create() {
         try {
             getFacade().create(getCurrent());
-            recreatePagination();
             recreateModel();
             status = "Item Created!";
             JsfUtil.addSuccessMessage(status);
@@ -38,23 +33,7 @@ public abstract class ControllerBase implements Serializable {
             JsfUtil.addErrorMessage(e, status);
         }
     }
-
-    public int getPage() {
-        return page;
-    }
-
-    public void setPage(int page) {
-        this.page = page;
-    }
-
-    public int getClientRows() {
-        return clientRows;
-    }
-
-    public void setClientRows(int clientRows) {
-        this.clientRows = clientRows;
-    }
-
+ 
     public Object getSelected() {
         if (getCurrent() == null) {
             createNewCurrent();
@@ -70,7 +49,6 @@ public abstract class ControllerBase implements Serializable {
     public void destroy() {
         if (getCurrent() != null) {
             performDestroy();
-            recreatePagination();
             recreateModel();
         }
     }
@@ -92,7 +70,7 @@ public abstract class ControllerBase implements Serializable {
 
     public DataModel getItems() {
         if (items == null) {
-            items = getPagination().createPageDataModel();
+            items =  new ListDataModel(getFacade().findAll());
         }
         return items;
     }
@@ -105,23 +83,6 @@ public abstract class ControllerBase implements Serializable {
         return JsfUtil.getSelectItems(getFacade().findAll(), true);
     }
 
-    public PaginationHelper getPagination() {
-        if (pagination == null) {
-            pagination = new PaginationHelper(10) {
-                @Override
-                public int getItemsCount() {
-                    return getFacade().count();
-                }
-
-                @Override
-                public DataModel createPageDataModel() {
-                    return new ListDataModel(getFacade().findRange(new int[]{getPageFirstItem(), getPageFirstItem() + getPageSize()}));
-                }
-            };
-        }
-        return pagination;
-    }
-
     public Object getObject(Integer id) {
         return getFacade().find(id);
     }
@@ -130,11 +91,6 @@ public abstract class ControllerBase implements Serializable {
         return getFacade().find(id);
     }
 
-    public String next() {
-        getPagination().nextPage();
-        recreateModel();
-        return "List";
-    }
 
     protected void performDestroy() {
         try {
@@ -155,22 +111,10 @@ public abstract class ControllerBase implements Serializable {
 
     public void prepareEdit() {
         setCurrent(getItems().getRowData());
-        selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
+        selectedItemIndex = getItems().getRowIndex();
     }
 
     public String prepareList() {
-        recreateModel();
-        return "List";
-    }
-
-    public String prepareView() {
-        setCurrent(getItems().getRowData());
-        selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
-        return "View";
-    }
-
-    public String previous() {
-        getPagination().previousPage();
         recreateModel();
         return "List";
     }
@@ -179,9 +123,6 @@ public abstract class ControllerBase implements Serializable {
         items = null;
     }
 
-    protected void recreatePagination() {
-        pagination = null;
-    }
 
     public void update() {
         try {
@@ -201,10 +142,6 @@ public abstract class ControllerBase implements Serializable {
         if (selectedItemIndex >= count) {
             // selected index cannot be bigger than number of items:
             selectedItemIndex = count - 1;
-            // go to previous page if last page disappeared:
-            if (pagination.getPageFirstItem() >= count) {
-                pagination.previousPage();
-            }
         }
         if (selectedItemIndex >= 0) {
             setCurrent(getFacade().findRange(new int[]{selectedItemIndex, selectedItemIndex + 1}).

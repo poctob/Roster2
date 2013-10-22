@@ -51,7 +51,7 @@
                             <h:graphicImage value="../resources/images/icons/Modify.png" alt="edit" /></a4j:commandLink>
                     </rich:column>
                     <f:facet name="footer">
-                        <rich:dataScroller page="#{positionController.pagination.pageFirstItem + 1}" />
+                        <rich:dataScroller for="table" />
                     </f:facet>
                 </rich:dataTable>
                 <r:messages />

@@ -97,9 +97,7 @@ public class ShiftController extends ControllerBase {
 
     public void setCurrent_date(Date current_date) {
         this.current_date = current_date;
-        columns = null;
-        current_pkid = 0;
-        prepareCreate();
+        reset();
     }
 
     public List<ShiftColumn> getShiftColumns() {
@@ -125,14 +123,15 @@ public class ShiftController extends ControllerBase {
         if (current != null) {
             super.create();
         }
-        prepareCreate();
+        reset();
         return null;
     }
 
     public Object reset() {
 
-        prepareCreate();
+        columns = null;        
         current_pkid = 0;
+        prepareCreate();
         return null;
     }
 
@@ -141,9 +140,7 @@ public class ShiftController extends ControllerBase {
             current.setPkid(current_pkid);
             super.update();
         }
-        columns = null;
-        current_pkid = 0;
-        prepareCreate();
+        reset();
         return null;
     }
 
@@ -151,9 +148,7 @@ public class ShiftController extends ControllerBase {
         if (current != null) {
             super.destroy();
         }
-        columns = null;
-        current_pkid = 0;
-        prepareCreate();
+        reset();
         return null;
     }
 
