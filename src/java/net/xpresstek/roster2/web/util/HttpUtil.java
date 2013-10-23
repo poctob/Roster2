@@ -7,7 +7,6 @@ package net.xpresstek.roster2.web.util;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.Map;
@@ -23,7 +22,7 @@ public class HttpUtil {
     public static String sendPost(Map params, String url) throws Exception
     {
         URL obj=new URL(url);
-        HttpURLConnection con=(HttpURLConnection)obj.openConnection();
+        HttpsURLConnection con=(HttpsURLConnection)obj.openConnection();
         con.setRequestMethod("POST");
         
         Set set=params.entrySet();        
