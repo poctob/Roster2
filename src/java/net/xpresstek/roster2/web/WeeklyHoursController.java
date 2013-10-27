@@ -66,7 +66,7 @@ public class WeeklyHoursController extends ControllerBase {
 
         Calendar start = DateUtils.getWeekStart(false, cdate);
         Calendar end = new GregorianCalendar();
-        end.set(Calendar.DAY_OF_MONTH, start.get(Calendar.DAY_OF_MONTH));
+        end.setTime(start.getTime());
         end.add(Calendar.DAY_OF_MONTH, 6);
         end.set(Calendar.HOUR, 23);
         end.set(Calendar.MINUTE, 59);
