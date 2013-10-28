@@ -39,7 +39,7 @@ import net.xpresstek.roster2.web.PositionController.PositionControllerConverter;
     @NamedQuery(name = "Shift.findFromStart", query = "SELECT s FROM Shift s WHERE s.start >= :start"),
     @NamedQuery(name = "Shift.findByPeriod", query = "SELECT s FROM Shift s WHERE s.start >= :start AND s.end <= :end"),
     @NamedQuery(name = "Shift.findByPositionIDAndStart", query = "SELECT s FROM Shift s WHERE s.positionID = :positionID AND s.start >= :start1 AND s.start < :start2"),
-    @NamedQuery(name = "Shift.findByEmployeeIDAndStart", query = "SELECT s FROM Shift s WHERE s.employeeID = :employeeID AND ((s.start >= :start1 AND s.start <= :start2) OR (s.end >= :start1 AND s.end <= :start2))"),
+    @NamedQuery(name = "Shift.findByEmployeeIDAndStart", query = "SELECT s FROM Shift s WHERE s.employeeID = :employeeID AND ((s.start > :start1 AND s.start < :start2) OR (s.end > :start1 AND s.end < :start2))"),
     @NamedQuery(name = "Shift.findByPositionIDAndEmployeeIDAndStart", query = "SELECT s FROM Shift s WHERE s.positionID = :positionID AND s.start <= :start1 AND s.end >= :start1 AND s.employeeID = :employeeID"),
     @NamedQuery(name = "Shift.findByEnd", query = "SELECT s FROM Shift s WHERE s.end = :end")})
     
