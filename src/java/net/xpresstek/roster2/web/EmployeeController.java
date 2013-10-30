@@ -70,6 +70,11 @@ public class EmployeeController extends ControllerBase {
         return ejbFacade.findAll();
     }
     
+    public List<Employee> getActiveEmployees()
+    {
+        return ejbFacade.findActive();
+    }
+    
     public List<Employee> getAllowedItems
             (int position, String start, String end)
     {

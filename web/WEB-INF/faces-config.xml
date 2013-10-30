@@ -18,4 +18,9 @@
         <managed-bean-class>net.xpresstek.roster2.web.ShiftHelper</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
+    <managed-bean>
+        <managed-bean-name>logInBean</managed-bean-name>
+        <managed-bean-class>net.xpresstek.roster2.ejb.LogInBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
 </faces-config>

@@ -142,8 +142,16 @@
                                     <f:selectItems value="#{timeOffStatusController.itemsAvailableSelectOne}"/>
                                 </h:selectOneMenu>
                                 <h:outputLabel value="#{bundle.CreateTimeOffLabel_employeeid}" for="employeeid" />
-                                <h:selectOneMenu id="employeeid" value="#{timeOffController.selected.employeeid}" title="#{bundle.CreateTimeOffTitle_employeeid}" required="true" requiredMessage="#{bundle.CreateTimeOffRequiredMessage_employeeid}">
-                                    <f:selectItems value="#{employeeController.itemsAvailableSelectOne}"/>
+                                <h:selectOneMenu id="employeeid" 
+                                                 value="#{timeOffController.selected.employeeid}" 
+                                                 title="#{bundle.CreateTimeOffTitle_employeeid}" 
+                                                 required="true" 
+                                                 requiredMessage="#{bundle.CreateTimeOffRequiredMessage_employeeid}">
+                                    <f:selectItems value="#{employeeController.activeEmployees}"
+                                                   var="employee"
+                                                   itemValue="#{employee}"
+                                                   itemLabel="#{employee.name}"/>
+                                    <f:converter converterId="employeeControllerConverter" />
                                 </h:selectOneMenu>                            
                             </h:panelGrid>
                             <a4j:commandButton value="Update" 
