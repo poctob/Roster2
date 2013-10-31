@@ -1,5 +1,8 @@
 package net.xpresstek.roster2.web;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import net.xpresstek.roster2.ejb.TimeOff;
 
 import javax.ejb.EJB;
@@ -16,6 +19,7 @@ import javax.faces.convert.FacesConverter;
 public class TimeOffController extends ControllerBase {
 
     private TimeOff current;
+    private List<TimeOff> activeTimeOffs;
     @EJB
     private net.xpresstek.roster2.web.TimeOffFacade ejbFacade;
 
@@ -36,6 +40,21 @@ public class TimeOffController extends ControllerBase {
         return (TimeOff)getObject(id);
     }
     
+    public List<TimeOff> getActiveTimeOffs()
+    {
+        List<TimeOff> all_items=ejbFacade.findAll();
+        activeTimeOffs=new ArrayList();
+        
+        for(TimeOff to : all_items)
+        {
+            if(to.getEmployeeid().getIsActive())
+            {
+                activeTimeOffs.add(to);
+            }
+        }
+        Collections.sort(activeTimeOffs, Collections.reverseOrder());
+        return activeTimeOffs;
+    }
 
     @Override
     void setCurrent(Object obj) {

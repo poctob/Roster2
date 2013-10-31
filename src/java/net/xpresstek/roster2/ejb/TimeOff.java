@@ -36,7 +36,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "TimeOff.findByPkid", query = "SELECT t FROM TimeOff t WHERE t.pkid = :pkid"),
     @NamedQuery(name = "TimeOff.findByStart", query = "SELECT t FROM TimeOff t WHERE t.start = :start"),
     @NamedQuery(name = "TimeOff.findByEnd", query = "SELECT t FROM TimeOff t WHERE t.end = :end")})
-public class TimeOff implements Serializable {
+public class TimeOff implements Serializable, Comparable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -158,5 +158,10 @@ public class TimeOff implements Serializable {
         }
         return false;
 
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return start.compareTo(((TimeOff)o).getStart());
     }
 }

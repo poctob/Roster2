@@ -18,6 +18,7 @@
 
         <ui:define name="content">
             <h:form prependId="false" id="dataForm">
+                <p:growl id="growl" showDetail="true" life="3000" />
                 <p:dataTable id="dataTable" var="item" value="#{employeeController.items}"  
                              paginator="true" rows="10"  
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  

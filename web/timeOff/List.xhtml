@@ -4,138 +4,148 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:a4j="http://richfaces.org/a4j"
-      xmlns:rich="http://richfaces.org/rich"
-      xmlns:r="http://java.sun.com/jsf/composite/ezcomp">
+      xmlns:p="http://primefaces.org/ui">
 
     <ui:composition template="./../resources/appTemplate.xhtml">
         <ui:define name="title">
             <h:outputText value="#{bundle.ListTimeOffTitle}"></h:outputText>
         </ui:define>
         <ui:define name="top">
-            <h:panelGroup id="messagePanel" layout="block">
-                <h:messages errorStyle="color: red" infoStyle="color: white" layout="table"/>
-            </h:panelGroup>
+
         </ui:define>   
 
         <ui:define name="content">
-            <a4j:status onstart="#{rich:component('statPane')}.show()" onstop="#{rich:component('statPane')}.hide()" />
-            <h:form styleClass="jsfcrud_list_form">
 
-                <rich:dataTable value="#{timeOffController.items}" 
-                                var="item" iterationStatusVar="it" 
-                                id="table" 
-                                rows="15"
-                                >                      
-                    <rich:column>
-                        <f:facet name="header">#{bundle.ListTimeOffTitle_pkid}</f:facet>
-                        <h:outputText value="#{item.pkid}"/>
-                    </rich:column>
-                    <rich:column>
-                        <f:facet name="header">#{bundle.ListTimeOffTitle_start}</f:facet>
+            <h:form id="dataForm">
+                <p:growl id="growl" showDetail="true" life="10000" />             
+
+                <p:dataTable value="#{timeOffController.items}" 
+                             var="item" 
+                             id="dataTable" 
+                             paginator="true" rows="10"  
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                             rowsPerPageTemplate="5,10,15"
+                             sortBy="#{item.start}"
+                             sortOrder="descending"
+                             >
+                    <f:facet name="header">  
+                        Time Off
+                    </f:facet> 
+
+                    <p:column sortBy="#{item.start}" headerText="#{bundle.ListTimeOffTitle_start}">                  
                         <h:outputText value="#{item.start}">
                             <f:convertDateTime pattern="MM/dd/yyyy hh:mm:ss a" />
                         </h:outputText>
-                    </rich:column>
-                    <rich:column>
-                        <f:facet name="header">#{bundle.ListTimeOffTitle_end}</f:facet>
+                    </p:column>
+
+                    <p:column sortBy="${item.end}" headerText="#{bundle.ListTimeOffTitle_end}">                      
                         <h:outputText value="#{item.end}">
                             <f:convertDateTime pattern="MM/dd/yyyy hh:mm:ss a" />
                         </h:outputText>
-                    </rich:column>
-                    <rich:column>
-                        <f:facet name="header">#{bundle.ListTimeOffTitle_timeOffStatusid}</f:facet>
+                    </p:column>
+
+                    <p:column sortBy="${item.timeOffStatusid.name}" 
+                              headerText="#{bundle.ListTimeOffTitle_timeOffStatusName}">                        
                         <h:outputText value="#{item.timeOffStatusid.name}"/>
-                    </rich:column>  
-                    <rich:column>
-                        <f:facet name="header">#{bundle.ListTimeOffTitle_employeeid}</f:facet>
+                    </p:column>  
+
+                    <p:column sortBy="#{item.employeeid.name}" 
+                              headerText="#{bundle.ListTimeOffTitle_employeeName}">
                         <h:outputText value="#{item.employeeid.name}"/>
-                    </rich:column>  
+                    </p:column>  
+                    
+                    <p:column sortBy="#{item.employeeid.isActive}" 
+                              headerText="#{bundle.ListTimeOffTitle_employeeActive}">
+                        <h:outputText value="#{item.employeeid.isActive}"/>
+                    </p:column>  
 
-                     <rich:column>
-                        <a4j:commandLink styleClass="no-decor" 
-                                         execute="@this" 
-                                         render="@none" 
-                                         oncomplete="#{rich:component('confirmPane')}.show()"
-                                         action="#{timeOffController.prepareEdit}"
-                                         onclick="javascript:hideSelection('edit_div', true);">
+                     <p:column>
+                        <p:commandLink styleClass="no-decor"                                                             
+                                       action="#{timeOffController.prepareEdit}"
+                                       onclick="javascript:hideSelection('edit_div', true);"
+                                       oncomplete="doDelete()">
+                            <p:confirm header="Confirmation" message="Are you sure you want to delete this item?" 
+                                       icon="ui-icon-alert" />
                             <h:graphicImage value="../resources/images/icons/Delete.png" alt="delete" />
-                        </a4j:commandLink>
-                        <a4j:commandLink styleClass="no-decor" 
-                                         render="edit_text" 
-                                         execute="@this" 
-                                         action="#{timeOffController.prepareEdit}"
-                                         onclick="javascript:hideSelection('edit_div', false);">
-                            <h:graphicImage value="../resources/images/icons/Modify.png" alt="edit" /></a4j:commandLink>
-                    </rich:column>
-                    <f:facet name="footer">
-                        <rich:dataScroller for="table" />
-                    </f:facet>
-                </rich:dataTable>
+                        </p:commandLink>
+                        <p:commandLink styleClass="no-decor" 
+                                       update=":editForm:edit_text"          
+                                       action="#{timeOffController.prepareEdit}"
+                                       onclick="javascript:hideSelection('edit_div', false);">
+                            <h:graphicImage value="../resources/images/icons/Modify.png" alt="edit" />
+                        </p:commandLink>
+                    </p:column>
+                </p:dataTable>
+                <p:messages />
 
-                
-                 <r:messages />
-                <a4j:outputPanel ajaxRendered="true">
-                    <h:outputText value="#{timeOffController.status}" 
-                                  id="out" 
-                                  rendered="#{facesContext.maximumSeverity == null}" />
-                </a4j:outputPanel>
-                 
-                 
-                <a4j:jsFunction name="remove" 
-                                action="#{timeOffController.destroy}" 
-                                render="table" 
-                                execute="@this" 
-                                oncomplete="#{rich:component('confirmPane')}.hide();" />
 
-                <rich:popupPanel id="statPane" autosized="true">
-                    <h:graphicImage value="../resources/images/ai.gif" alt="ai" />
-                    Please wait...
-                </rich:popupPanel>
+                <p:remoteCommand name="doDelete" 
+                                 actionListener="#{timeOffController.destroy}"
+                                 update=":editForm, :dataForm:dataTable" />  
 
-                <rich:popupPanel id="confirmPane" autosized="true">
-                    Are you sure you want to delete the row?
-                    <a4j:commandButton value="Cancel" onclick="#{rich:component('confirmPane')}.hide();
-                                                 return false;" />
-                    <a4j:commandButton value="Delete" onclick="remove();
-                                                 return false;" />
-                </rich:popupPanel>
+            </h:form>
+
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px"> 
+                <f:facet name="start">  
+                    <p:graphicImage  value="../resources/images/ai.gif" />  
+                </f:facet>  
+
+                <f:facet name="complete" >  
+                    <h:outputText value="" />  
+                </f:facet>  
+            </p:ajaxStatus> 
+
+
+            <h:form styleClass="jsfcrud_list_form">
+
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="explode">  
+
+                    <p:commandButton 
+                        value="Yes" 
+                        type="button" 
+                        styleClass="ui-confirmdialog-yes" 
+                        icon="ui-icon-check" 
+                        />  
+
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"/>       
+                </p:confirmDialog>  
 
                 <h:outputText escape="false" value="#{bundle.ListTimeOffEmpty}" rendered="#{timeOffController.items.rowCount == 0}"/>
+                <p:messages />
             </h:form>
         </ui:define>
+        
         <ui:define name="right">
-
-            <a4j:outputPanel layout="block">
-                <h:form styleClass="jsfcrud_list_form">
-                    <a4j:commandLink styleClass="no-decor" 
-                                     execute="@this" 
-                                     render="edit_text" 
+             <p:outputPanel layout="block">
+                <h:form id="editForm">
+                    <p:commandLink styleClass="no-decor" 
+                                     update="edit_text" 
                                      action="#{timeOffController.prepareCreate}"
                                      onclick="javascript:hideSelection('edit_div', false);">
-                        <h:graphicImage value="../resources/images/icons/Create.png" alt="create" />
-                    </a4j:commandLink>
+                        <h:graphicImage value="../resources/images/icons/Create.png" alt="create" />                
+                    </p:commandLink>
+                    
                     <br />
                     <div id="edit_div" class="invisible">
-                        <a4j:outputPanel id="edit_text" layout="block">
+                        <p:outputPanel id="edit_text" layout="block">
                             <h:panelGrid columns="2" styleClass="editPanel">
                                 <h:outputLabel value="#{bundle.CreateTimeOffLabel_start}" for="start" />
-                                <rich:calendar value="#{timeOffController.selected.start}"
-                                               id="start"
-                                               datePattern="MM/dd/yyyy hh:mm:ss a"
-                                               popup="false"
-                                               required="true" 
-                                               requiredMessage="#{bundle.CreateTimeOffRequiredMessage_start}"
-                                               />
+                                <p:calendar value="#{timeOffController.selected.start}"
+                                            id="start"                                            
+                                            pattern="MM/dd/yyyy hh:mm a"
+                                            required="true" 
+                                            requiredMessage="#{bundle.CreateTimeOffRequiredMessage_start}"
+                                            showButtonPanel="true"
+                                            />                                    
 
                                 <h:outputLabel value="#{bundle.CreateTimeOffLabel_end}" for="end" />                    
-                                <rich:calendar value="#{timeOffController.selected.end}"
-                                               id="end"
-                                               datePattern="MM/dd/yyyy hh:mm:ss a"
-                                               popup="false"
-                                               required="true" 
-                                               requiredMessage="#{bundle.CreateTimeOffRequiredMessage_end}"
-                                               />
+                                <p:calendar value="#{timeOffController.selected.end}"
+                                            id="end"
+                                            pattern="MM/dd/yyyy hh:mm a"
+                                            required="true" 
+                                            requiredMessage="#{bundle.CreateTimeOffRequiredMessage_end}"
+                                            showButtonPanel="true"
+                                            />
 
                                 <h:outputLabel value="#{bundle.CreateTimeOffLabel_timeOffStatusid}" for="timeOffStatusid" />
                                 <h:selectOneMenu id="timeOffStatusid" value="#{timeOffController.selected.timeOffStatusid}" title="#{bundle.CreateTimeOffTitle_timeOffStatusid}" required="true" requiredMessage="#{bundle.CreateTimeOffRequiredMessage_timeOffStatusid}">
@@ -154,21 +164,21 @@
                                     <f:converter converterId="employeeControllerConverter" />
                                 </h:selectOneMenu>                            
                             </h:panelGrid>
-                            <a4j:commandButton value="Update" 
+                            <p:commandButton value="Update" 
                                                rendered="#{not empty timeOffController.selected.start}"
                                                action="#{timeOffController.update}"
-                                               render="table"
+                                               update="editForm, :dataForm:dataTable, :dataForm:growl"
                                                onclick="javascript:hideSelection('edit_div', true);"/>
 
-                            <a4j:commandButton value="Add" 
+                            <p:commandButton value="Add" 
                                                rendered="#{empty timeOffController.selected.start}"
                                                action="#{timeOffController.create}"
-                                               render="table"
+                                               update="editForm, :dataForm:dataTable, :dataForm:growl"
                                                onclick="javascript:hideSelection('edit_div', true);"/>
-                        </a4j:outputPanel>
+                        </p:outputPanel>
                     </div>
                 </h:form>
-            </a4j:outputPanel>
+            </p:outputPanel>
         </ui:define>
     </ui:composition>
 
