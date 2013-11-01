@@ -86,15 +86,27 @@ public class EmployeeController extends ControllerBase {
         List<Employee> employees=new ArrayList();
         for(Employee e : ejbFacade.findAll())
         {
-            if(e!=null && 
-                    e.getIsActive() &&
-                    e.isPositionAllowed(position) &&
-                    e.isTimeAllowed(start, end))
+            if(isEmployeeAllowed(e,position, start, end))
             {
                 employees.add(e);
             }
         }
         return employees;
+    }
+    
+    public static boolean isEmployeeAllowed(Employee e,
+            int position,
+            String start,
+            String end)
+    {
+         if(e!=null && 
+                    e.getIsActive() &&
+                    e.isPositionAllowed(position) &&
+                    e.isTimeAllowed(start, end))
+            {
+                return true;
+            }
+         return false;
     }
     
     @FacesConverter(forClass = Employee.class, value = "employeeControllerConverter")

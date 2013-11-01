@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import net.xpresstek.roster2.ejb.Configuration;
 import net.xpresstek.roster2.ejb.Shift;
@@ -33,9 +35,19 @@ public class UploadController implements Serializable {
     private String db_user;
     private String db_pass;
     private String response;
+    private Integer progress = 0;
+    private boolean error;
+
+    public Integer getProgress() {
+        return progress;
+    }
+
+    public void setProgress(Integer progress) {
+        this.progress = progress;
+    }
 
     public void upload() {
-
+        progress = 0;
         HashMap hm = new HashMap();
         hm.put("user", getDb_user());
         hm.put("password", getDb_pass());
@@ -43,6 +55,7 @@ public class UploadController implements Serializable {
 
         ShiftController sc = ShiftControllerConverter.getController();
         List<Shift> shifts = sc.getItemsFromTheWeekStart();
+        progress = 10;
         for (Shift s : shifts) {
             Map map = new HashMap();
             map.put("employee", s.getEmployeeObject().getName());
@@ -51,22 +64,24 @@ public class UploadController implements Serializable {
             map.put("end", DateUtils.DateToString(s.getEnd()));
             l1.add(map);
         }
+        progress = 20;
         hm.put("data", JSONValue.toJSONString(l1));
-
+        progress = 50;
         try {
             response = HttpUtil.sendPost(hm, getUrl());
+            progress = 100;
         } catch (Exception ex) {
             Logger.getLogger(UploadController.class.getName()).
-                    log(Level.SEVERE, null, ex);
+                    log(Level.SEVERE, null, ex);   
+             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage
+                (FacesMessage.SEVERITY_ERROR, "Upload Failed", "Upload Failed"));
+             error=true;
+        } finally {
+            url = null;
+            db_user = null;
+            db_pass = null;
+            error=false;
         }
-        finally
-        {
-            url=null;
-            db_user=null;
-            db_pass=null;
-
-        }
-
     }
 
     public String getUrl() {
@@ -115,10 +130,30 @@ public class UploadController implements Serializable {
     }
 
     public String getResponse() {
+        progress = 0;
         return response;
     }
 
     public void setResponse(String response) {
         this.response = response;
+    }
+
+    public void cancel() {
+        progress = 0;
+    }
+
+    public void onComplete() {
+        if(error)
+        {
+             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage
+                (FacesMessage.SEVERITY_ERROR, "Upload Failed", "Upload Failed"));
+        }
+        else
+        {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage
+                    (FacesMessage.SEVERITY_INFO, "Upload Completed", "Upload Completed"));
+        }
+        error=false;
+        progress = 0;
     }
 }

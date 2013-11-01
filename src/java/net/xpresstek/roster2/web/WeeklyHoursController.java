@@ -64,6 +64,12 @@ public class WeeklyHoursController extends ControllerBase {
         Calendar cdate = new GregorianCalendar();
         cdate.setTime(date);
 
+        //Hack to get week start on monday
+        if(cdate.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY)
+        {
+            cdate.add(Calendar.DAY_OF_MONTH, -1);
+        }
+        
         Calendar start = DateUtils.getWeekStart(false, cdate);
         Calendar end = new GregorianCalendar();
         end.setTime(start.getTime());
@@ -71,9 +77,6 @@ public class WeeklyHoursController extends ControllerBase {
         end.set(Calendar.HOUR, 23);
         end.set(Calendar.MINUTE, 59);
         end.set(Calendar.SECOND, 59);
-
-        Date st_date = start.getTime();
-        Date en_date = end.getTime();
 
         if (ejbFacade != null) {
             ejbFacade.refreshData();

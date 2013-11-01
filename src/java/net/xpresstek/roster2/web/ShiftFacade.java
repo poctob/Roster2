@@ -56,6 +56,15 @@ public class ShiftFacade extends AbstractFacade<Shift> {
         return query.getResultList();
     }
       
+       public List<Shift> findByStartandEnd(Date start, Date end) {
+        TypedQuery<Shift> query = getEntityManager().
+                createNamedQuery("Shift.findByStartandEnd", Shift.class);
+               
+        query.setParameter("start1", start);
+        query.setParameter("start2", end);
+        return query.getResultList();
+    }
+      
        public List<Shift> findByPeriod(Date start, Date end) {
         TypedQuery<Shift> query = getEntityManager().
                 createNamedQuery("Shift.findByPeriod", Shift.class);

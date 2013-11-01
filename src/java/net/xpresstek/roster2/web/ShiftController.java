@@ -111,9 +111,9 @@ public class ShiftController extends ControllerBase {
             for (Position p : pos) {
                 List<Shift> shifts = ejbFacade.
                         findByPositionIdAndStart(p.getPkID(), current_date);
-                if (shifts != null && shifts.size() > 0) {
+              //  if (shifts != null && shifts.size() > 0) {
                     columns.add(new ShiftColumn(shifts, p));
-                }
+            //    }
             }
         }
         return columns;
@@ -192,19 +192,46 @@ public class ShiftController extends ControllerBase {
         if (empl == null) {
             return null;
         }
-        ArrayList<Employee> retval = new ArrayList();
-        for (Employee e : empl) {
-            if (e != null && current != null) {
-                List<Shift> s = ejbFacade.findByEmployeeIDAndStart(e.getPkID(), current.getStart(), current.getEnd());
-                if (s == null || s.isEmpty()) {
-                    retval.add(e);
-                }
+        List<Shift> s = ejbFacade.findByStartandEnd(current.getStart(), current.getEnd());
+        for (Shift sh : s)
+        {
+            empl.remove(sh.getEmployeeObject());
+        }
+        
+        if (checkCurrentEmployee()) {
+            empl.add(current.getEmployeeObject());
+        }
+        return empl;
+    }
+    
+    public boolean checkCurrentEmployee()
+    {
+        if(current_pkid > 0 && current != null)
+        {
+            if(EmployeeController.isEmployeeAllowed(current.getEmployeeObject(),
+                    current.getPositionID(), 
+                     DateUtils.DateToString(current.getStart()),
+                    DateUtils.DateToString(current.getEnd())))
+            {
+                 List<Shift> s = ejbFacade.findByEmployeeIDAndStart
+                         (current.getEmployeeObject().getPkID(), 
+                         current.getStart(),
+                         current.getEnd());
+                  if (s == null || s.isEmpty()) 
+                  {
+                      return true;
+                  }
+                  else if(s.size()==1)
+                  {
+                      Shift shift = s.get(0);
+                      if(shift.getPkid()==current.getPkid())
+                      {
+                          return true;
+                      }
+                  }
             }
         }
-        if (current_pkid > 0 && current != null) {
-            retval.add(current.getEmployeeObject());
-        }
-        return retval;
+        return false;
     }
 
     public void processShiftClick(String position, String time) {

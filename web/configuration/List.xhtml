@@ -4,9 +4,7 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:a4j="http://richfaces.org/a4j"
-      xmlns:rich="http://richfaces.org/rich"
-      xmlns:r="http://java.sun.com/jsf/composite/ezcomp">
+      xmlns:p="http://primefaces.org/ui">
 
     <ui:composition template="./../resources/appTemplate.xhtml">
         <ui:define name="title">
@@ -14,86 +12,84 @@
         </ui:define> 
 
         <ui:define name="content">
-            <h:form styleClass="jsfcrud_list_form">
-                <a4j:status onstart="#{rich:component('statPane')}.show()" onstop="#{rich:component('statPane')}.hide()" />
-
-
-                <rich:dataTable value="#{configurationController.items}" 
-                                var="item" iterationStatusVar="it" 
-                                id="table" 
-                                rows="15"
-                                >
-                    <rich:column>
+            <h:form id="dataForm">
+                <p:growl id="growl" showDetail="true" life="10000" />    
+                <p:dataTable value="#{configurationController.items}" 
+                             var="item" 
+                             id="dataTable" 
+                             paginator="true" rows="10"  
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                             rowsPerPageTemplate="5,10,15"
+                             sortBy="#{item.start}"
+                             sortOrder="descending"
+                             >
+                    <f:facet name="header">  
+                        Configuration
+                    </f:facet> 
+                    <p:column>
                         <f:facet name="header">#{config_bundle.ListConfigurationTitle_configID}</f:facet>
                         <h:outputText value="#{item.configID}"/>
-                    </rich:column>
-                    <rich:column>
+                    </p:column>
+                    <p:column>
                         <f:facet name="header">#{config_bundle.ListConfigurationTitle_configValue}</f:facet>
                         <h:outputText value="#{item.configValue}"/>
-                    </rich:column>    
-
-                     <rich:column>
-                        <a4j:commandLink styleClass="no-decor" 
-                                         execute="@this" 
-                                         render="@none" 
-                                         oncomplete="#{rich:component('confirmPane')}.show()"
-                                         action="#{configurationController.prepareEdit}"
-                                         onclick="javascript:hideSelection('edit_div', true);">
+                    </p:column>    
+                     <p:column>
+                        <p:commandLink styleClass="no-decor"                                                             
+                                       action="#{configurationController.prepareEdit}"
+                                       onclick="javascript:hideSelection('edit_div', true);"
+                                       oncomplete="doDelete()">
+                            <p:confirm header="Confirmation" message="Are you sure you want to delete this item?" 
+                                       icon="ui-icon-alert" />
                             <h:graphicImage value="../resources/images/icons/Delete.png" alt="delete" />
-                        </a4j:commandLink>
-                        <a4j:commandLink styleClass="no-decor" 
-                                         render="edit_text" 
-                                         execute="@this" 
-                                         action="#{configurationController.prepareEdit}"
-                                         onclick="javascript:hideSelection('edit_div', false);">
-                            <h:graphicImage value="../resources/images/icons/Modify.png" alt="edit" /></a4j:commandLink>
-                    </rich:column>
-                    <f:facet name="footer">
-                        <rich:dataScroller for="table" />
-                    </f:facet>
-                </rich:dataTable>
-                <r:messages />
-                <a4j:outputPanel ajaxRendered="true">
-                    <h:outputText value="#{configurationController.status}" 
-                                  id="out" 
-                                  rendered="#{facesContext.maximumSeverity == null}" />
-                </a4j:outputPanel>
-                <a4j:jsFunction name="remove" 
-                                action="#{configurationController.destroy}" 
-                                render="table" 
-                                execute="@this" 
-                                oncomplete="#{rich:component('confirmPane')}.hide();" />
+                        </p:commandLink>
+                        <p:commandLink styleClass="no-decor" 
+                                       update=":editForm:edit_text"          
+                                       action="#{configurationController.prepareEdit}"
+                                       onclick="javascript:hideSelection('edit_div', false);">
+                            <h:graphicImage value="../resources/images/icons/Modify.png" alt="edit" />
+                        </p:commandLink>
+                    </p:column>
+                </p:dataTable>
+                <p:messages />
 
-                <rich:popupPanel id="statPane" autosized="true">
-                    <h:graphicImage value="../resources/images/ai.gif" alt="ai" />
-                    Please wait...
-                </rich:popupPanel>
 
-                <rich:popupPanel id="confirmPane" autosized="true">
-                    Are you sure you want to delete the row?
-                    <a4j:commandButton value="Cancel" onclick="#{rich:component('confirmPane')}.hide();
-                                                 return false;" />
-                    <a4j:commandButton value="Delete" onclick="remove();
-                                                 return false;" />
-                </rich:popupPanel>
+                <p:remoteCommand name="doDelete" 
+                                 actionListener="#{configurationController.destroy}"
+                                 update=":editForm, :dataForm:dataTable" />  
+            </h:form>
+
+            <h:form>
+
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="explode">  
+
+                    <p:commandButton 
+                        value="Yes" 
+                        type="button" 
+                        styleClass="ui-confirmdialog-yes" 
+                        icon="ui-icon-check" 
+                        />  
+
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"/>       
+                </p:confirmDialog>  
 
                 <h:outputText escape="false" value="#{config_bundle.ListConfigurationEmpty}" rendered="#{configurationController.items.rowCount == 0}"/>
+                <p:messages />
             </h:form>
         </ui:define>
         <ui:define name="right">
 
-            <a4j:outputPanel layout="block">
-                <h:form styleClass="jsfcrud_list_form">
-                    <a4j:commandLink styleClass="no-decor" 
-                                     execute="@this" 
-                                     render="edit_text" 
-                                     action="#{configurationController.prepareCreate}"
-                                     onclick="javascript:hideSelection('edit_div', false);">
-                        <h:graphicImage value="../resources/images/icons/Create.png" alt="create" />
-                    </a4j:commandLink>
+            <p:outputPanel layout="block">
+                <h:form id="editForm">
+                    <p:commandLink styleClass="no-decor" 
+                                   update="edit_text" 
+                                   action="#{configurationController.prepareCreate}"
+                                   onclick="javascript:hideSelection('edit_div', false);">
+                        <h:graphicImage value="../resources/images/icons/Create.png" alt="create" />                
+                    </p:commandLink>
                     <br />
                     <div id="edit_div" class="invisible">
-                        <a4j:outputPanel id="edit_text" layout="block">
+                        <p:outputPanel id="edit_text" layout="block">
                             <h:panelGrid columns="2" styleClass="editPanel"> 
                                 <h:outputLabel value="#{config_bundle.EditConfigurationLabel_configID}" for="name" />                    
                                 <h:inputText id="name" value="#{configurationController.selected.configID}" 
@@ -108,21 +104,21 @@
                                              title="#{config_bundle.EditConfigurationTitle_configValue}" 
                                              />
                             </h:panelGrid>
-                            <a4j:commandButton value="Update" 
-                                               rendered="#{not empty configurationController.selected.configID}"
-                                               action="#{configurationController.update}"
-                                               render="table"
-                                               onclick="javascript:hideSelection('edit_div', true);"/>
+                            <p:commandButton value="Update" 
+                                             rendered="#{not empty configurationController.selected.configID}"
+                                             action="#{configurationController.update}"
+                                             update="editForm, :dataForm:dataTable, :dataForm:growl"
+                                             onclick="javascript:hideSelection('edit_div', true);"/>
 
-                            <a4j:commandButton value="Add" 
-                                               rendered="#{empty configurationController.selected.configID}"
-                                               action="#{configurationController.create}"
-                                               render="table"
-                                               onclick="javascript:hideSelection('edit_div', true);"/>
-                        </a4j:outputPanel>
+                            <p:commandButton value="Add" 
+                                             rendered="#{empty configurationController.selected.configID}"
+                                             action="#{configurationController.create}"
+                                             update="editForm, :dataForm:dataTable, :dataForm:growl"
+                                             onclick="javascript:hideSelection('edit_div', true);"/>
+                        </p:outputPanel>
                     </div>
                 </h:form>
-            </a4j:outputPanel>
+            </p:outputPanel>
         </ui:define>
     </ui:composition>
 
