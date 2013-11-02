@@ -44,16 +44,26 @@
                             <f:facet name="header">
                                 <h:outputText value="#{shift_column.positionName}" />
                             </f:facet>  
-                            <p:commandLink
-                                value="#{shift_column.getEmployeeName(times)}"                                
-                                update=":edit_form:edit_text"
-                                process="@this"
-                                >
-                                <f:setPropertyActionListener
-                                    value="#{shift_column.getShiftID(times)}"
-                                    target="#{shiftController.current_pkid}"
-                                    />                                 
-                            </p:commandLink>
+
+
+                            <p:dataList value="#{shift_column.getEmployeeNames(times)}"
+                                        var="employee"
+                                        itemType="square"
+                                        emptyMessage=""
+                                        rendered="#{shift_column.getEmployeeNames(times).size() gt 0}">  
+                                <p:commandLink
+                                    value="#{employee.name}"                                
+                                    update=":edit_form:edit_text"
+                                    process="@this"                                    
+                                    >
+                                    <f:setPropertyActionListener
+                                        value="#{shift_column.
+                                                 getShiftIDByTimeandEmployee(times, employee.pkID)}"
+                                        target="#{shiftController.current_pkid}"
+                                        />                                 
+                                </p:commandLink>
+
+                            </p:dataList>  
 
                         </p:column>
                     </c:forEach>      
@@ -149,7 +159,7 @@
                                                    var="pos"
                                                    itemValue="#{pos.pkID}"
                                                    itemLabel="#{pos.name}"/>
-                                   
+
                                     <p:ajax event="change" 
                                             update="employeeName" 
                                             partialSubmit="true"

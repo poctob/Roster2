@@ -38,6 +38,15 @@ public class ShiftColumn {
         }
         return -1;
     }
+    
+     public int getShiftIDByTimeandEmployee(String time, int employeeID) {
+        for (Shift s : getShiftByTimeAndEmployee(time, employeeID)) {
+            if (s != null) {
+                return s.getPkid();
+            }
+        }
+        return -1;
+    }
 
     public Position getPosition() {
         return position;
@@ -64,10 +73,22 @@ public class ShiftColumn {
         return retval;
     }
 
+    public List<Employee> getEmployeeNames(String time) {
+        List<Employee> retval = new ArrayList();
+        List<Shift> shifts = getShiftByTime(time);
+        if (shifts != null) {
+            for (Shift s : shifts) {
+                if (s != null) {
+                    retval.add(s.getEmployeeObject());
+                }
+            }
+        }
+        return retval;
+    }
+
     public List<Shift> getShiftByTime(String time) {
 
-        if(time == null || time.length()==0)
-        {
+        if (time == null || time.length() == 0) {
             return null;
         }
         ArrayList<Shift> retval = new ArrayList();
@@ -83,6 +104,31 @@ public class ShiftColumn {
                 c_strdate += time_slot;
                 int employeeid = s.isEmployeeOn(position.getPkID(), c_strdate);
                 if (employeeid > 0) {
+                    retval.add(s);
+                }
+            }
+        }
+        return retval;
+    }
+    public List<Shift> getShiftByTimeAndEmployee(String time, int employeeID) {
+
+        if (time == null || time.length() == 0 || 
+                employeeID<=0) {
+            return null;
+        }
+        ArrayList<Shift> retval = new ArrayList();
+        if (shifts == null) {
+            return null;
+        }
+        for (Shift s : shifts) {
+
+            if (s != null) {
+                String strdate = DateUtils.DateToString(s.getStart());
+                String c_strdate = strdate.substring(0, 11);
+                String time_slot = time + ":00.0";
+                c_strdate += time_slot;
+                int employeeid = s.isEmployeeOn(position.getPkID(), c_strdate);
+                if (employeeid == employeeID) {
                     retval.add(s);
                 }
             }

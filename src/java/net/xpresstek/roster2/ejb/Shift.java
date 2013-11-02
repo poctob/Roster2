@@ -174,7 +174,7 @@ public class Shift implements Serializable {
     public int isEmployeeOn(int position, String date) {
         boolean start_b = DateUtils.isCalendarBetween(start, end, date, null, true);
         if (positionID > 0 && employeeID >0 && positionID==position && start_b) {
-            return positionID;
+            return employeeID;
         }
         return 0;
     }
