@@ -48,7 +48,8 @@
 
                             <p:dataList value="#{shift_column.getEmployeeNames(times)}"
                                         var="employee"
-                                        itemType="square"
+                                        itemType="none"
+                                        styleClass="shiftDataList"
                                         emptyMessage=""
                                         rendered="#{shift_column.getEmployeeNames(times).size() gt 0}">  
                                 <p:commandLink
