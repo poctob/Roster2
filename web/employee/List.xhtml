@@ -56,7 +56,7 @@
                         <f:facet name="header">#{bundle.ListEmployeeTitle_comment}</f:facet>
                         <h:outputText value="#{item.comment}"/>
                     </p:column>
-
+                     
                      <p:column>
                         <p:commandLink styleClass="no-decor"                                                             
                                        action="#{employeeController.prepareEdit}"
@@ -144,6 +144,11 @@
                                     <f:selectItems value="#{privilegeController.itemsAvailableSelectMany}" />
                                     <f:converter converterId="privilegeControllerConverter"/>
                                 </h:selectManyCheckbox>
+                            </h:panelGrid>
+                            
+                            <h:panelGrid columns="2">
+                                <h:outputLabel value="Password" for="employeePassword" />
+                                <p:password id="employeePassword" value="#{employeeController.password}" />
                             </h:panelGrid>
                             <p:commandButton value="Update" 
                                              rendered="#{not empty employeeController.selected.name}"

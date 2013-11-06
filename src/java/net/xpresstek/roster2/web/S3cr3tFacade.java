@@ -4,9 +4,9 @@
  */
 package net.xpresstek.roster2.web;
 
+import java.util.List;
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import net.xpresstek.roster2.ejb.S3cr3t;
 
 /**
@@ -15,16 +15,22 @@ import net.xpresstek.roster2.ejb.S3cr3t;
  */
 @Stateless
 public class S3cr3tFacade extends AbstractFacade<S3cr3t> {
-    @PersistenceContext(unitName = "Roster2PU")
-    private EntityManager em;
-
-    @Override
-    protected EntityManager getEntityManager() {
-        return em;
-    }
 
     public S3cr3tFacade() {
         super(S3cr3t.class);
     }
+
+    public List<S3cr3t> findByEmployeeID(int employeeID) {
+        TypedQuery<S3cr3t> query = getEntityManager().
+                createNamedQuery("S3cr3t.findByUserId", S3cr3t.class);
+        query.setParameter("userId", employeeID);
+        return query.getResultList();
+    }
     
+     public void deleteByEmployeeID(int employeeID) {
+        TypedQuery<S3cr3t> query = getEntityManager().
+                createNamedQuery("S3cr3t.deleteByUserId", S3cr3t.class);
+        query.setParameter("userId", employeeID);
+        query.executeUpdate();
+    }
 }

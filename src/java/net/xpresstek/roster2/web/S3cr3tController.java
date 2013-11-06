@@ -1,11 +1,9 @@
 package net.xpresstek.roster2.web;
 
+import com.gzlabs.utils.CryptoUtils;
+import java.util.List;
 import net.xpresstek.roster2.ejb.S3cr3t;
-import net.xpresstek.roster2.web.util.JsfUtil;
-import net.xpresstek.roster2.web.util.PaginationHelper;
 
-import java.io.Serializable;
-import java.util.ResourceBundle;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
@@ -13,185 +11,78 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
-import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
-import javax.faces.model.SelectItem;
 
 @Named("s3cr3tController")
 @SessionScoped
-public class S3cr3tController implements Serializable {
+public class S3cr3tController extends ControllerBase {
 
     private S3cr3t current;
-    private DataModel items = null;
     @EJB
     private net.xpresstek.roster2.web.S3cr3tFacade ejbFacade;
-    private PaginationHelper pagination;
-    private int selectedItemIndex;
 
     public S3cr3tController() {
     }
 
-    public S3cr3t getSelected() {
-        if (current == null) {
-            current = new S3cr3t();
-            current.setS3cr3tPK(new net.xpresstek.roster2.ejb.S3cr3tPK());
-            selectedItemIndex = -1;
-        }
-        return current;
-    }
-
-    private S3cr3tFacade getFacade() {
+    @Override
+    AbstractFacade getFacade() {
         return ejbFacade;
     }
 
-    public PaginationHelper getPagination() {
-        if (pagination == null) {
-            pagination = new PaginationHelper(10) {
-                @Override
-                public int getItemsCount() {
-                    return getFacade().count();
-                }
-
-                @Override
-                public DataModel createPageDataModel() {
-                    return new ListDataModel(getFacade().findRange(new int[]{getPageFirstItem(), getPageFirstItem() + getPageSize()}));
-                }
-            };
-        }
-        return pagination;
+    @Override
+    Object getCurrent() {
+        return current;
     }
 
-    public String prepareList() {
-        recreateModel();
-        return "List";
+    @Override
+    void setCurrent(Object obj) {
+        current = (S3cr3t) obj;
     }
 
-    public String prepareView() {
-        current = (S3cr3t) getItems().getRowData();
-        selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
-        return "View";
-    }
-
-    public String prepareCreate() {
+    @Override
+    void createNewCurrent() {
         current = new S3cr3t();
-        current.setS3cr3tPK(new net.xpresstek.roster2.ejb.S3cr3tPK());
-        selectedItemIndex = -1;
-        return "Create";
     }
 
-    public String create() {
-        try {
-            current.getS3cr3tPK().setUserId(current.getEmployee().getPkID());
-            getFacade().create(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("S3cr3tCreated"));
-            return prepareCreate();
-        } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
-            return null;
-        }
+    @Override
+    public void create() {
+        hashPassword();
+        ejbFacade.deleteByEmployeeID(current.getEmployee().getPkID());
+        super.create();
+    }
+    
+    @Override
+    public void update() {
+        hashPassword();
+        ejbFacade.deleteByEmployeeID(current.getEmployee().getPkID());
+        super.update();
     }
 
-    public String prepareEdit() {
-        current = (S3cr3t) getItems().getRowData();
-        selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
-        return "Edit";
+    private void hashPassword() {
+        String salt = CryptoUtils.generateRandomSalt(120, 32);
+        String pass = current.getS3cr3tPK().getPass();
+        String hash = CryptoUtils.hashPasswordSHA512(pass, salt);
+        current.getS3cr3tPK().setPass(hash);
+        current.getS3cr3tPK().setSalt(salt);
     }
-
-    public String update() {
-        try {
-            current.getS3cr3tPK().setUserId(current.getEmployee().getPkID());
-            getFacade().edit(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("S3cr3tUpdated"));
-            return "View";
-        } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
-            return null;
-        }
-    }
-
-    public String destroy() {
-        current = (S3cr3t) getItems().getRowData();
-        selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
-        performDestroy();
-        recreatePagination();
-        recreateModel();
-        return "List";
-    }
-
-    public String destroyAndView() {
-        performDestroy();
-        recreateModel();
-        updateCurrentItem();
-        if (selectedItemIndex >= 0) {
-            return "View";
-        } else {
-            // all items were removed - go back to list
-            recreateModel();
-            return "List";
-        }
-    }
-
-    private void performDestroy() {
-        try {
-            getFacade().remove(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("S3cr3tDeleted"));
-        } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
-        }
-    }
-
-    private void updateCurrentItem() {
-        int count = getFacade().count();
-        if (selectedItemIndex >= count) {
-            // selected index cannot be bigger than number of items:
-            selectedItemIndex = count - 1;
-            // go to previous page if last page disappeared:
-            if (pagination.getPageFirstItem() >= count) {
-                pagination.previousPage();
+    
+    public boolean isPasswordCorrect(int employeeID, String password)
+    {
+        boolean retval=false;
+        List<S3cr3t> secrets = ejbFacade.findByEmployeeID(employeeID);
+        if(secrets.size()>0)
+        {
+            String salt=secrets.get(0).getS3cr3tPK().getSalt();
+            String hash=CryptoUtils.hashPasswordSHA512(password, salt);
+            if(secrets.get(0).getS3cr3tPK().getPass().equals(hash))
+            {
+                retval=true;
             }
         }
-        if (selectedItemIndex >= 0) {
-            current = getFacade().findRange(new int[]{selectedItemIndex, selectedItemIndex + 1}).get(0);
-        }
+        return retval;
     }
 
-    public DataModel getItems() {
-        if (items == null) {
-            items = getPagination().createPageDataModel();
-        }
-        return items;
-    }
-
-    private void recreateModel() {
-        items = null;
-    }
-
-    private void recreatePagination() {
-        pagination = null;
-    }
-
-    public String next() {
-        getPagination().nextPage();
-        recreateModel();
-        return "List";
-    }
-
-    public String previous() {
-        getPagination().previousPage();
-        recreateModel();
-        return "List";
-    }
-
-    public SelectItem[] getItemsAvailableSelectMany() {
-        return JsfUtil.getSelectItems(ejbFacade.findAll(), false);
-    }
-
-    public SelectItem[] getItemsAvailableSelectOne() {
-        return JsfUtil.getSelectItems(ejbFacade.findAll(), true);
-    }
-
-    public S3cr3t getS3cr3t(net.xpresstek.roster2.ejb.S3cr3tPK id) {
-        return ejbFacade.find(id);
+    public S3cr3t getS3cr3t(Integer id) {
+        return (S3cr3t) getObject(id);
     }
 
     @FacesConverter(forClass = S3cr3t.class)
@@ -209,24 +100,24 @@ public class S3cr3tController implements Serializable {
                     getValue(facesContext.getELContext(), null, "s3cr3tController");
             return controller.getS3cr3t(getKey(value));
         }
+        
+        public static S3cr3tController getController()
+        {
+            FacesContext fc=FacesContext.getCurrentInstance();
+            return (S3cr3tController) fc.getApplication().getELResolver().
+                    getValue(fc.getELContext(), null, "s3cr3tController");
+        }
 
-        net.xpresstek.roster2.ejb.S3cr3tPK getKey(String value) {
+        Integer getKey(String value) {
             net.xpresstek.roster2.ejb.S3cr3tPK key;
             String values[] = value.split(SEPARATOR_ESCAPED);
             key = new net.xpresstek.roster2.ejb.S3cr3tPK();
-            key.setUserId(Integer.parseInt(values[0]));
-            key.setPass(values[1]);
-            key.setSalt(values[2]);
-            return key;
+            return Integer.parseInt(values[0]);
         }
 
         String getStringKey(net.xpresstek.roster2.ejb.S3cr3tPK value) {
             StringBuilder sb = new StringBuilder();
             sb.append(value.getUserId());
-            sb.append(SEPARATOR);
-            sb.append(value.getPass());
-            sb.append(SEPARATOR);
-            sb.append(value.getSalt());
             return sb.toString();
         }
 

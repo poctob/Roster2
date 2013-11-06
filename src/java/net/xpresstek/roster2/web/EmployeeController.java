@@ -13,16 +13,52 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import net.xpresstek.roster2.ejb.S3cr3t;
+import net.xpresstek.roster2.ejb.S3cr3tPK;
+import net.xpresstek.roster2.web.S3cr3tController.S3cr3tControllerConverter;
 
 @Named("employeeController")
 @SessionScoped
 public class EmployeeController extends ControllerBase {
 
     private Employee current;
+    private String password;
     @EJB
     private net.xpresstek.roster2.web.EmployeeFacade ejbFacade;
 
     public EmployeeController() {
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    @Override
+    public void create() {        
+        super.create();
+        updatePassword();
+    }
+
+    private void updatePassword() {
+        if (password != null && password.length() > 0) {
+            S3cr3tController sc = S3cr3tControllerConverter.getController();
+            sc.prepareCreate();
+            S3cr3tPK pk = new S3cr3tPK(current.getPkID(), password, null);
+            ((S3cr3t) sc.getCurrent()).setEmployee(current);
+            ((S3cr3t) sc.getCurrent()).setS3cr3tPK(pk);
+            sc.update();
+        }
+        password="";
+    }
+
+    @Override
+    public void update() {      
+        super.update();
+        updatePassword();
     }
 
     @Override
@@ -38,18 +74,14 @@ public class EmployeeController extends ControllerBase {
     public Employee getEmployee(Integer id) {
         return (Employee) getObject(id);
     }
-    
-    public Employee getEmployeeByName(String name)
-    {
-        if(name==null)
-        {
+
+    public Employee getEmployeeByName(String name) {
+        if (name == null) {
             return null;
         }
-        List<Employee> pos=getAllItems();
-        for(Employee p : pos)
-        {
-            if(p.getName().equals(name))
-            {
+        List<Employee> pos = getAllItems();
+        for (Employee p : pos) {
+            if (p.getName().equals(name)) {
                 return p;
             }
         }
@@ -69,46 +101,38 @@ public class EmployeeController extends ControllerBase {
     public List<Employee> getAllItems() {
         return ejbFacade.findAll();
     }
-    
-    public List<Employee> getActiveEmployees()
-    {
+
+    public List<Employee> getActiveEmployees() {
         return ejbFacade.findActive();
     }
-    
-    public List<Employee> getAllowedItems
-            (int position, String start, String end)
-    {
-        if(position<=0 || start==null || end==null)
-        {
+
+    public List<Employee> getAllowedItems(int position, String start, String end) {
+        if (position <= 0 || start == null || end == null) {
             return null;
-        } 
-        
-        List<Employee> employees=new ArrayList();
-        for(Employee e : ejbFacade.findAll())
-        {
-            if(isEmployeeAllowed(e,position, start, end))
-            {
+        }
+
+        List<Employee> employees = new ArrayList();
+        for (Employee e : ejbFacade.findAll()) {
+            if (isEmployeeAllowed(e, position, start, end)) {
                 employees.add(e);
             }
         }
         return employees;
     }
-    
+
     public static boolean isEmployeeAllowed(Employee e,
             int position,
             String start,
-            String end)
-    {
-         if(e!=null && 
-                    e.getIsActive() &&
-                    e.isPositionAllowed(position) &&
-                    e.isTimeAllowed(start, end))
-            {
-                return true;
-            }
-         return false;
+            String end) {
+        if (e != null
+                && e.getIsActive()
+                && e.isPositionAllowed(position)
+                && e.isTimeAllowed(start, end)) {
+            return true;
+        }
+        return false;
     }
-    
+
     @FacesConverter(forClass = Employee.class, value = "employeeControllerConverter")
     public static class EmployeeControllerConverter implements Converter {
 
@@ -121,10 +145,9 @@ public class EmployeeController extends ControllerBase {
                     getValue(facesContext.getELContext(), null, "employeeController");
             return controller.getEmployee(getKey(value));
         }
-        
-         public static EmployeeController getController()
-        {
-            FacesContext fc=FacesContext.getCurrentInstance();
+
+        public static EmployeeController getController() {
+            FacesContext fc = FacesContext.getCurrentInstance();
             return (EmployeeController) fc.getApplication().getELResolver().
                     getValue(fc.getELContext(), null, "employeeController");
         }
@@ -153,8 +176,5 @@ public class EmployeeController extends ControllerBase {
                 throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + Employee.class.getName());
             }
         }
-        
     }
-    
-  
 }

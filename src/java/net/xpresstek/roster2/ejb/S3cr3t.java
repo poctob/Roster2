@@ -25,7 +25,9 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "S3cr3t.findAll", query = "SELECT s FROM S3cr3t s"),
     @NamedQuery(name = "S3cr3t.findByUserId", query = "SELECT s FROM S3cr3t s WHERE s.s3cr3tPK.userId = :userId"),
     @NamedQuery(name = "S3cr3t.findByPass", query = "SELECT s FROM S3cr3t s WHERE s.s3cr3tPK.pass = :pass"),
+    @NamedQuery(name = "S3cr3t.deleteByUserId", query = "DELETE FROM S3cr3t s WHERE s.s3cr3tPK.userId = :userId"),
     @NamedQuery(name = "S3cr3t.findBySalt", query = "SELECT s FROM S3cr3t s WHERE s.s3cr3tPK.salt = :salt")})
+
 public class S3cr3t implements Serializable {
     private static final long serialVersionUID = 1L;
     @EmbeddedId
