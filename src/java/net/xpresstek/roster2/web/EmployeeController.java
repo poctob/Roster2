@@ -15,7 +15,9 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import net.xpresstek.roster2.ejb.S3cr3t;
 import net.xpresstek.roster2.ejb.S3cr3tPK;
+import net.xpresstek.roster2.ejb.TimeOff;
 import net.xpresstek.roster2.web.S3cr3tController.S3cr3tControllerConverter;
+import net.xpresstek.roster2.web.TimeOffController.TimeOffControllerConverter;
 
 @Named("employeeController")
 @SessionScoped
@@ -70,6 +72,11 @@ public class EmployeeController extends ControllerBase {
     Object getCurrent() {
         return current;
     }
+    
+    public void refresh()
+    {
+        ejbFacade.refresh(current);
+    }
 
     public Employee getEmployee(Integer id) {
         return (Employee) getObject(id);
@@ -89,7 +96,7 @@ public class EmployeeController extends ControllerBase {
     }
 
     @Override
-    void setCurrent(Object obj) {
+    public void setCurrent(Object obj) {
         current = (Employee) obj;
     }
 
@@ -97,7 +104,13 @@ public class EmployeeController extends ControllerBase {
     void createNewCurrent() {
         current = new Employee();
     }
-
+    
+    public void updateTimeOff()
+    {
+        TimeOffController toc=TimeOffControllerConverter.getController();
+        List<TimeOff> tos=toc.findByEmployeeID(current);
+        current.setTimeOffCollection(tos);
+    }
     public List<Employee> getAllItems() {
         return ejbFacade.findAll();
     }

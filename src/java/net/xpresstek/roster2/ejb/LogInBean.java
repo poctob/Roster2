@@ -55,6 +55,11 @@ public class LogInBean {
         return "success";
     }
 
+    /**
+     * Processes login information.  Sets current employee to supplied user name.
+     * Manages messages.
+     * @return String signifying success of the login operation.
+     */
     public String login() {
         RequestContext context = RequestContext.getCurrentInstance();        
         String retval="failure";
@@ -66,6 +71,7 @@ public class LogInBean {
             Employee e = ec.getEmployeeByName(user);
             if (sc.isPasswordCorrect(e.getPkID(), password)) {
                 msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Welcome", user);
+                ec.setCurrent(e);                
                 retval="success";
             } else {
                 loggedIn = false;

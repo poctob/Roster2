@@ -1,5 +1,7 @@
 package net.xpresstek.roster2.web;
 
+import java.util.List;
+import java.util.ResourceBundle;
 import net.xpresstek.roster2.ejb.TimeOffStatus;
 
 import javax.ejb.EJB;
@@ -34,6 +36,23 @@ public class TimeOffStatusController extends ControllerBase  {
     
     public TimeOffStatus getTimeOffStatus(Integer id) {
         return (TimeOffStatus)getObject(id);
+    }
+    
+    public TimeOffStatus getDefaultStatus()
+    {
+        ResourceBundle bundle=ResourceBundle.getBundle("Bundle");
+        List<TimeOffStatus> tos=
+                ejbFacade.findByName(bundle.getString("TimeOffStatusDefaultStatus"));
+        
+        if(tos.size()>0)
+        {
+            return tos.get(0);
+        }
+        else
+        {
+            return null;
+        }
+        
     }
     
 

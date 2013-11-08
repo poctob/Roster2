@@ -12,6 +12,8 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import net.xpresstek.roster2.ejb.Employee;
+import net.xpresstek.roster2.ejb.TimeOffStatus;
 
 
 @Named("timeOffController")
@@ -36,8 +38,23 @@ public class TimeOffController extends ControllerBase {
         return current;
     }
     
+    public void prepareCreate(Employee empl, TimeOffStatus to)
+    {
+        prepareCreate();
+        if(current!=null)
+        {
+            current.setEmployeeid(empl);
+            current.setTimeOffStatusid(to);
+        }
+    }
+    
     public TimeOff getTimeOff(Integer id) {
         return (TimeOff)getObject(id);
+    }
+    
+    public List<TimeOff> findByEmployeeID(Employee empl)
+    {
+        return ejbFacade.findByEmployeeID(empl);
     }
     
     public List<TimeOff> getActiveTimeOffs()
@@ -54,6 +71,15 @@ public class TimeOffController extends ControllerBase {
         }
         Collections.sort(activeTimeOffs, Collections.reverseOrder());
         return activeTimeOffs;
+    }
+    
+    /**
+     * Set current item using primary id key.
+     * @param id Primary id key of the time off item.
+     */
+    public void setCurrentById(Integer id)
+    {
+        setCurrent(getTimeOff(id));
     }
 
     @Override
@@ -77,6 +103,12 @@ public class TimeOffController extends ControllerBase {
             TimeOffController controller = (TimeOffController) facesContext.getApplication().getELResolver().
                     getValue(facesContext.getELContext(), null, "timeOffController");
             return controller.getTimeOff(getKey(value));
+        }
+        
+        public static TimeOffController getController() {
+            FacesContext fc = FacesContext.getCurrentInstance();
+            return (TimeOffController) fc.getApplication().getELResolver().
+                    getValue(fc.getELContext(), null, "timeOffController");
         }
 
         java.lang.Integer getKey(String value) {
