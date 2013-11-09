@@ -13,6 +13,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import javax.faces.model.SelectItem;
 import net.xpresstek.roster2.ejb.S3cr3t;
 import net.xpresstek.roster2.ejb.S3cr3tPK;
 import net.xpresstek.roster2.ejb.TimeOff;
@@ -25,12 +26,48 @@ public class EmployeeController extends ControllerBase {
 
     private Employee current;
     private String password;
+    private List<Employee> filteredEmployees;
+    
+    /**
+     * Filtering options
+     */
+    private SelectItem[] activeOptions;
     @EJB
     private net.xpresstek.roster2.web.EmployeeFacade ejbFacade;
 
     public EmployeeController() {
+        createFilterOptions();
     }
 
+    public List<Employee> getFilteredEmployees() {
+        return filteredEmployees;
+    }
+
+    public void setFilteredEmployees(List<Employee> filteredEmployees) {
+        this.filteredEmployees = filteredEmployees;
+    }
+    
+    public SelectItem[] getActiveOptions() {
+        return activeOptions;
+    }
+
+    public void setActiveOptions(SelectItem[] activeOptions) {
+        this.activeOptions = activeOptions;
+    }
+
+    private void createFilterOptions()
+    {
+        activeOptions=new SelectItem[3];
+        activeOptions[0]=new SelectItem("true", "Active");
+        activeOptions[1]=new SelectItem("false", "Inactive");
+        activeOptions[2]=new SelectItem("", "All");
+    }
+    
+    public String getDefaultFilter()
+    {
+        return "true";
+    }
+    
     public String getPassword() {
         return password;
     }
@@ -60,6 +97,7 @@ public class EmployeeController extends ControllerBase {
     @Override
     public void update() {      
         super.update();
+        super.recreateModel();
         updatePassword();
     }
 
@@ -93,6 +131,12 @@ public class EmployeeController extends ControllerBase {
             }
         }
         return null;
+    }
+    
+    public void prepareEdit(int id)
+    {
+        setCurrent(getEmployee(id));
+        selectedItemIndex=id;
     }
 
     @Override

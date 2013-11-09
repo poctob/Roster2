@@ -18,44 +18,48 @@
 
             <h:form id="dataForm">
                 <p:growl id="growl" showDetail="true" life="10000" />             
+                <p:selectOneMenu id="toFilter"
+                    value="#{timeOffController.current_filter}">
+                    <f:selectItems value="#{timeOffController.filterOptions}"/>
 
+                    <p:ajax event="change" 
+                            update="dataTable" 
+                            partialSubmit="true"
+                            process="toFilter">
+                    </p:ajax>
+                </p:selectOneMenu>
                 <p:dataTable value="#{timeOffController.items}" 
                              var="item" 
                              id="dataTable" 
                              paginator="true" rows="10"  
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
                              rowsPerPageTemplate="5,10,15"
-                             sortBy="#{item.start}"
-                             sortOrder="descending"
                              >
                     <f:facet name="header">  
                         Time Off
                     </f:facet> 
 
-                    <p:column sortBy="#{item.start}" headerText="#{bundle.ListTimeOffTitle_start}">                  
+                    <p:column headerText="#{bundle.ListTimeOffTitle_start}">                  
                         <h:outputText value="#{item.start}">
                             <f:convertDateTime pattern="MM/dd/yyyy hh:mm:ss a" />
                         </h:outputText>
                     </p:column>
 
-                    <p:column sortBy="${item.end}" headerText="#{bundle.ListTimeOffTitle_end}">                      
+                    <p:column headerText="#{bundle.ListTimeOffTitle_end}">                      
                         <h:outputText value="#{item.end}">
                             <f:convertDateTime pattern="MM/dd/yyyy hh:mm:ss a" />
                         </h:outputText>
                     </p:column>
 
-                    <p:column sortBy="${item.timeOffStatusid.name}" 
-                              headerText="#{bundle.ListTimeOffTitle_timeOffStatusName}">                        
+                    <p:column headerText="#{bundle.ListTimeOffTitle_timeOffStatusName}">                        
                         <h:outputText value="#{item.timeOffStatusid.name}"/>
                     </p:column>  
 
-                    <p:column sortBy="#{item.employeeid.name}" 
-                              headerText="#{bundle.ListTimeOffTitle_employeeName}">
+                    <p:column headerText="#{bundle.ListTimeOffTitle_employeeName}">
                         <h:outputText value="#{item.employeeid.name}"/>
                     </p:column>  
-                    
-                    <p:column sortBy="#{item.employeeid.isActive}" 
-                              headerText="#{bundle.ListTimeOffTitle_employeeActive}">
+
+                    <p:column headerText="#{bundle.ListTimeOffTitle_employeeActive}">
                         <h:outputText value="#{item.employeeid.isActive}"/>
                     </p:column>  
 
@@ -76,8 +80,6 @@
                         </p:commandLink>
                     </p:column>
                 </p:dataTable>
-                <p:messages />
-
 
                 <p:remoteCommand name="doDelete" 
                                  actionListener="#{timeOffController.destroy}"
@@ -111,20 +113,19 @@
                 </p:confirmDialog>  
 
                 <h:outputText escape="false" value="#{bundle.ListTimeOffEmpty}" rendered="#{timeOffController.items.rowCount == 0}"/>
-                <p:messages />
             </h:form>
         </ui:define>
-        
+
         <ui:define name="right">
-             <p:outputPanel layout="block">
+            <p:outputPanel layout="block">
                 <h:form id="editForm">
                     <p:commandLink styleClass="no-decor" 
-                                     update="edit_text" 
-                                     action="#{timeOffController.prepareCreate}"
-                                     onclick="javascript:hideSelection('edit_div', false);">
+                                   update="edit_text" 
+                                   action="#{timeOffController.prepareCreate}"
+                                   onclick="javascript:hideSelection('edit_div', false);">
                         <h:graphicImage value="../resources/images/icons/Create.png" alt="create" />                
                     </p:commandLink>
-                    
+
                     <br />
                     <div id="edit_div" class="invisible">
                         <p:outputPanel id="edit_text" layout="block">
@@ -165,16 +166,16 @@
                                 </h:selectOneMenu>                            
                             </h:panelGrid>
                             <p:commandButton value="Update" 
-                                               rendered="#{not empty timeOffController.selected.start}"
-                                               action="#{timeOffController.update}"
-                                               update="editForm, :dataForm:dataTable, :dataForm:growl"
-                                               onclick="javascript:hideSelection('edit_div', true);"/>
+                                             rendered="#{not empty timeOffController.selected.start}"
+                                             action="#{timeOffController.update}"
+                                             update="editForm, :dataForm:dataTable, :dataForm:growl"
+                                             onclick="javascript:hideSelection('edit_div', true);"/>
 
                             <p:commandButton value="Add" 
-                                               rendered="#{empty timeOffController.selected.start}"
-                                               action="#{timeOffController.create}"
-                                               update="editForm, :dataForm:dataTable, :dataForm:growl"
-                                               onclick="javascript:hideSelection('edit_div', true);"/>
+                                             rendered="#{empty timeOffController.selected.start}"
+                                             action="#{timeOffController.create}"
+                                             update="editForm, :dataForm:dataTable, :dataForm:growl"
+                                             onclick="javascript:hideSelection('edit_div', true);"/>
                         </p:outputPanel>
                     </div>
                 </h:form>
