@@ -4,6 +4,7 @@
  */
 package net.xpresstek.roster2.web;
 
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
@@ -24,6 +25,20 @@ public class TimeOffFacade extends AbstractFacade<TimeOff> {
         TypedQuery<TimeOff> query = getEntityManager().
                 createNamedQuery("TimeOff.findByEmployeeID", TimeOff.class);
         query.setParameter("employee_id", empl);
+        return query.getResultList();
+    }
+     
+      public List<TimeOff> findBeforeNow() {
+        TypedQuery<TimeOff> query = getEntityManager().
+                createNamedQuery("TimeOff.findBeforeNow", TimeOff.class);
+        query.setParameter("start", new Date());
+        return query.getResultList();
+    }
+      
+       public List<TimeOff> findAfterAndNow() {
+        TypedQuery<TimeOff> query = getEntityManager().
+                createNamedQuery("TimeOff.findAfterAndNow", TimeOff.class);
+        query.setParameter("start", new Date());
         return query.getResultList();
     }
     

@@ -9,7 +9,6 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.TimeZone;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -36,6 +35,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "TimeOff.findAll", query = "SELECT t FROM TimeOff t"),
     @NamedQuery(name = "TimeOff.findByPkid", query = "SELECT t FROM TimeOff t WHERE t.pkid = :pkid"),
     @NamedQuery(name = "TimeOff.findByStart", query = "SELECT t FROM TimeOff t WHERE t.start = :start"),
+    @NamedQuery(name = "TimeOff.findBeforeNow", query = "SELECT t FROM TimeOff t WHERE t.start < :start"),
+    @NamedQuery(name = "TimeOff.findAfterAndNow", query = "SELECT t FROM TimeOff t WHERE t.start >= :start"),
     @NamedQuery(name = "TimeOff.findByEmployeeID", query = "SELECT t FROM TimeOff t WHERE t.employeeid = :employee_id"),
     @NamedQuery(name = "TimeOff.findByEnd", query = "SELECT t FROM TimeOff t WHERE t.end = :end")})
 public class TimeOff implements Serializable, Comparable {

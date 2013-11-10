@@ -121,11 +121,12 @@
                     </p:dataTable>
                 </h:form>
             </p:outputPanel>
+            <p:sticky target="weekly_panel" /> 
         </ui:define>
 
         <ui:define name="right">
 
-            <p:outputPanel layout="block">
+            <p:outputPanel layout="block" id="rightPanel">
                 <h:form id="date_picker_form">
                     <p:calendar value="#{shiftController.current_date}"
                                 id="current_date"
@@ -272,6 +273,7 @@
 
                 </h:form>
             </p:outputPanel>
+            <p:sticky target="rightPanel" /> 
         </ui:define>
 
     </ui:composition>

@@ -12,7 +12,6 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
-import javax.faces.model.SelectItem;
 import net.xpresstek.roster2.ejb.Employee;
 import net.xpresstek.roster2.ejb.TimeOffStatus;
 
@@ -73,8 +72,12 @@ public class TimeOffController extends ControllerBase {
 
     public List<TimeOff> getFilteredTimeOffs() {
         switch (current_filter) {
-            case "Current + Future": break;
-            case "Previous": break;
+            case "Current + Future": 
+                filteredTimeOffs=ejbFacade.findAfterAndNow();
+                break;
+            case "Previous": 
+                filteredTimeOffs=ejbFacade.findBeforeNow();
+                break;
             case "All": filteredTimeOffs=ejbFacade.findAll();
         }
         return filteredTimeOffs;
@@ -90,6 +93,12 @@ public class TimeOffController extends ControllerBase {
             current.setEmployeeid(empl);
             current.setTimeOffStatusid(to);
         }
+    }
+    
+    public void prepareEdit(int id)
+    {
+        setCurrent(getTimeOff(id));
+        selectedItemIndex=id;
     }
 
     public TimeOff getTimeOff(Integer id) {

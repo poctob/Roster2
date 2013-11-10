@@ -76,8 +76,8 @@ div.visible
     border: none;
     color: inherit;
     background: inherit;
-    margin-left:0;
-    padding-left:0;
+    margin:0;
+    padding:0;
 }
 
 .shiftDataList .ui-datalist-data
@@ -85,16 +85,16 @@ div.visible
     border: none;
     color: inherit;
     background: inherit;
-    margin-left:0;
-    padding-left:0;
+    margin:0;
+    padding:0;
 }
 .shiftDataList .ui-datalist-item
 {
     border: none;
     color: inherit;
     background: inherit;
-    margin-left:0;
-    padding-left:0;
+    margin:0;
+    padding:0;
     text-align: left;
 }
 
