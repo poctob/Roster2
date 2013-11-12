@@ -111,6 +111,11 @@ public class EmployeeController extends ControllerBase {
         return current;
     }
     
+    public Employee getCurrentEmployee()
+    {
+        return current;
+    }
+    
     public void refresh()
     {
         ejbFacade.refresh(current);

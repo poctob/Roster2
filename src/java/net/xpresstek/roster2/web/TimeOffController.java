@@ -95,6 +95,17 @@ public class TimeOffController extends ControllerBase {
         }
     }
     
+    public void createOrUpdate()
+    {
+        if(current.getPkid()!=null)
+        {
+            super.update();
+        }
+        else
+        {
+            super.create();
+        }
+    }
     public void prepareEdit(int id)
     {
         setCurrent(getTimeOff(id));
