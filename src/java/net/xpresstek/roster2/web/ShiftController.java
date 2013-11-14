@@ -100,6 +100,17 @@ public class ShiftController extends ControllerBase {
         reset();
     }
 
+    public List<Shift> getByStartAndEmployee(int id, Date start)
+    {
+        Date dt_start=new Date();
+        if(start!=null)
+        {
+            dt_start=start;
+        }
+        
+        return ejbFacade.findByStartAndEmployee(dt_start, id);
+    }
+    
     public List<ShiftColumn> getShiftColumns() {
 
         if (columns == null || columns.isEmpty()) {

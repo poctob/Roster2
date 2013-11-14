@@ -15,6 +15,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.faces.model.DataModel;
+import net.xpresstek.roster2.ejb.Employee;
 
 @Named("weeklyHoursController")
 @SessionScoped
@@ -59,7 +60,12 @@ public class WeeklyHoursController extends ControllerBase {
     public WeeklyHours getWeeklyHours(String id) {
         return (WeeklyHours) getObject(id);
     }
-
+    
+    public List<WeeklyHours> getWeeklyHoursByEmployee(String name)
+    {
+        return ejbFacade.findByEmployee(name);
+    }
+    
     public List<WeeklyHours> getWeeklyHoursByDate(Date date) {
         Calendar cdate = new GregorianCalendar();
         cdate.setTime(date);

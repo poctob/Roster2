@@ -54,6 +54,7 @@ import net.xpresstek.roster2.web.PositionController.PositionControllerConverter;
         + "(s.start > :start1 AND s.start < :start2) OR"
         + "(s.end > :start1 AND s.end < :start2))"),
     @NamedQuery(name = "Shift.findByPositionIDAndEmployeeIDAndStart", query = "SELECT s FROM Shift s WHERE s.positionID = :positionID AND s.start <= :start1 AND s.end >= :start1 AND s.employeeID = :employeeID"),
+    @NamedQuery(name = "Shift.findByStartAndEmployee", query = "SELECT s FROM Shift s WHERE s.start >= :start AND s.employeeID = :employeeID"),
     @NamedQuery(name = "Shift.findByEnd", query = "SELECT s FROM Shift s WHERE s.end = :end")})
     
 public class Shift implements Serializable {

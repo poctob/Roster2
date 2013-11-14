@@ -18,7 +18,7 @@
     float: left;
     background-color: #ece3a5;
     padding: 5px;
-    width: 30%;
+    width: 35%;
 }
 
 #right {
@@ -37,13 +37,13 @@
 .left_content {
     background-color: #dddddd;
     padding: 5px;
-    margin-left: 31%;
+    margin-left: 36%;
 }
 
 .right_content {
     background-color: #dddddd;
     padding: 5px;
-    margin: 0px 31% 0px 31%;
+    margin: 0px 31% 0px 36%;
 }
 
 #top a:link, #top a:visited {

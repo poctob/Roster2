@@ -92,13 +92,13 @@
                                  >
                         <p:column sortBy="#{toitem.start}" headerText="#{bundle.ListTimeOffTitle_start}">                  
                             <h:outputText value="#{toitem.start}">
-                                <f:convertDateTime pattern="MM/dd/yyyy hh:mm:ss a" />
+                                <f:convertDateTime pattern="MM/dd/yyyy hh:mm a" />
                             </h:outputText>
                         </p:column>
 
                         <p:column sortBy="${toitem.end}" headerText="#{bundle.ListTimeOffTitle_end}">                      
                             <h:outputText value="#{toitem.end}">
-                                <f:convertDateTime pattern="MM/dd/yyyy hh:mm:ss a" />
+                                <f:convertDateTime pattern="MM/dd/yyyy hh:mm a" />
                             </h:outputText>
                         </p:column>
 
@@ -117,8 +117,8 @@
                             </p:commandLink>
                             <p:commandLink styleClass="no-decor"         
                                            action="#{timeOffController.prepareEdit(toitem.pkid)}"
-                                            oncomplete="PF('to_dlg').show()"
-                                            update=":editDialogForm">
+                                           oncomplete="PF('to_dlg').show()"
+                                           update=":editDialogForm">
                                 <h:graphicImage value="../resources/images/icons/Modify.png" alt="edit" />
                             </p:commandLink>
                         </p:column>
@@ -162,16 +162,16 @@
                                         showButtonPanel="true"
                                         showOn="button" 
                                         />    
-                        <p:commandButton id="toSubmitButton" 
-                                         value="Request"                                       
-                                         update=":employeeTimeOffForm, :dataForm:growl"                                         
-                                         actionListener="#{timeOffController.createOrUpdate}"
-                                         oncomplete="PF('to_dlg').hide();"/>  
-            
+                            <p:commandButton id="toSubmitButton" 
+                                             value="Request"                                       
+                                             update=":employeeTimeOffForm, :dataForm:growl"                                         
+                                             actionListener="#{timeOffController.createOrUpdate}"
+                                             oncomplete="PF('to_dlg').hide();"/>  
 
-                        <p:commandButton id="toCancelButton" 
-                                         value="Cancel" 
-                                         onclick="PF('to_dlg').hide();"/>  
+
+                            <p:commandButton id="toCancelButton" 
+                                             value="Cancel" 
+                                             onclick="PF('to_dlg').hide();"/>  
                         </h:panelGrid> 
                     </h:form>  
                 </p:dialog>  
@@ -207,13 +207,37 @@
             </h:form>
         </ui:define>
         <ui:define name="right">
-            <p:dataTable id="scheduleDataTable" 
+            <p:dataTable value="#{shiftController.getByStartAndEmployee
+                                  (employeeController.selected.pkID, null)}"
+                         id="scheduleDataTable" 
                          var="schedule" 
                          >  
-
                 <f:facet name="header">  
                     Schedule 
                 </f:facet>  
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputText value="Start"/>
+                    </f:facet>
+                    <h:outputText value="#{schedule.start}">
+                        <f:convertDateTime pattern="MM/dd/yyyy hh:mm a" />
+                    </h:outputText>
+                </p:column>
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputText value="End"/>
+
+                    </f:facet>
+                    <h:outputText value="#{schedule.end}">
+                        <f:convertDateTime pattern="MM/dd/yyyy hh:mm a" />
+                    </h:outputText>
+                </p:column>
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputText value="Position"/>
+                    </f:facet>
+                    <h:outputText value="#{schedule.positionObject.name}"/>
+                </p:column>
             </p:dataTable>
 
             <p:panel id="dailyPanel" 
@@ -230,6 +254,40 @@
                      closable="false" 
                      toggleSpeed="500" 
                      > 
+                <h:form id="weekly_form">
+                    <p:dataTable value="#{weeklyHoursController.getWeeklyHoursByEmployee
+                                          (employeeController.selected.name)}" 
+                                 var="weeklys"                
+                                 id="weekly_table">
+                        <f:facet name="header">
+                            <h:outputText value="Weekly Hours"/>
+                        </f:facet>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Scheduled"/>
+                            </f:facet>
+                            <h:outputText value="#{weeklys.totalHours}">
+                                <f:convertNumber pattern="#0.00" />
+                            </h:outputText>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Worked"/>
+                            </f:facet>
+                            <h:outputText value="#{weeklys.totalHours}">
+                                <f:convertNumber pattern="#0.00" />
+                            </h:outputText>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Remaining"/>
+                            </f:facet>
+                            <h:outputText value="#{weeklys.totalHours}">
+                                <f:convertNumber pattern="#0.00" />
+                            </h:outputText>
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
             </p:panel>
         </ui:define>
     </ui:composition>
