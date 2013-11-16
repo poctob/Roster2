@@ -88,4 +88,22 @@ public class ShiftFacade extends AbstractFacade<Shift> {
         query.setParameter("start", start);
         return query.getResultList();
     }
+
+    public List<Shift> findTodaysShiftsByEmployee(int empl_id) {
+        Calendar todaystart = new GregorianCalendar();
+        Calendar todayend = new GregorianCalendar();
+        todaystart.set(Calendar.HOUR_OF_DAY, 0);
+        todaystart.set(Calendar.MINUTE, 0);
+        todaystart.set(Calendar.SECOND, 0);
+
+        todayend.set(Calendar.HOUR_OF_DAY, 23);
+        todayend.set(Calendar.MINUTE, 59);
+        todayend.set(Calendar.SECOND, 59);
+        TypedQuery<Shift> query = getEntityManager().
+                createNamedQuery("Shift.findTodaysShiftsByEmployee", Shift.class);
+        query.setParameter("employeeID", empl_id);
+        query.setParameter("daystart", todaystart.getTime());
+        query.setParameter("dayend", todayend.getTime());
+        return query.getResultList();
+    }
 }

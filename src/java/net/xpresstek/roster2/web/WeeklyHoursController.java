@@ -15,7 +15,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.faces.model.DataModel;
-import net.xpresstek.roster2.ejb.Employee;
+
 
 @Named("weeklyHoursController")
 @SessionScoped

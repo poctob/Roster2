@@ -246,6 +246,40 @@
                      closable="false" 
                      toggleSpeed="500" 
                      > 
+                <h:form id="daily_form">
+                    <p:dataTable value="#{shiftController.getTodaysHours
+                                          (employeeController.selected.pkID)}" 
+                                 var="dailys"                
+                                 id="daily_table">
+                        <f:facet name="header">
+                            <h:outputText value="Today Hours"/>
+                        </f:facet>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Scheduled"/>
+                            </f:facet>
+                            <h:outputText value="#{dailys}">
+                                <f:convertNumber pattern="#0.00" />
+                            </h:outputText>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Worked"/>
+                            </f:facet>
+                            <h:outputText value="#{dailys}">
+                                <f:convertNumber pattern="#0.00" />
+                            </h:outputText>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Remaining"/>
+                            </f:facet>
+                            <h:outputText value="#{dailys}">
+                                <f:convertNumber pattern="#0.00" />
+                            </h:outputText>
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
             </p:panel>
 
             <p:panel id="weeklyPanel" 

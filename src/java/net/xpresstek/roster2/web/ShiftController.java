@@ -100,17 +100,19 @@ public class ShiftController extends ControllerBase {
         reset();
     }
 
-    public List<Shift> getByStartAndEmployee(int id, Date start)
-    {
-        Date dt_start=new Date();
-        if(start!=null)
-        {
-            dt_start=start;
+    public List<Shift> getByStartAndEmployee(int id, Date start) {
+        Calendar today = new GregorianCalendar();
+        today.set(Calendar.HOUR_OF_DAY, 0);
+        today.set(Calendar.MINUTE, 0);
+        today.set(Calendar.SECOND, 0);
+        Date dt_start = today.getTime();
+        if (start != null) {
+            dt_start = start;
         }
-        
+
         return ejbFacade.findByStartAndEmployee(dt_start, id);
     }
-    
+
     public List<ShiftColumn> getShiftColumns() {
 
         if (columns == null || columns.isEmpty()) {
@@ -122,9 +124,9 @@ public class ShiftController extends ControllerBase {
             for (Position p : pos) {
                 List<Shift> shifts = ejbFacade.
                         findByPositionIdAndStart(p.getPkID(), current_date);
-              //  if (shifts != null && shifts.size() > 0) {
-                    columns.add(new ShiftColumn(shifts, p));
-            //    }
+                //  if (shifts != null && shifts.size() > 0) {
+                columns.add(new ShiftColumn(shifts, p));
+                //    }
             }
         }
         return columns;
@@ -140,7 +142,7 @@ public class ShiftController extends ControllerBase {
 
     public Object reset() {
 
-        columns = null;        
+        columns = null;
         current_pkid = 0;
         prepareCreate();
         return null;
@@ -204,45 +206,45 @@ public class ShiftController extends ControllerBase {
             return null;
         }
         List<Shift> s = ejbFacade.findByStartandEnd(current.getStart(), current.getEnd());
-        for (Shift sh : s)
-        {
+        for (Shift sh : s) {
             empl.remove(sh.getEmployeeObject());
         }
-        
+
         if (checkCurrentEmployee()) {
             empl.add(current.getEmployeeObject());
         }
         return empl;
     }
-    
-    public boolean checkCurrentEmployee()
-    {
-        if(current_pkid > 0 && current != null)
-        {
-            if(EmployeeController.isEmployeeAllowed(current.getEmployeeObject(),
-                    current.getPositionID(), 
-                     DateUtils.DateToString(current.getStart()),
-                    DateUtils.DateToString(current.getEnd())))
-            {
-                 List<Shift> s = ejbFacade.findByEmployeeIDAndStart
-                         (current.getEmployeeObject().getPkID(), 
-                         current.getStart(),
-                         current.getEnd());
-                  if (s == null || s.isEmpty()) 
-                  {
-                      return true;
-                  }
-                  else if(s.size()==1)
-                  {
-                      Shift shift = s.get(0);
-                      if(shift.getPkid()==current.getPkid())
-                      {
-                          return true;
-                      }
-                  }
+
+    public boolean checkCurrentEmployee() {
+        if (current_pkid > 0 && current != null) {
+            if (EmployeeController.isEmployeeAllowed(current.getEmployeeObject(),
+                    current.getPositionID(),
+                    DateUtils.DateToString(current.getStart()),
+                    DateUtils.DateToString(current.getEnd()))) {
+                List<Shift> s = ejbFacade.findByEmployeeIDAndStart(current.getEmployeeObject().getPkID(),
+                        current.getStart(),
+                        current.getEnd());
+                if (s == null || s.isEmpty()) {
+                    return true;
+                } else if (s.size() == 1) {
+                    Shift shift = s.get(0);
+                    if (shift.getPkid() == current.getPkid()) {
+                        return true;
+                    }
+                }
             }
         }
         return false;
+    }
+
+    public double getTodaysHours(int empl_id) {
+        double retval = 0;
+        List<Shift> shifts = ejbFacade.findTodaysShiftsByEmployee(empl_id);
+        for (Shift s : shifts) {
+            retval += s.getShiftHours();
+        }
+        return retval;
     }
 
     public void processShiftClick(String position, String time) {

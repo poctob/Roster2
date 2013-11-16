@@ -6,6 +6,7 @@ package net.xpresstek.roster2.ejb;
 
 import com.gzlabs.utils.DateUtils;
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -39,24 +40,24 @@ import net.xpresstek.roster2.web.PositionController.PositionControllerConverter;
     @NamedQuery(name = "Shift.findFromStart", query = "SELECT s FROM Shift s WHERE s.start >= :start"),
     @NamedQuery(name = "Shift.findByPeriod", query = "SELECT s FROM Shift s WHERE s.start >= :start AND s.end <= :end"),
     @NamedQuery(name = "Shift.findByPositionIDAndStart", query = "SELECT s FROM Shift s WHERE s.positionID = :positionID AND s.start >= :start1 AND s.start < :start2"),
-    @NamedQuery(name = "Shift.findByEmployeeIDAndStart", query = 
-        "SELECT s FROM Shift s WHERE s.employeeID = :employeeID AND "
-        + "((s.start = :start1 AND s.end = :start2) OR "
-        + "(s.start < :start1 AND s.end > :start1) OR "
-        + "(s.start < :start2 AND s.end > :start2) OR"
-        + "(s.start > :start1 AND s.start < :start2) OR"
-        + "(s.end > :start1 AND s.end < :start2))"),
-      @NamedQuery(name = "Shift.findByStartandEnd", query = 
-        "SELECT s FROM Shift s WHERE "
-        + "((s.start = :start1 AND s.end = :start2) OR "
-        + "(s.start < :start1 AND s.end > :start1) OR "
-        + "(s.start < :start2 AND s.end > :start2) OR"
-        + "(s.start > :start1 AND s.start < :start2) OR"
-        + "(s.end > :start1 AND s.end < :start2))"),
+    @NamedQuery(name = "Shift.findByEmployeeIDAndStart", query =
+            "SELECT s FROM Shift s WHERE s.employeeID = :employeeID AND "
+            + "((s.start = :start1 AND s.end = :start2) OR "
+            + "(s.start < :start1 AND s.end > :start1) OR "
+            + "(s.start < :start2 AND s.end > :start2) OR"
+            + "(s.start > :start1 AND s.start < :start2) OR"
+            + "(s.end > :start1 AND s.end < :start2))"),
+    @NamedQuery(name = "Shift.findByStartandEnd", query =
+            "SELECT s FROM Shift s WHERE "
+            + "((s.start = :start1 AND s.end = :start2) OR "
+            + "(s.start < :start1 AND s.end > :start1) OR "
+            + "(s.start < :start2 AND s.end > :start2) OR"
+            + "(s.start > :start1 AND s.start < :start2) OR"
+            + "(s.end > :start1 AND s.end < :start2))"),
     @NamedQuery(name = "Shift.findByPositionIDAndEmployeeIDAndStart", query = "SELECT s FROM Shift s WHERE s.positionID = :positionID AND s.start <= :start1 AND s.end >= :start1 AND s.employeeID = :employeeID"),
     @NamedQuery(name = "Shift.findByStartAndEmployee", query = "SELECT s FROM Shift s WHERE s.start >= :start AND s.employeeID = :employeeID"),
+    @NamedQuery(name = "Shift.findTodaysShiftsByEmployee", query = "SELECT s FROM Shift s WHERE s.start >= :daystart AND s.start < :dayend AND s.employeeID = :employeeID"),
     @NamedQuery(name = "Shift.findByEnd", query = "SELECT s FROM Shift s WHERE s.end = :end")})
-    
 public class Shift implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -99,7 +100,6 @@ public class Shift implements Serializable {
         this.end = end;
     }
 
-    
     public Integer getPkid() {
         return pkid;
     }
@@ -122,11 +122,11 @@ public class Shift implements Serializable {
 
     public void setPositionID(int positionID) {
         this.positionID = positionID;
-    }        
+    }
 
     public Date getStart() {
         return start;
-    }    
+    }
 
     public void setStart(Date start) {
         this.start = start;
@@ -174,21 +174,28 @@ public class Shift implements Serializable {
      */
     public int isEmployeeOn(int position, String date) {
         boolean start_b = DateUtils.isCalendarBetween(start, end, date, null, true);
-        if (positionID > 0 && employeeID >0 && positionID==position && start_b) {
+        if (positionID > 0 && employeeID > 0 && positionID == position && start_b) {
             return employeeID;
         }
         return 0;
     }
-    
-    public Employee getEmployeeObject()
-    {
+
+    public Employee getEmployeeObject() {
         return EmployeeControllerConverter.getController().
                 getEmployee(employeeID);
     }
-    
-     public Position getPositionObject()
-    {
+
+    public Position getPositionObject() {
         return PositionControllerConverter.getController().
                 getPosition(positionID);
+    }
+
+    /**
+     * Calculates the total number of hours for this shift
+     * @return Shift span in hours
+     */
+    public double getShiftHours() {
+        double milliseconds = end.getTime() - start.getTime();
+        return (milliseconds / 1000) / 3600;
     }
 }
