@@ -84,7 +84,7 @@ public class ClockOutReasons implements Serializable {
 
     @Override
     public String toString() {
-        return "net.xpresstek.roster2.ejb.ClockOutReasons[ pkid=" + pkid + " ]";
+        return name;
     }
     
 }

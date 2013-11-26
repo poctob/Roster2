@@ -15,13 +15,6 @@ import net.xpresstek.roster2.ejb.ClockOutReasons;
  */
 @Stateless
 public class ClockOutReasonsFacade extends AbstractFacade<ClockOutReasons> {
-    @PersistenceContext(unitName = "Roster2PU")
-    private EntityManager em;
-
-    @Override
-    protected EntityManager getEntityManager() {
-        return em;
-    }
 
     public ClockOutReasonsFacade() {
         super(ClockOutReasons.class);

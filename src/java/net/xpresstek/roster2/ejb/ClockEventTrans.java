@@ -32,6 +32,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "ClockEventTrans.findAll", query = "SELECT c FROM ClockEventTrans c"),
     @NamedQuery(name = "ClockEventTrans.findByPkid", query = "SELECT c FROM ClockEventTrans c WHERE c.pkid = :pkid"),
+    @NamedQuery(name = "ClockEventTrans.findLastEvent", query = "SELECT c FROM ClockEventTrans c WHERE c.employeeid = :id ORDER BY c.timestamp DESC"),
     @NamedQuery(name = "ClockEventTrans.findByTimestamp", query = "SELECT c FROM ClockEventTrans c WHERE c.timestamp = :timestamp"),
     @NamedQuery(name = "ClockEventTrans.findByClockOutReasonid", query = "SELECT c FROM ClockEventTrans c WHERE c.clockOutReasonid = :clockOutReasonid")})
 public class ClockEventTrans implements Serializable {
@@ -41,8 +42,6 @@ public class ClockEventTrans implements Serializable {
     @Basic(optional = false)
     @Column(name = "pkid")
     private Integer pkid;
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "timestamp")
     @Temporal(TemporalType.TIMESTAMP)
     private Date timestamp;

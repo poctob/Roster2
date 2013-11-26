@@ -3,11 +3,10 @@
  * and open the template in the editor.
  */
 package net.xpresstek.roster2.web;
-
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import net.xpresstek.roster2.ejb.ClockEventTrans;
+import net.xpresstek.roster2.ejb.Employee;
 
 /**
  *
@@ -15,16 +14,24 @@ import net.xpresstek.roster2.ejb.ClockEventTrans;
  */
 @Stateless
 public class ClockEventTransFacade extends AbstractFacade<ClockEventTrans> {
-    @PersistenceContext(unitName = "Roster2PU")
-    private EntityManager em;
-
-    @Override
-    protected EntityManager getEntityManager() {
-        return em;
-    }
 
     public ClockEventTransFacade() {
         super(ClockEventTrans.class);
+    }
+    
+     /**
+     * Returns last clock event for specified employee
+     * @param employee_id Employee id.
+     * @return last ClockEventTrans matching the id.
+     */
+    public ClockEventTrans getLastEvent(Employee employee_id)
+    {
+        TypedQuery<ClockEventTrans> query = getEntityManager().
+                createNamedQuery("ClockEventTrans.findLastEvent", ClockEventTrans.class);
+        
+        query.setParameter("id", employee_id);
+        query.setMaxResults(1);
+        return query.getSingleResult();
     }
     
 }

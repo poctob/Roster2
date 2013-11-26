@@ -19,6 +19,7 @@
             </h:form>
         </ui:define>   
 
+
         <ui:define name="content">
 
             <h:form id="dataForm">
@@ -26,14 +27,57 @@
 
                 <p:clock />
                 <h:panelGrid columns="1">
-                    <p:commandButton value="Clock In" />
-                    <p:commandButton value="Clock Out" />
-
-                    <h:outputText value="Last event type: "/>
-                    <h:outputText value="Last event time "/>
+                    <p:commandButton value="Clock In" 
+                                     actionListener="#{clockEventTransController.prepareCreate()}"
+                                     action="#{clockEventTransController.
+                                               ClockIn(employeeController.
+                                               currentEmployee)}"
+                                     update="lastEventPanel"/>
+                    <p:commandButton value="Clock Out" 
+                                     onclick="PF('coReason').show()"/>
+                    <p:panel id="lastEventPanel">
+                        <h:panelGrid columns="2" styleClass="editPanel"> 
+                            <h:outputLabel value="Last event type:"/>
+                            <h:outputText value="#{clockEventTransController.getLastEventName
+                                                   (employeeController.
+                                                   currentEmployee)}"/>
+                            <h:outputLabel value="Last event time:"/>
+                            <h:outputText value="#{clockEventTransController.getLastEventTime
+                                                   (employeeController.
+                                                   currentEmployee)}">
+                                <f:convertDateTime pattern="hh:mm dd MMM YYYY"/>
+                            </h:outputText>
+                        </h:panelGrid>
+                    </p:panel>
                 </h:panelGrid>
                 <p:messages />
             </h:form>
+
+            <p:dialog header="Select Clock Out Reason" widgetVar="coReason" resizable="false">  
+                <h:form id="coReasonForm">  
+
+                    <h:panelGrid columns="2" style="margin-bottom:10px">  
+                        <h:outputLabel for="reasons" value="Clock Out Reason:" />  
+                        <p:selectOneMenu value="#{clockEventTransController.reason}" id="reasons">  
+                            <f:selectItems value="#{clockOutReasonsController.itemsAvailableSelectOne}" /> 
+                        </p:selectOneMenu>
+                    </h:panelGrid>  
+
+                    <p:commandButton id="clockOutSubmitButton" 
+                                     value="Submit" 
+                                     actionListener="#{clockEventTransController.prepareCreate()}"
+                                     action="#{clockEventTransController.
+                                               ClockOut(employeeController.
+                                               currentEmployee)}"
+                                     oncomplete="PF('coReason').hide();"
+                                     update=":dataForm:lastEventPanel"/>/>  
+
+                    <p:commandButton id="clockOutCancelButton" 
+                                     value="Cancel" 
+                                     oncomplete="PF('coReason').hide();"/>  
+
+                </h:form>  
+            </p:dialog>  
 
             <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px"> 
                 <f:facet name="start">  
