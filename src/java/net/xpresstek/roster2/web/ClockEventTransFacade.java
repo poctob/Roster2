@@ -3,6 +3,8 @@
  * and open the template in the editor.
  */
 package net.xpresstek.roster2.web;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
 import net.xpresstek.roster2.ejb.ClockEventTrans;
@@ -22,7 +24,7 @@ public class ClockEventTransFacade extends AbstractFacade<ClockEventTrans> {
      /**
      * Returns last clock event for specified employee
      * @param employee_id Employee id.
-     * @return last ClockEventTrans matching the id.
+     * @return last ClockEventTrans matching the id, null if none.
      */
     public ClockEventTrans getLastEvent(Employee employee_id)
     {
@@ -31,7 +33,18 @@ public class ClockEventTransFacade extends AbstractFacade<ClockEventTrans> {
         
         query.setParameter("id", employee_id);
         query.setMaxResults(1);
-        return query.getSingleResult();
+        
+        ClockEventTrans retval=null;
+        try
+        {
+            retval=query.getSingleResult();            
+        }
+        catch(Exception e)
+        {
+             Logger.getLogger(UploadController.class.getName()).
+                    log(Level.INFO, null, e);   
+        }
+        return retval;
     }
     
 }

@@ -15,8 +15,8 @@ import net.xpresstek.roster2.ejb.ClockEvent;
 @Stateless
 public class ClockEventFacade extends AbstractFacade<ClockEvent> {
 
-    private static final String CLOCK_OUT_NAME="ClockOut";
-    private static final String CLOCK_IN_NAME="ClockIn";
+    public static final String CLOCK_OUT_NAME="ClockOut";
+    public static final String CLOCK_IN_NAME="ClockIn";
     
     public ClockEventFacade() {
         super(ClockEvent.class);

@@ -54,7 +54,7 @@ public class ClockEventTransController extends ControllerBase {
     }
 
     /**
-     * Current clock out reason accessor.
+     * Current clock out reason accessors.
      * @return Current clock out reasons
      */
     public ClockOutReasons getReason() {
@@ -97,6 +97,17 @@ public class ClockEventTransController extends ControllerBase {
             return event.getTimestamp();
         }
         return null;
+    }
+    
+    /**
+     * Checks if the employee is clocked in.
+     * @param employee Employee object to check
+     * @return True if employee is currently clocked in, false otherwise.
+     */
+    public boolean isClockedIn(Employee employee)
+    {
+        return getLastEventName(employee).
+                equals(ClockEventFacade.CLOCK_IN_NAME);
     }
 
     

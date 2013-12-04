@@ -27,14 +27,22 @@
 
                 <p:clock />
                 <h:panelGrid columns="1">
-                    <p:commandButton value="Clock In" 
-                                     actionListener="#{clockEventTransController.prepareCreate()}"
-                                     action="#{clockEventTransController.
-                                               ClockIn(employeeController.
-                                               currentEmployee)}"
-                                     update="lastEventPanel"/>
-                    <p:commandButton value="Clock Out" 
-                                     onclick="PF('coReason').show()"/>
+                    <p:panel id="clockInOutButtons">
+                        <p:commandButton value="Clock In" 
+                                         actionListener="#{clockEventTransController.prepareCreate()}"
+                                         action="#{clockEventTransController.
+                                                   ClockIn(employeeController.
+                                                   currentEmployee)}"
+                                         rendered="#{not clockEventTransController.
+                                                     isClockedIn(employeeController.
+                                                     currentEmployee)}"
+                                         update="clockInOutButtons,lastEventPanel"/>
+                        <p:commandButton value="Clock Out" 
+                                         rendered="#{clockEventTransController.
+                                                     isClockedIn(employeeController.
+                                                     currentEmployee)}"
+                                         onclick="PF('coReason').show()"/>
+                    </p:panel>
                     <p:panel id="lastEventPanel">
                         <h:panelGrid columns="2" styleClass="editPanel"> 
                             <h:outputLabel value="Last event type:"/>
@@ -70,7 +78,7 @@
                                                ClockOut(employeeController.
                                                currentEmployee)}"
                                      oncomplete="PF('coReason').hide();"
-                                     update=":dataForm:lastEventPanel"/>/>  
+                                     update=":dataForm:lastEventPanel,:dataForm:clockInOutButtons"/> 
 
                     <p:commandButton id="clockOutCancelButton" 
                                      value="Cancel" 
@@ -292,7 +300,7 @@
                      > 
                 <h:form id="daily_form">
                     <p:dataTable value="#{shiftController.getTodaysHours
-                                          (employeeController.selected.pkID)}" 
+                                          (employeeController.selected)}" 
                                  var="dailys"                
                                  id="daily_table">
                         <f:facet name="header">
@@ -302,7 +310,7 @@
                             <f:facet name="header">
                                 <h:outputText value="Scheduled"/>
                             </f:facet>
-                            <h:outputText value="#{dailys}">
+                            <h:outputText value="#{dailys.scheduledHours}">
                                 <f:convertNumber pattern="#0.00" />
                             </h:outputText>
                         </p:column>
@@ -310,7 +318,7 @@
                             <f:facet name="header">
                                 <h:outputText value="Worked"/>
                             </f:facet>
-                            <h:outputText value="#{dailys}">
+                            <h:outputText value="#{dailys.workedHours}">
                                 <f:convertNumber pattern="#0.00" />
                             </h:outputText>
                         </p:column>
@@ -318,7 +326,7 @@
                             <f:facet name="header">
                                 <h:outputText value="Remaining"/>
                             </f:facet>
-                            <h:outputText value="#{dailys}">
+                            <h:outputText value="#{dailys.remainingHours}">
                                 <f:convertNumber pattern="#0.00" />
                             </h:outputText>
                         </p:column>
@@ -333,8 +341,8 @@
                      toggleSpeed="500" 
                      > 
                 <h:form id="weekly_form">
-                    <p:dataTable value="#{weeklyHoursController.getWeeklyHoursByEmployee
-                                          (employeeController.selected.name)}" 
+                    <p:dataTable value="#{shiftController.getWeeklyHours
+                                          (employeeController.selected)}" 
                                  var="weeklys"                
                                  id="weekly_table">
                         <f:facet name="header">
@@ -344,7 +352,7 @@
                             <f:facet name="header">
                                 <h:outputText value="Scheduled"/>
                             </f:facet>
-                            <h:outputText value="#{weeklys.totalHours}">
+                            <h:outputText value="#{weeklys.scheduledHours}">
                                 <f:convertNumber pattern="#0.00" />
                             </h:outputText>
                         </p:column>
@@ -352,7 +360,7 @@
                             <f:facet name="header">
                                 <h:outputText value="Worked"/>
                             </f:facet>
-                            <h:outputText value="#{weeklys.totalHours}">
+                            <h:outputText value="#{weeklys.workedHours}">
                                 <f:convertNumber pattern="#0.00" />
                             </h:outputText>
                         </p:column>
@@ -360,7 +368,7 @@
                             <f:facet name="header">
                                 <h:outputText value="Remaining"/>
                             </f:facet>
-                            <h:outputText value="#{weeklys.totalHours}">
+                            <h:outputText value="#{weeklys.remainingHours}">
                                 <f:convertNumber pattern="#0.00" />
                             </h:outputText>
                         </p:column>
