@@ -38,13 +38,13 @@
                                        oncomplete="doDelete()">
                             <p:confirm header="Confirmation" message="Are you sure you want to delete this item?" 
                                        icon="ui-icon-alert" />
-                            <h:graphicImage value="../resources/images/icons/Delete.png" alt="delete" />
+                            <h:graphicImage value="resources/images/icons/Delete.png" alt="delete" />
                         </p:commandLink>
                         <p:commandLink styleClass="no-decor" 
                                        update=":editForm:edit_text"          
                                        action="#{privilegeController.prepareEdit}"
                                        onclick="javascript:hideSelection('edit_div', false);">
-                            <h:graphicImage value="../resources/images/icons/Modify.png" alt="edit" />
+                            <h:graphicImage value="resources/images/icons/Modify.png" alt="edit" />
                         </p:commandLink>
                     </p:column>
                 </p:dataTable>
@@ -79,7 +79,7 @@
                                    update="edit_text" 
                                    action="#{privilegeController.prepareCreate}"
                                    onclick="javascript:hideSelection('edit_div', false);">
-                        <h:graphicImage value="../resources/images/icons/Create.png" alt="create" />                
+                        <h:graphicImage value="resources/images/icons/Create.png" alt="create" />                
                     </p:commandLink>
                     <br />
                     <div id="edit_div" class="invisible">

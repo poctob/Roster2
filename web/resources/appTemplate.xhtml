@@ -8,9 +8,9 @@
 
     <h:head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <link href="../resources/css/default.css" rel="stylesheet" type="text/css" />
-        <link href="../resources/css/jsfcrud.css" rel="stylesheet" type="text/css" />
-        <link href="../resources/css/cssLayout.css" rel="stylesheet" type="text/css" />        
+        <link href="resources/css/default.css" rel="stylesheet" type="text/css" />
+        <link href="resources/css/jsfcrud.css" rel="stylesheet" type="text/css" />
+        <link href="resources/css/cssLayout.css" rel="stylesheet" type="text/css" />        
         <script>
             function hideSelection(selectionid, hide) {
                 if (document.getElementById) {
@@ -30,7 +30,13 @@
 
         <div id="top">
             <ui:insert name="top">
-                Top
+                <p:messages />
+                <h:form id="LogoutForm">
+                    <p:commandLink value="Log Out"
+                                   id="submitLogout"
+                                   action="#{logInBean.logout}"
+                                   />
+                </h:form>
             </ui:insert>
         </div>
         <div>
@@ -49,7 +55,7 @@
         </div>  
         <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
             <f:facet name="start">  
-                <p:graphicImage value="../resources/images/ai.gif" />  
+                <p:graphicImage value="resources/images/ai.gif" />  
             </f:facet>  
 
             <f:facet name="complete">  
@@ -59,14 +65,14 @@
 
         <h:form id="menu_form">
             <p:dock>
-                <p:menuitem value="Scheduler" icon="../resources/images/icons/Table.png" url="/faces/shift/List.xhtml"/> 
-                <p:menuitem value="Employees" icon="../resources/images/icons/Users.png" url="/faces/employee/List.xhtml"/>  
-                <p:menuitem value="Positions" icon="../resources/images/icons/Clipboard.png" url="/faces/position/List.xhtml"/>
-                <p:menuitem value="Privileges" icon="../resources/images/icons/Unlock.png" url="/faces/privilege/List.xhtml"/>
-                <p:menuitem value="Time Off" icon="../resources/images/icons/Person.png" url="/faces/timeOff/List.xhtml"/>
-                <p:menuitem value="Calendar" icon="../resources/images/icons/Calendar.png" url="/faces/schedule/List.xhtml"/> 
-                <p:menuitem value="Configuration" icon="../resources/images/icons/Wrench.png" url="/faces/configuration/List.xhtml"/>
-                <p:menuitem value="Upload" icon="../resources/images/icons/Update.png" url="/faces/upload/upload.xhtml"/>
+                <p:menuitem value="Scheduler" icon="resources/images/icons/Table.png" action="#{navigationBean.getPage('shift')}"/> 
+                <p:menuitem value="Employees" icon="resources/images/icons/Users.png" action="#{navigationBean.getPage('employee')}"/>  
+                <p:menuitem value="Positions" icon="resources/images/icons/Clipboard.png" action="#{navigationBean.getPage('position')}" />
+                <p:menuitem value="Privileges" icon="resources/images/icons/Unlock.png" action="#{navigationBean.getPage('privilege')}"/>
+                <p:menuitem value="Time Off" icon="resources/images/icons/Person.png" action="#{navigationBean.getPage('timeOff')}"/>
+                <p:menuitem value="Calendar" icon="resources/images/icons/Calendar.png" action="#{navigationBean.getPage('schedule')}"/> 
+                <p:menuitem value="Configuration" icon="resources/images/icons/Wrench.png" action="#{navigationBean.getPage('configuration')}"/>
+                <p:menuitem value="Upload" icon="resources/images/icons/Update.png" action="#{navigationBean.getPage('upload')}"/>
             </p:dock>
         </h:form>
     </h:body>

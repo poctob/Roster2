@@ -43,6 +43,8 @@ public class Privilege implements Serializable {
     private String name;
     @ManyToMany(mappedBy = "privilegeCollection")
     private Collection<Employee> employeeCollection;
+    
+    public static final String ADMINISTRATOR="Administrator";
 
     public Privilege() {
     }
@@ -99,6 +101,11 @@ public class Privilege implements Serializable {
     @Override
     public String toString() {
         return name;
+    }
+    
+    public boolean isAdministrator()
+    {
+        return this.name.equals(ADMINISTRATOR);
     }
     
 }

@@ -11,6 +11,7 @@
             <h:outputText value="User Panel"></h:outputText>
         </ui:define>
         <ui:define name="top">
+            <p:messages />
             <h:form id="LogoutForm">
                 <p:commandLink value="Log Out"
                                id="submitLogout"
@@ -58,7 +59,7 @@
                         </h:panelGrid>
                     </p:panel>
                 </h:panelGrid>
-                <p:messages />
+               
             </h:form>
 
             <p:dialog header="Select Clock Out Reason" widgetVar="coReason" resizable="false">  
@@ -89,7 +90,7 @@
 
             <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px"> 
                 <f:facet name="start">  
-                    <p:graphicImage  value="../resources/images/ai.gif" />  
+                    <p:graphicImage  value="resources/images/ai.gif" />  
                 </f:facet>  
 
                 <f:facet name="complete" >  
@@ -165,13 +166,13 @@
                                            oncomplete="doDelete()">
                                 <p:confirm header="Confirmation" message="Are you sure you want to delete this item?" 
                                            icon="ui-icon-alert" />
-                                <h:graphicImage value="../resources/images/icons/Delete.png" alt="delete" />
+                                <h:graphicImage value="resources/images/icons/Delete.png" alt="delete" />
                             </p:commandLink>
                             <p:commandLink styleClass="no-decor"         
                                            action="#{timeOffController.prepareEdit(toitem.pkid)}"
                                            oncomplete="PF('to_dlg').show()"
                                            update=":editDialogForm">
-                                <h:graphicImage value="../resources/images/icons/Modify.png" alt="edit" />
+                                <h:graphicImage value="resources/images/icons/Modify.png" alt="edit" />
                             </p:commandLink>
                         </p:column>
 
@@ -231,7 +232,7 @@
             </p:panel>
             <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px"> 
                 <f:facet name="start">  
-                    <p:graphicImage  value="../resources/images/ai.gif" />  
+                    <p:graphicImage  value="resources/images/ai.gif" />  
                 </f:facet>  
 
                 <f:facet name="complete" >  
@@ -255,7 +256,6 @@
                 </p:confirmDialog>  
 
                 <h:outputText escape="false" value="#{bundle.ListTimeOffEmpty}" rendered="#{timeOffController.items.rowCount == 0}"/>
-                <p:messages />
             </h:form>
         </ui:define>
         <ui:define name="right">

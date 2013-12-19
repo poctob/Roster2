@@ -23,35 +23,9 @@
         <managed-bean-class>net.xpresstek.roster2.ejb.LogInBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
-    
-    <navigation-rule>
-        <from-view-id>/login/Login.xhtml</from-view-id>
-
-        <navigation-case>
-            <from-action>#{logInBean.login}</from-action>
-            <from-outcome>success</from-outcome>
-            <to-view-id>/user/List.xhtml</to-view-id>
-            <redirect/>
-        </navigation-case>
-        
-          <navigation-case>
-            <from-action>#{logInBean.login}</from-action>
-            <from-outcome>failure</from-outcome>
-            <to-view-id>/login/Login.xhtml</to-view-id>
-            <redirect/>
-        </navigation-case>
-    </navigation-rule>
-    
-     <navigation-rule>
-        <from-view-id>/user/List.xhtml</from-view-id>
-
-        <navigation-case>
-            <from-action>#{logInBean.logout}</from-action>
-            <from-outcome>success</from-outcome>
-            <to-view-id>/login/Login.xhtml</to-view-id>
-            <redirect/>
-        </navigation-case>
-
-    </navigation-rule>
-
+    <managed-bean>
+        <managed-bean-name>navigationBean</managed-bean-name>
+        <managed-bean-class>net.xpresstek.roster2.ejb.NavigationBean</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
 </faces-config>

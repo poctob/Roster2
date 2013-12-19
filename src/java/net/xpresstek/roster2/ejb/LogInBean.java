@@ -4,6 +4,7 @@
  */
 package net.xpresstek.roster2.ejb;
 
+import java.util.Collection;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import net.xpresstek.roster2.web.EmployeeController;
@@ -18,6 +19,9 @@ import org.primefaces.context.RequestContext;
  */
 public class LogInBean {
 
+    public static final String EMPLOYEE_PAGE="/user/List";
+    public static final String ADMINISTRATOR_PAGE="/shift/List";
+     public static final String LOGIN_PAGE="/index";
     private String user;
     private String password;
     private boolean loggedIn = false;
@@ -49,10 +53,11 @@ public class LogInBean {
     
     public String logout()
     {
+        FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
         this.loggedIn=false;
         this.user="";
         this.password="";
-        return "success";
+        return LOGIN_PAGE;
     }
 
     /**
@@ -61,8 +66,9 @@ public class LogInBean {
      * @return String signifying success of the login operation.
      */
     public String login() {
+        FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
         RequestContext context = RequestContext.getCurrentInstance();        
-        String retval="failure";
+        String retval=null;
 
         if (user != null && password != null) {
             loggedIn = true;
@@ -70,9 +76,9 @@ public class LogInBean {
             EmployeeController ec = EmployeeControllerConverter.getController();
             Employee e = ec.getEmployeeByName(user);
             if (sc.isPasswordCorrect(e.getPkID(), password)) {
-                msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Welcome", user);
+                msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Welcome "+user, user);
                 ec.setCurrent(e);                
-                retval="success";
+                retval=getPrivilegePage(e);
             } else {
                 loggedIn = false;
                 msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Login Error", "Invalid credentials");
@@ -84,6 +90,30 @@ public class LogInBean {
 
         addCurrentMessage();
         context.addCallbackParam("loggedIn", loggedIn);
+        return retval;
+    }
+    
+    /**
+     * Determines navigation page based on the employee privileges
+     * @param employee Employee to check.
+     * @return Navigation page.
+     */
+    private String getPrivilegePage(Employee employee)
+    {
+        String retval=null;
+        if(employee!=null)
+        {
+            retval=EMPLOYEE_PAGE;
+            Collection<Privilege> priv=employee.getPrivilegeCollection();
+            for(Privilege p : priv)
+            {
+                if(p.isAdministrator())
+                {
+                    retval=ADMINISTRATOR_PAGE;
+                    break;
+                }
+            }
+        }
         return retval;
     }
     

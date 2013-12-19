@@ -8,9 +8,9 @@
 
     <h:head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <link href="../resources/css/default.css" rel="stylesheet" type="text/css" />
-        <link href="../resources/css/jsfcrud.css" rel="stylesheet" type="text/css" />
-        <link href="../resources/css/cssLayoutUser.css" rel="stylesheet" type="text/css" />        
+        <link href="resources/css/default.css" rel="stylesheet" type="text/css" />
+        <link href="resources/css/jsfcrud.css" rel="stylesheet" type="text/css" />
+        <link href="resources/css/cssLayoutUser.css" rel="stylesheet" type="text/css" />        
         <script>
             function hideSelection(selectionid, hide) {
                 if (document.getElementById) {
@@ -49,26 +49,13 @@
         </div>  
         <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
             <f:facet name="start">  
-                <p:graphicImage value="../resources/images/ai.gif" />  
+                <p:graphicImage value="resources/images/ai.gif" />  
             </f:facet>  
 
             <f:facet name="complete">  
                 <h:outputText value="" />  
             </f:facet>  
         </p:ajaxStatus>  
-
-        <h:form id="menu_form">
-            <p:dock>
-                <p:menuitem value="Scheduler" icon="../resources/images/icons/Table.png" url="/faces/shift/List.xhtml"/> 
-                <p:menuitem value="Employees" icon="../resources/images/icons/Users.png" url="/faces/employee/List.xhtml"/>  
-                <p:menuitem value="Positions" icon="../resources/images/icons/Clipboard.png" url="/faces/position/List.xhtml"/>
-                <p:menuitem value="Privileges" icon="../resources/images/icons/Unlock.png" url="/faces/privilege/List.xhtml"/>
-                <p:menuitem value="Time Off" icon="../resources/images/icons/Person.png" url="/faces/timeOff/List.xhtml"/>
-                <p:menuitem value="Calendar" icon="../resources/images/icons/Calendar.png" url="/faces/schedule/List.xhtml"/> 
-                <p:menuitem value="Configuration" icon="../resources/images/icons/Wrench.png" url="/faces/configuration/List.xhtml"/>
-                <p:menuitem value="Upload" icon="../resources/images/icons/Update.png" url="/faces/upload/upload.xhtml"/>
-            </p:dock>
-        </h:form>
     </h:body>
 
 </html>

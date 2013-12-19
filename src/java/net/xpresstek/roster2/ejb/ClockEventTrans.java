@@ -40,7 +40,7 @@ import javax.xml.bind.annotation.XmlRootElement;
         + "ND c.employeeid = :employee "
         + "ORDER BY c.timestamp ASC"),
     @NamedQuery(name = "ClockEventTrans.findByClockOutReasonid", query = "SELECT c FROM ClockEventTrans c WHERE c.clockOutReasonid = :clockOutReasonid")})
-public class ClockEventTrans implements Serializable {
+public class ClockEventTrans implements Serializable, Comparable<ClockEventTrans> {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -134,6 +134,11 @@ public class ClockEventTrans implements Serializable {
     @Override
     public String toString() {
         return "net.xpresstek.roster2.ejb.ClockEventTrans[ pkid=" + pkid + " ]";
+    }
+
+    @Override
+    public int compareTo(ClockEventTrans o) {
+        return this.timestamp.compareTo(o.timestamp);
     }
     
 }

@@ -1,15 +1,48 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html">
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
-        <title>Glozone Scheduler</title>
+        <title>ZRoster Login</title>
         <h:outputStylesheet name="css/jsfcrud.css"/>
     </h:head>
-    <h:body>
-       
+    <h:body>       
         <h:link outcome="/shift/List" value="Start Application"/>
-     
+         <p:outputPanel layout="block">
+            <h:form styleClass="jsfcrud_list_form" id="loginForm">
+                <p:growl id="growl" showDetail="true" life="3000" />
+                <h:panelGrid columns="2" cellpadding="5">  
+                    <h:outputText value="User Name: " />  
+                    <p:selectOneMenu
+                        id="user"
+                        value="#{logInBean.user}"
+                        required="true">  
+                        <f:selectItem itemLabel="Select Name" itemValue="" />  
+                        <f:selectItems value="#{employeeController.activeEmployees}" />  
+                    </p:selectOneMenu>   
+                    <h:outputText value="Password: " />  
+                    <p:password id="password"
+                                value="#{logInBean.password}"
+                                required="true"/> 
+                    <p:commandButton value="Submit" 
+                                     id="submit"
+                                     update="growl"
+                                     action="#{logInBean.login}"
+                                     /> 
+                    <p:commandButton value="Clear" id="clear">
+                        <p:ajax update="loginForm" resetValues="true" />
+                    </p:commandButton>
+                </h:panelGrid>
+
+                <p:messages id="messages">  
+                    <p:effect type="pulsate" event="load" delay="1000">  
+                        <f:param name="mode" value="'show'" />  
+                    </p:effect>  
+                </p:messages> 
+            </h:form>
+        </p:outputPanel>
         
     </h:body>
 

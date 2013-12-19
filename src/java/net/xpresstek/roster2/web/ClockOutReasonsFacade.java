@@ -5,8 +5,6 @@
 package net.xpresstek.roster2.web;
 
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import net.xpresstek.roster2.ejb.ClockOutReasons;
 
 /**
