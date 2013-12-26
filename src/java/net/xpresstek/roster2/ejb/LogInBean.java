@@ -4,6 +4,7 @@
  */
 package net.xpresstek.roster2.ejb;
 
+import java.io.Serializable;
 import java.util.Collection;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -17,11 +18,11 @@ import org.primefaces.context.RequestContext;
  *
  * @author apavlune
  */
-public class LogInBean {
+public class LogInBean implements Serializable{
 
-    public static final String EMPLOYEE_PAGE="/user/List";
+    public static final String EMPLOYEE_PAGE="/secured/user/List";
     public static final String ADMINISTRATOR_PAGE="/shift/List";
-     public static final String LOGIN_PAGE="/index";
+    public static final String LOGIN_PAGE="/index";
     private String user;
     private String password;
     private boolean loggedIn = false;
