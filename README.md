@@ -1,4 +1,4 @@
-Roster2
+ZRoster
 =======
 
 Roster as a web app
