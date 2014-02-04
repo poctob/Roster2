@@ -15,17 +15,29 @@
     </application>
     <managed-bean>
         <managed-bean-name>shiftHelper</managed-bean-name>
-        <managed-bean-class>net.xpresstek.roster2.web.ShiftHelper</managed-bean-class>
+        <managed-bean-class>net.xpresstek.zroster.web.ShiftHelper</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
     <managed-bean>
         <managed-bean-name>logInBean</managed-bean-name>
-        <managed-bean-class>net.xpresstek.roster2.ejb.LogInBean</managed-bean-class>
+        <managed-bean-class>net.xpresstek.zroster.ejb.LogInBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
     <managed-bean>
         <managed-bean-name>navigationBean</managed-bean-name>
-        <managed-bean-class>net.xpresstek.roster2.ejb.NavigationBean</managed-bean-class>
+        <managed-bean-class>net.xpresstek.zroster.ejb.NavigationBean</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope>
     </managed-bean>
+    
+    <lifecycle>
+        <phase-listener>net.xpresstek.zroster.security.AuthorizationListener</phase-listener>
+    </lifecycle>
+    
+    <navigation-rule>  
+        <from-view-id>/*</from-view-id>  
+        <navigation-case>  
+            <from-outcome>loginPage</from-outcome>  
+            <to-view-id>/index.xhtml</to-view-id>  
+        </navigation-case>  
+    </navigation-rule>
 </faces-config>

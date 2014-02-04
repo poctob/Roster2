@@ -5,10 +5,6 @@
         <param-value>Development</param-value>
     </context-param>
     <context-param>
-        <param-name>org.richfaces.push.jms</param-name>
-        <param-value>enabled</param-value>
-    </context-param>
-    <context-param>
         <param-name>javax.faces.DATETIMECONVERTER_DEFAULT_TIMEZONE_IS_SYSTEM_TIMEZONE</param-name>
         <param-value>true</param-value>
     </context-param>
@@ -25,23 +21,19 @@
         <servlet-name>Faces Servlet</servlet-name>
         <url-pattern>/faces/*</url-pattern>
     </servlet-mapping>
+
+    <welcome-file-list>
+        <welcome-file>faces/index.xhtml</welcome-file>
+    </welcome-file-list>
+    
+    <error-page>
+        <exception-type>javax.faces.application.ViewExpiredException</exception-type>
+        <location>/</location>
+    </error-page>
+    
     <session-config>
         <session-timeout>
             30
         </session-timeout>
     </session-config>
-    <welcome-file-list>
-        <welcome-file>faces/index.xhtml</welcome-file>
-    </welcome-file-list>
-    
-    <filter>
-        <filter-name>SessionFilter</filter-name>
-        <filter-class>
-            net.xpresstek.roster2.web.util.SessionFilter
-        </filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>SessionFilter</filter-name>
-        <url-pattern>/secured/*</url-pattern>
-    </filter-mapping>
 </web-app>
