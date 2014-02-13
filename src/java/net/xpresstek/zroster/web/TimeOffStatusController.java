@@ -7,24 +7,25 @@ import net.xpresstek.zroster.ejb.TimeOffStatus;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import org.primefaces.event.RowEditEvent;
 
 @Named("timeOffStatusController")
 @SessionScoped
-public class TimeOffStatusController extends ControllerBase  {
+public class TimeOffStatusController extends ControllerBase {
 
     private TimeOffStatus current;
     @EJB
     private net.xpresstek.zroster.web.TimeOffStatusFacade ejbFacade;
 
-
     public TimeOffStatusController() {
     }
 
-     @Override
+    @Override
     AbstractFacade getFacade() {
         return ejbFacade;
     }
@@ -33,37 +34,44 @@ public class TimeOffStatusController extends ControllerBase  {
     Object getCurrent() {
         return current;
     }
-    
+
     public TimeOffStatus getTimeOffStatus(Integer id) {
-        return (TimeOffStatus)getObject(id);
+        return (TimeOffStatus) getObject(id);
     }
-    
-    public TimeOffStatus getDefaultStatus()
-    {
-        ResourceBundle bundle=ResourceBundle.getBundle("Bundle");
-        List<TimeOffStatus> tos=
-                ejbFacade.findByName(bundle.getString("TimeOffStatusDefaultStatus"));
-        
-        if(tos.size()>0)
-        {
+
+    public TimeOffStatus getDefaultStatus() {
+        ResourceBundle bundle = ResourceBundle.getBundle("Bundle");
+        List<TimeOffStatus> tos
+                = ejbFacade.findByName(bundle.getString("TimeOffStatusDefaultStatus"));
+
+        if (tos.size() > 0) {
             return tos.get(0);
-        }
-        else
-        {
+        } else {
             return null;
         }
-        
+
     }
-    
+
+    public void onEdit(RowEditEvent event) {
+        FacesMessage msg = new FacesMessage("TimeOffStatus Edited", ((TimeOffStatus) event.getObject()).getName());
+
+        FacesContext.getCurrentInstance().addMessage(null, msg);
+    }
+
+    public void onEditCancel(RowEditEvent event) {
+        FacesMessage msg = new FacesMessage("TimeOffStatus Edit Cancelled", ((TimeOffStatus) event.getObject()).getName());
+
+        FacesContext.getCurrentInstance().addMessage(null, msg);
+    }
 
     @Override
     void setCurrent(Object obj) {
-        current=(TimeOffStatus)obj;
+        current = (TimeOffStatus) obj;
     }
 
     @Override
     void createNewCurrent() {
-        current=new TimeOffStatus();
+        current = new TimeOffStatus();
     }
 
     @FacesConverter(forClass = TimeOffStatus.class)
