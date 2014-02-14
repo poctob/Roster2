@@ -15,101 +15,12 @@
             <h:form id="dataForm">
                 <p:growl id="growl" showDetail="true" life="10000" />    
 
-                <p:accordionPanel dynamic="true" cache="true" id="dataAccordion">
-                    <p:tab title="General Properties">                       
-                        <p:dataTable value="#{configurationController.items}" 
-                                     var="item1" 
-                                     id="GeneralPropertiesDataTable" 
-                                     paginator="true" rows="10"  
-                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-                                     rowsPerPageTemplate="5,10,15"
-                                     sortBy="#{item1.start}"
-                                     sortOrder="descending"
-                                     >
-                            <f:facet name="header">  
-                                General Properties
-                            </f:facet> 
-                            <p:column>
-                                <f:facet name="header">#{config_bundle.ListConfigurationTitle_configID}</f:facet>
-                                <h:outputText value="#{item1.configID}"/>
-                            </p:column>
-                            <p:column>
-                                <f:facet name="header">#{config_bundle.ListConfigurationTitle_configValue}</f:facet>
-                                <h:outputText value="#{item1.configValue}"/>
-                            </p:column>    
-                             <p:column>
-                                <!--          <p:commandLink styleClass="no-decor"                                                             
-                                                         action="#{configurationController.prepareEdit}"
-                                                         onclick="javascript:hideSelection('edit_div', true);"
-                                                         oncomplete="doDelete()">
-                                              <p:confirm header="Confirmation" message="Are you sure you want to delete this item?" 
-                                                         icon="ui-icon-alert" />
-                                              <h:graphicImage value="resources/images/icons/Delete.png" alt="delete" />
-                                          </p:commandLink>
-                                          <p:commandLink styleClass="no-decor" 
-                                                         update=":editForm:edit_text"          
-                                                         action="#{configurationController.prepareEdit}"
-                                                         onclick="javascript:hideSelection('edit_div', false);">
-                                              <h:graphicImage value="resources/images/icons/Modify.png" alt="edit" />
-                                          </p:commandLink>
-                                -->
-                            </p:column>
-                        </p:dataTable>                           
-                    </p:tab>
-
-                    <p:tab title="Time Off Status">
-
-                            <p:dataTable value="#{timeOffStatusController.items}" 
-                                         var="item2" 
-                                         id="timeOffStatusDataTable" 
-                                         paginator="true" rows="10"  
-                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-                                         rowsPerPageTemplate="5,10,15"
-                                         editable="true"
-                                         >
-                                <f:facet name="header">  
-                                    Time Off Status
-                                </f:facet> 
-
-                                <p:ajax event="rowEdit" listener="#{timeOffStatusController.onEdit}" update=":dataForm:growl"/>  
-                                <p:ajax event="rowEditCancel" listener="#{timeOffStatusController.onEditCancel}" update=":dataForm:growl"/>
-
-                                <p:column headerText="#{bundle.ListPrivilegeTitle_name}" style="width:30%">  
-                                    <p:cellEditor>  
-                                        <f:facet name="output">  
-                                            <h:outputText value="#{item2.name}" />  
-                                        </f:facet>  
-                                        <f:facet name="input">  
-                                            <p:inputText value="#{item2.name}" style="width:100%"/>  
-                                        </f:facet>  
-                                    </p:cellEditor>                                      
-                                </p:column>          
-
-                                <p:column style="width:6%">  
-                                    <p:rowEditor />  
-                                </p:column>  
-
-                            </p:dataTable>
-
-                        <h:form id="TimeOffStatusNewForm">
-                            <p:outputPanel layout="block">
-                                <h:outputLabel value="#{bundle.EditTimeOffStatusLabel_name}" for="timeOffStatusName" />      
-                                <h:inputText id="timeOffStatusName" value="#{timeOffStatusController.selected.name}" 
-                                             rendered="true"
-                                             title="#{bundle.EditPrivilegeTitle_name}" 
-                                             />
-                                <p:commandButton value="Add"  
-                                                 action="#{timeOffStatusController.create}"
-                                                 update="TimeOffStatusNewForm, :dataForm:dataAccordion:timeOffStatusDataTable, :dataForm:growl"
-                                                 process="TimeOffStatusNewForm"
-                                                 />
-                            </p:outputPanel>
-                            <p:remoteCommand name="timeOffPrepareCreate"                                             
-                                             action="#{timeOffStatusController.create}" />  
-
-                        </h:form>
-
-                    </p:tab>
+                <p:accordionPanel dynamic="true" cache="true" id="dataAccordion">                   
+                    
+                   <ui:include src="tab.xhtml" />
+                   <ui:include src="../timeOffStatus/tab.xhtml" />
+                   <ui:include src="../privilege/tab.xhtml" />
+                   <ui:include src="../position/tab.xhtml" />                   
                 </p:accordionPanel>
                 <p:messages />
 
@@ -137,50 +48,7 @@
             </h:form>
         </ui:define>
         <ui:define name="right">
-            <!--
-                        <p:outputPanel layout="block">
-                            <h:form id="editForm">
-                                <p:commandLink styleClass="no-decor" 
-                                               update="edit_text" 
-                                               action="#{configurationController.prepareCreate}"
-                                               onclick="javascript:hideSelection('edit_div', false);">
-                                    <h:graphicImage value="resources/images/icons/Create.png" alt="create" />                
-                                </p:commandLink>
-                                <br />
-                                <div id="edit_div" class="invisible">
-                                    <p:outputPanel id="edit_text" layout="block">
-                                        <h:panelGrid columns="2" styleClass="editPanel"> 
-                                            <h:outputLabel value="#{config_bundle.EditConfigurationLabel_configID}" for="name" />                    
-                                            <h:inputText id="name" value="#{configurationController.selected.configID}" 
-                                                         rendered="true"
-                                                         title="#{config_bundle.EditConfigurationTitle_configID}" 
-                                                         required="true" 
-                                                         requiredMessage="#{config_bundle.EditConfigurationRequiredMessage_configID}"/>
-            
-                                            <h:outputLabel value="#{config_bundle.EditConfigurationLabel_configValue}" for="name" />      
-                                            <h:inputText id="value" value="#{configurationController.selected.configValue}" 
-                                                         rendered="true"
-                                                         title="#{config_bundle.EditConfigurationTitle_configValue}" 
-                                                         />
-                                        </h:panelGrid>
-                                        <p:commandButton value="Update" 
-                                                         rendered="#{not empty configurationController.selected.configID}"
-                                                         action="#{configurationController.update}"
-                                                         update="editForm, :dataForm:dataTable, :dataForm:growl"
-                                                         onclick="javascript:hideSelection('edit_div', true);"/>
-            
-                                        <p:commandButton value="Add" 
-                                                         rendered="#{empty configurationController.selected.configID}"
-                                                         action="#{configurationController.create}"
-                                                         update="editForm, :dataForm:dataTable, :dataForm:growl"
-                                                         onclick="javascript:hideSelection('edit_div', true);"/>
-                                    </p:outputPanel>
-                                </div>
-            
-            
-                            </h:form>
-                        </p:outputPanel>
-            -->
+          
         </ui:define>
     </ui:composition>
 

@@ -51,16 +51,9 @@ public class TimeOffStatusController extends ControllerBase {
 
     }
 
-    public void onEdit(RowEditEvent event) {
-        FacesMessage msg = new FacesMessage("TimeOffStatus Edited", ((TimeOffStatus) event.getObject()).getName());
-
-        FacesContext.getCurrentInstance().addMessage(null, msg);
-    }
-
-    public void onEditCancel(RowEditEvent event) {
-        FacesMessage msg = new FacesMessage("TimeOffStatus Edit Cancelled", ((TimeOffStatus) event.getObject()).getName());
-
-        FacesContext.getCurrentInstance().addMessage(null, msg);
+    public void prepareEdit(int id) {
+        setCurrent(getTimeOffStatus(id));
+        selectedItemIndex = id;
     }
 
     @Override

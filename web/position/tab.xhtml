@@ -1,0 +1,91 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+
+    <p:tab title="Positions">
+
+        <p:dataTable value="#{positionController.items}" 
+                     var="positionItem" 
+                     id="PositionsDataTable" 
+                     paginator="true" rows="10"  
+                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                     rowsPerPageTemplate="5,10,15"
+                     editable="true"                     
+                     >
+            <f:facet name="header">  
+                Positions
+            </f:facet> 
+
+            <p:ajax event="rowEdit" 
+                    listener="#{positionController.onRowEdit}"  
+                    update=":dataForm:growl, PositionsDataTable" />  
+            <p:ajax event="rowEditCancel" 
+                    listener="#{positionController.onRowEditCancel}"  
+                    update=":dataForm:growl, PositionsDataTable" />        
+
+            <p:column>
+                <f:facet name="header">#{bundle.ListPositionTitle_name}</f:facet>
+                <p:cellEditor>  
+                    <f:facet name="output"><h:outputText value="#{positionItem.name} " /></f:facet>  
+                    <f:facet name="input"><p:inputText value="#{positionItem.name}" style="width:96%"/></f:facet>  
+                </p:cellEditor>                
+            </p:column>  
+            <p:column>
+                <f:facet name="header">#{bundle.ListPositionTitle_comment}</f:facet>
+                <p:cellEditor>  
+                    <f:facet name="output"><h:outputText value="#{positionItem.comment} " /></f:facet>  
+                    <f:facet name="input"><p:inputText value="#{positionItem.comment}" style="width:96%"/></f:facet>  
+                </p:cellEditor>                
+            </p:column>            
+
+            <p:column style="width:6%">
+                <p:rowEditor />
+                <p:commandLink action="#{positionController.prepareEdit}" 
+                               oncomplete="doDeletePosition()"
+                               ajax="true" >
+                    <h:outputText styleClass="ui-menuitem-icon ui-icon ui-icon-close" />
+                    <p:confirm header="Confirmation" message="Are you sure you want to delete this item?" 
+                               icon="ui-icon-alert" />
+                </p:commandLink>
+            </p:column>
+
+
+        </p:dataTable>
+
+        <p:remoteCommand name="doDeletePosition" 
+                         actionListener="#{positionController.destroy}"
+                         update="PositionsDataTable"
+                         /> 
+
+        <h:form id="PositionNewForm">
+            <p:outputPanel layout="block">
+
+                <h:panelGrid columns="2" styleClass="editPanel"> 
+                    <h:panelGrid columns="2" styleClass="editPanel"> 
+                        <h:outputLabel value="#{bundle.EditPrivilegeLabel_name}" for="positionName" />                    
+                        <h:inputText id="positionName" value="#{positionController.selected.name}" 
+                                     rendered="true"
+                                     title="#{bundle.EditPrivilegeTitle_name}" 
+                                     required="true" 
+                                     requiredMessage="#{bundle.EditPositionRequiredMessage_name}"/>
+                        <h:outputLabel value="#{bundle.EditPositionLabel_comment}" for="positionComment" />
+                        <h:inputTextarea rows="4" cols="30" id="positionComment" 
+                                         value="#{positionController.selected.comment}" 
+                                         title="#{bundle.EditPositionTitle_comment}" />
+                    </h:panelGrid>
+
+                    <p:commandButton value="Add"  
+                                     action="#{positionController.create}"
+                                     update="PositionNewForm, :dataForm:dataAccordion:PositionsDataTable, :dataForm:growl"
+                                     process="PositionNewForm"
+                                     />
+                </h:panelGrid>
+            </p:outputPanel>                          
+        </h:form>
+
+    </p:tab>
+
+</ui:composition>

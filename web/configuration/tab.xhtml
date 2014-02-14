@@ -1,0 +1,90 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+
+    <p:tab title="General Properties">
+
+        <p:dataTable value="#{configurationController.items}" 
+                     var="item1" 
+                     id="GeneralPropertiesDataTable" 
+                     paginator="true" rows="10"  
+                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                     rowsPerPageTemplate="5,10,15"
+                     sortBy="#{item1.start}"
+                     sortOrder="descending"
+                     editable="true"                     
+                     >
+            <f:facet name="header">  
+                General Properties
+            </f:facet> 
+
+            <p:ajax event="rowEdit" 
+                    listener="#{configurationController.onRowEdit}"  
+                    update=":dataForm:growl, GeneralPropertiesDataTable" />  
+            <p:ajax event="rowEditCancel" 
+                    listener="#{configurationController.onRowEditCancel}"  
+                    update=":dataForm:growl, GeneralPropertiesDataTable" />
+
+            <p:column>
+                <f:facet name="header">#{config_bundle.ListConfigurationTitle_configID}</f:facet> 
+                <h:outputText value="#{item1.configID}"/>
+            </p:column>
+
+            <p:column>
+                <f:facet name="header">#{config_bundle.ListConfigurationTitle_configValue}</f:facet>
+                <p:cellEditor>  
+                    <f:facet name="output"><h:outputText value="#{item1.configValue} " /></f:facet>  
+                    <f:facet name="input"><p:inputText value="#{item1.configValue}" style="width:96%"/></f:facet>  
+                </p:cellEditor>                
+            </p:column>  
+
+            <p:column style="width:6%">
+                <p:rowEditor />
+                <p:commandLink action="#{configurationController.prepareEdit}" 
+                               oncomplete="doDeleteGeneralConfiguration()"
+                               ajax="true" >
+                    <h:outputText styleClass="ui-menuitem-icon ui-icon ui-icon-close" />
+                    <p:confirm header="Confirmation" message="Are you sure you want to delete this item?" 
+                               icon="ui-icon-alert" />
+                </p:commandLink>
+            </p:column>
+
+
+        </p:dataTable>
+
+        <p:remoteCommand name="doDeleteGeneralConfiguration" 
+                         actionListener="#{configurationController.destroy}"
+                         update="GeneralPropertiesDataTable"
+                         /> 
+
+        <h:form id="GeneralPropertiesNewForm">
+            <p:outputPanel layout="block">
+
+                <h:panelGrid columns="2" styleClass="editPanel"> 
+                    <h:outputLabel value="#{config_bundle.EditConfigurationLabel_configID}" for="generalPropertiesName" />                    
+                    <h:inputText id="generalPropertiesName" value="#{configurationController.selected.configID}" 
+                                 rendered="true"
+                                 title="#{config_bundle.EditConfigurationTitle_configID}" 
+                                 required="true" 
+                                 requiredMessage="#{config_bundle.EditConfigurationRequiredMessage_configID}"/>
+
+                    <h:outputLabel value="#{config_bundle.EditConfigurationLabel_configValue}" for="generalPropertiesValue" />      
+                    <h:inputText id="generalPropertiesValue" value="#{configurationController.selected.configValue}" 
+                                 rendered="true"
+                                 title="#{config_bundle.EditConfigurationTitle_configValue}" 
+                                 />
+                </h:panelGrid>  
+                <p:commandButton value="Add"  
+                                 action="#{configurationController.create}"
+                                 update="GeneralPropertiesNewForm, :dataForm:dataAccordion:GeneralPropertiesDataTable, :dataForm:growl"
+                                 process="GeneralPropertiesNewForm"
+                                 />
+            </p:outputPanel>                          
+        </h:form>
+
+    </p:tab>
+
+</ui:composition>

@@ -6,10 +6,14 @@ package net.xpresstek.zroster.web;
 
 import java.io.Serializable;
 import java.util.ResourceBundle;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
+import net.xpresstek.zroster.ejb.TimeOffStatus;
 import net.xpresstek.zroster.web.util.JsfUtil;
+import org.primefaces.event.RowEditEvent;
 
 /**
  *
@@ -147,5 +151,20 @@ public abstract class ControllerBase implements Serializable {
             setCurrent(getFacade().findRange(new int[]{selectedItemIndex, selectedItemIndex + 1}).
                     get(0));
         }
+    }
+    
+     public void onRowEdit(RowEditEvent event) {
+
+        Object newValue = event.getObject();
+
+        if (newValue != null) {
+            setCurrent(newValue);
+            update();           
+        }
+    }
+
+    public void onRowEditCancel(RowEditEvent event) {
+        FacesMessage msg = new FacesMessage("Edit Canceled","Edit Canceled");
+        FacesContext.getCurrentInstance().addMessage(null, msg);
     }
 }

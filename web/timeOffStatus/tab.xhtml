@@ -1,0 +1,72 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+
+    <p:tab title="Time Off Status">
+
+        <p:dataTable value="#{timeOffStatusController.items}" 
+                     var="item2" 
+                     id="timeOffStatusDataTable" 
+                     paginator="true" rows="10"  
+                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                     rowsPerPageTemplate="5,10,15"
+                     editable="true"                     
+                     >
+            <f:facet name="header">  
+                Time Off Status
+            </f:facet> 
+            
+            <p:ajax event="rowEdit" 
+                    listener="#{timeOffStatusController.onRowEdit}"  
+                    update=":dataForm:growl, timeOffStatusDataTable" />  
+            <p:ajax event="rowEditCancel" 
+                    listener="#{timeOffStatusController.onRowEditCancel}"  
+                    update=":dataForm:growl, timeOffStatusDataTable" />
+
+            <p:column headerText="#{bundle.ListPrivilegeTitle_name}" style="width:30%"> 
+                <p:cellEditor>  
+                    <f:facet name="output"><h:outputText value="#{item2.name} " /></f:facet>  
+                    <f:facet name="input"><p:inputText id="modelInput" value="#{item2.name}" style="width:96%"/></f:facet>  
+                </p:cellEditor>  
+            </p:column>  
+
+            <p:column style="width:6%">
+                <p:rowEditor />
+                <p:commandLink action="#{timeOffStatusController.prepareEdit(item2.pkid)}" 
+                    oncomplete="doDeleteTimeOffStatus()"
+                    ajax="true" >
+                     <h:outputText styleClass="ui-menuitem-icon ui-icon ui-icon-close" />
+                      <p:confirm header="Confirmation" message="Are you sure you want to delete this item?" 
+                                       icon="ui-icon-alert" />
+                </p:commandLink>
+            </p:column>
+
+
+        </p:dataTable>
+
+        <p:remoteCommand name="doDeleteTimeOffStatus" 
+                         actionListener="#{timeOffStatusController.destroy}"
+                         update="timeOffStatusDataTable"
+                         /> 
+
+        <h:form id="TimeOffStatusNewForm">
+            <p:outputPanel layout="block">
+                <h:outputLabel value="#{bundle.EditTimeOffStatusLabel_name}" for="timeOffStatusName" />      
+                <h:inputText id="timeOffStatusName" value="#{timeOffStatusController.selected.name}" 
+                             rendered="true"
+                             title="#{bundle.EditPrivilegeTitle_name}" 
+                             />
+                <p:commandButton value="Add"  
+                                 action="#{timeOffStatusController.create}"
+                                 update="TimeOffStatusNewForm, :dataForm:dataAccordion:timeOffStatusDataTable, :dataForm:growl"
+                                 process="TimeOffStatusNewForm"
+                                 />
+            </p:outputPanel>                          
+        </h:form>
+
+    </p:tab>
+
+</ui:composition>
