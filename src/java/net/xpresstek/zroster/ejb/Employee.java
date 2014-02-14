@@ -6,7 +6,6 @@ package net.xpresstek.zroster.ejb;
 
 import java.io.Serializable;
 import java.util.Collection;
-import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;

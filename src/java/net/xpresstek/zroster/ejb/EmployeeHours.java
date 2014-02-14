@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import javax.annotation.PreDestroy;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -32,10 +33,24 @@ public class EmployeeHours {
     private EntityManager entityManager;
 
     public EmployeeHours() {
-        factory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
-        entityManager = factory.createEntityManager();
+     //   factory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
+      //  entityManager = factory.createEntityManager();
     }
-
+    
+    @PreDestroy
+    public void cleanUp()
+    {
+        if(entityManager != null && entityManager.isOpen())
+        {
+            entityManager.close();
+        }
+        
+        if(factory!=null && factory.isOpen())
+        {
+           factory.close();
+        }
+       
+    }
     public double getScheduledHours() {
         return scheduledHours;
     }

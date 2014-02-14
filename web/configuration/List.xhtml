@@ -15,7 +15,7 @@
             <h:form id="dataForm">
                 <p:growl id="growl" showDetail="true" life="10000" />    
 
-                <p:accordionPanel dynamic="true" cache="true">
+                <p:accordionPanel dynamic="true" cache="true" id="dataAccordion">
                     <p:tab title="General Properties">                       
                         <p:dataTable value="#{configurationController.items}" 
                                      var="item1" 
@@ -59,7 +59,6 @@
 
                     <p:tab title="Time Off Status">
 
-                        <h:form id="TimeOffStatusTableForm">
                             <p:dataTable value="#{timeOffStatusController.items}" 
                                          var="item2" 
                                          id="timeOffStatusDataTable" 
@@ -91,7 +90,6 @@
                                 </p:column>  
 
                             </p:dataTable>
-                        </h:form>
 
                         <h:form id="TimeOffStatusNewForm">
                             <p:outputPanel layout="block">
@@ -100,12 +98,15 @@
                                              rendered="true"
                                              title="#{bundle.EditPrivilegeTitle_name}" 
                                              />
-                                <p:commandButton value="Add"                                                  
+                                <p:commandButton value="Add"  
                                                  action="#{timeOffStatusController.create}"
-                                                 update="editForm, :dataForm:dataTable, :dataForm:growl"
-                                                 onstart="#{timeOffStatusController.prepareCreate}"
+                                                 update="TimeOffStatusNewForm, :dataForm:dataAccordion:timeOffStatusDataTable, :dataForm:growl"
+                                                 process="TimeOffStatusNewForm"
                                                  />
                             </p:outputPanel>
+                            <p:remoteCommand name="timeOffPrepareCreate"                                             
+                                             action="#{timeOffStatusController.create}" />  
+
                         </h:form>
 
                     </p:tab>

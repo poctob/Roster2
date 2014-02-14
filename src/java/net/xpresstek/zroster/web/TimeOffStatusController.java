@@ -41,8 +41,7 @@ public class TimeOffStatusController extends ControllerBase {
 
     public TimeOffStatus getDefaultStatus() {
         ResourceBundle bundle = ResourceBundle.getBundle("Bundle");
-        List<TimeOffStatus> tos
-                = ejbFacade.findByName(bundle.getString("TimeOffStatusDefaultStatus"));
+        List<TimeOffStatus> tos = ejbFacade.findByName(bundle.getString("TimeOffStatusDefaultStatus"));
 
         if (tos.size() > 0) {
             return tos.get(0);
