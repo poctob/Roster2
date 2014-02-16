@@ -3,24 +3,40 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui">
 
     <ui:composition template="./../resources/appTemplate.xhtml">
         <ui:define name="title">
-            <h:outputText value="#{bundle.ListShiftTitle}"></h:outputText>
+            <h:outputText value="#{bundle.TimeClockTitle}"></h:outputText>
         </ui:define>
 
+        <ui:define name="top">
+
+        </ui:define> 
+
         <ui:define name="content">                             
+            <h:form id="dataForm">
+                <p:growl id="messages" showDetail="true" />  
 
-            <p:growl id="messages" showDetail="true" />  
-            <p:schedule id="schedule" 
-                        value="#{shiftController.eventModel}"
-                        draggable="false"
-                        resizable="false"
-                        view="agendaWeek"
-                        firstHour="8">
+                <p:dataTable value="#{clockEventTransController.items}" 
+                             var="item" 
+                             id="dataTable" 
+                             paginator="true" rows="10"  
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                             rowsPerPageTemplate="5,10,15"
+                             >
+                    <f:facet name="header">  
+                        Time Clock Events
+                    </f:facet> 
 
-            </p:schedule>
+                    <p:column>
+                        <f:facet name="header">#{bundle.ListEmployeeTitle_name}</f:facet>
+                        <h:outputText value="#{item.pkid}"/>
+                    </p:column>
+
+                </p:dataTable>
+            </h:form>
         </ui:define>
 
 

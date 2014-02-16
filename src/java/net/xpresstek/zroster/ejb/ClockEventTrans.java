@@ -26,21 +26,29 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author apavlune
  */
 @Entity
-@Table(name = "ClockEventTrans")
-@XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "ClockEventTrans.findAll", query = "SELECT c FROM ClockEventTrans c"),
+        @Table(name = "ClockEventTrans")
+        @XmlRootElement
+        @NamedQueries({
+    @NamedQuery(name = "ClockEventTrans.findAll", query = "SELECT c FROM ClockEventTrans c ORDER BY c.timestamp DESC"),
     @NamedQuery(name = "ClockEventTrans.findByPkid", query = "SELECT c FROM ClockEventTrans c WHERE c.pkid = :pkid"),
     @NamedQuery(name = "ClockEventTrans.findLastEvent", query = "SELECT c FROM ClockEventTrans c WHERE c.employeeid = :id ORDER BY c.timestamp DESC"),
     @NamedQuery(name = "ClockEventTrans.findByTimestamp", query = "SELECT c FROM ClockEventTrans c WHERE c.timestamp = :timestamp"),
-    @NamedQuery(name = "ClockEventTrans.findByEmployeeAndInterval", 
-        query = "SELECT c FROM ClockEventTrans c "
-        + "WHERE c.timestamp >= :start "
-        + "AND c.timestamp <= :end A"
-        + "ND c.employeeid = :employee "
-        + "ORDER BY c.timestamp ASC"),
-    @NamedQuery(name = "ClockEventTrans.findByClockOutReasonid", query = "SELECT c FROM ClockEventTrans c WHERE c.clockOutReasonid = :clockOutReasonid")})
+    @NamedQuery(name = "ClockEventTrans.findByEmployeeAndInterval",
+            query = "SELECT c FROM ClockEventTrans c "
+            + "WHERE c.timestamp >= :start "
+            + "AND c.timestamp <= :end A"
+            + "ND c.employeeid = :employee "
+            + "ORDER BY c.timestamp ASC"),
+    @NamedQuery(name = "ClockEventTrans.findByClockOutReasonid", query = "SELECT c FROM ClockEventTrans c WHERE c.clockOutReasonid = :clockOutReasonid"),
+    @NamedQuery(name = "ClockEventTrans.findLastClockIn", query = "SELECT c FROM ClockEventTrans c "
+        + "WHERE c.employeeid = :employee "
+        + "AND c.pkid < :outpkid "
+        + "AND c.clockEventid = :eventid "
+        + "ORDER BY c.timestamp DESC")})
+
+
 public class ClockEventTrans implements Serializable, Comparable<ClockEventTrans> {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,8 +58,9 @@ public class ClockEventTrans implements Serializable, Comparable<ClockEventTrans
     @Column(name = "timestamp")
     @Temporal(TemporalType.TIMESTAMP)
     private Date timestamp;
-    @Column(name = "ClockOutReason_id")
-    private Integer clockOutReasonid;
+    @JoinColumn(name = "ClockOutReason_id", referencedColumnName = "pkid")
+    @ManyToOne(optional = true)
+    private ClockOutReasons clockOutReasonid;
     @JoinColumn(name = "ClockEvent_id", referencedColumnName = "pkid")
     @ManyToOne(optional = false)
     private ClockEvent clockEventid;
@@ -87,11 +96,11 @@ public class ClockEventTrans implements Serializable, Comparable<ClockEventTrans
         this.timestamp = timestamp;
     }
 
-    public Integer getClockOutReasonid() {
+    public ClockOutReasons getClockOutReasonid() {
         return clockOutReasonid;
     }
 
-    public void setClockOutReasonid(Integer clockOutReasonid) {
+    public void setClockOutReasonid(ClockOutReasons clockOutReasonid) {
         this.clockOutReasonid = clockOutReasonid;
     }
 
@@ -140,5 +149,4 @@ public class ClockEventTrans implements Serializable, Comparable<ClockEventTrans
     public int compareTo(ClockEventTrans o) {
         return this.timestamp.compareTo(o.timestamp);
     }
-    
 }

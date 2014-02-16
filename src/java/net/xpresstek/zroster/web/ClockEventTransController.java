@@ -1,6 +1,8 @@
 package net.xpresstek.zroster.web;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import net.xpresstek.zroster.ejb.ClockEventTrans;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -9,6 +11,9 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import javax.faces.model.DataModel;
+import javax.faces.model.SelectItem;
+import net.xpresstek.zroster.ejb.ClockEvent;
 import net.xpresstek.zroster.ejb.ClockOutReasons;
 import net.xpresstek.zroster.ejb.Employee;
 import net.xpresstek.zroster.web.ClockEventController.ClockEventControllerConverter;
@@ -19,6 +24,7 @@ public class ClockEventTransController extends ControllerBase {
 
     private ClockEventTrans current;
     private ClockOutReasons reason;
+    private SelectItem[] availableEmployees; 
     @EJB
     private net.xpresstek.zroster.web.ClockEventTransFacade ejbFacade;
 
@@ -37,6 +43,36 @@ public class ClockEventTransController extends ControllerBase {
         current.setClockEventid(controller.getClockInId());
         super.create();
     }
+    
+    public SelectItem[] getAvailableEmployees()
+    {
+        return availableEmployees;
+    }
+    
+    @Override
+    public DataModel getItems() 
+    {
+        List<ClockEventTrans> items=ejbFacade.findAll();
+        ArrayList<String> names=new ArrayList<String>();
+        names.add("Select");
+        for(ClockEventTrans item : items)
+        {
+            String name=item.getEmployeeid().getName();
+            if(!names.contains(name))
+            {
+                names.add(name);
+            }
+        }
+        
+        availableEmployees=new SelectItem[names.size()];
+        for(int i=0; i<names.size(); i++)
+        {
+            availableEmployees[i]=new SelectItem(names.get(i), names.get(i));
+        }
+        
+        return super.getItems();
+    }
+ 
 
     /**
      * Performs clock out event for specified employee.
@@ -49,7 +85,7 @@ public class ClockEventTransController extends ControllerBase {
         ClockEventController controller =
                 ClockEventControllerConverter.getController();
         current.setClockEventid(controller.getClockOutId());
-        current.setClockOutReasonid(reason.getPkid());
+        current.setClockOutReasonid(reason);
         super.create();
     }
 
@@ -115,9 +151,33 @@ public class ClockEventTransController extends ControllerBase {
     AbstractFacade getFacade() {
         return ejbFacade;
     }
+    
+        public void prepareEdit(int id)
+    {
+        setCurrent(getClockEventTrans(id));
+        selectedItemIndex=id;
+    }
 
     public ClockEventTrans getClockEventTrans(java.lang.Integer id) {
         return ejbFacade.find(id);
+    }
+    
+    public double calculateShiftHours(ClockEventTrans item)
+    {
+        double hours=0;
+        ClockEvent clockout=ClockEventControllerConverter.
+                getController().getClockOutId();
+        
+        if(item!=null && item.getClockEventid().getPkid()==clockout.getPkid())
+        {
+            ClockEventTrans lastlogin=ejbFacade.getLastClockIn
+                    (item.getEmployeeid(), 
+                    item);
+            hours=item.getTimestamp().getTime()
+                    -lastlogin.getTimestamp().getTime();
+        }
+        return hours/(1000*60*60);
+            
     }
 
     @Override

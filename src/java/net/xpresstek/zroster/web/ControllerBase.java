@@ -11,7 +11,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
-import net.xpresstek.zroster.ejb.TimeOffStatus;
 import net.xpresstek.zroster.web.util.JsfUtil;
 import org.primefaces.event.RowEditEvent;
 

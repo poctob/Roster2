@@ -41,6 +41,9 @@ public class NavigationBean {
             case "configuration":
                 retval = "/configuration/List";
                 break;
+            case "timeClock":
+                retval = "/clockEventTrans/List";
+                break;
             case "upload":
                 retval = "/upload/upload";
                 break;

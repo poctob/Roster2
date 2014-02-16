@@ -1,5 +1,6 @@
 package net.xpresstek.zroster.web;
 
+import java.util.List;
 import net.xpresstek.zroster.ejb.ClockOutReasons;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -17,11 +18,17 @@ public class ClockOutReasonsController extends ControllerBase {
     @EJB
     private net.xpresstek.zroster.web.ClockOutReasonsFacade ejbFacade;
 
-
     public ClockOutReasonsController() {
     }
 
-  
+    /**
+     * Retrieves all clock out reasons from the database.
+     *
+     * @return All clock out reasons.
+     */
+    public List<ClockOutReasons> getAllItems() {
+        return ejbFacade.findAll();
+    }
 
     @Override
     AbstractFacade getFacade() {
@@ -41,9 +48,9 @@ public class ClockOutReasonsController extends ControllerBase {
     @Override
     void createNewCurrent() {
         current = new ClockOutReasons();
-    }
-    
-       public ClockOutReasons getClockOutReasons(Integer id) {
+    }   
+
+    public ClockOutReasons getClockOutReasons(Integer id) {
         return (ClockOutReasons) getObject(id);
     }
 

@@ -1,5 +1,6 @@
 package net.xpresstek.zroster.web;
 
+import java.util.List;
 import net.xpresstek.zroster.ejb.ClockEvent;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -47,6 +48,15 @@ public class ClockEventController extends ControllerBase {
     public ClockEvent getClockOutId()
     {
         return ejbFacade.getClockOutEvent();
+    }
+    
+    /**
+     * Retrieves all clock events from the database.
+     * @return All clock events.
+     */
+    public List<ClockEvent> getAllItems()
+    {
+        return ejbFacade.findAll();
     }
     
      /**
