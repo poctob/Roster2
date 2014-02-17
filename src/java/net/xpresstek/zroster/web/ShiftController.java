@@ -16,7 +16,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import net.xpresstek.zroster.ejb.Employee;
-import net.xpresstek.zroster.ejb.EmployeeHours;
 import net.xpresstek.zroster.ejb.Position;
 import net.xpresstek.zroster.ejb.ShiftColumn;
 import net.xpresstek.zroster.web.ConfigurationController.ConfigurationControllerConverter;
@@ -29,8 +28,6 @@ import org.primefaces.model.ScheduleModel;
 @Named("shiftController")
 @SessionScoped
 public class ShiftController extends ControllerBase {
-    @EJB
-    private EmployeeHours employeeHours;
 
     private Shift current;
     private Date current_date;
@@ -241,25 +238,7 @@ public class ShiftController extends ControllerBase {
         return false;
     }
 
-    /**
-     * Sets up employee hours object for today.
-     * @param employee Employee to search for.
-     * @return EmployeeHours object containing todays hours.
-     */
-    public EmployeeHours getTodaysHours(Employee employee) {
-        employeeHours.calculateDailyHours(employee);
-        return employeeHours;
-    }
-    
-     /**
-     * Sets up employee hours object for this week.
-     * @param employee Employee to search for.
-     * @return EmployeeHours object containing weekly hours.
-     */
-    public EmployeeHours getWeeklyHours(Employee employee) {
-        employeeHours.calculateWeeklyHours(employee);
-        return employeeHours;
-    }
+ 
 
     public void processShiftClick(String position, String time) {
         int i;

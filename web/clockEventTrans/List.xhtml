@@ -15,12 +15,14 @@
             <h:form id="dataForm">
                 <p:growl id="messages" showDetail="true" />  
 
-                <p:dataTable value="#{clockEventTransController.items}" 
+                <p:dataTable value="#{clockEventTransController.currentEvents}" 
                              var="item" 
                              id="dataTable" 
-                             paginator="true" rows="10"  
+                             paginator="true" rows="15"  
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
                              rowsPerPageTemplate="5,10,15"
+                             sortBy="#{item.timestamp}"
+                             sortOrder="descending"
                              >
                     <f:facet name="header">  
                         Time Clock Events
@@ -44,7 +46,9 @@
 
                     <p:column>
                         <f:facet name="header">#{bundle.TimeClockShiftHours}</f:facet>
-                        <h:outputText value="#{clockEventTransController.calculateShiftHours(item)}"/>
+                        <h:outputText value="#{clockEventTransController.calculateShiftHours(item)}">
+                            <f:convertNumber pattern="#0.00" />
+                        </h:outputText>
                     </p:column>
 
                     <p:column sortBy="clockOutReasonid.name" headerText="#{bundle.TimeClockOutReason}">                        
@@ -93,9 +97,70 @@
                 <h:outputText escape="false" value="#{bundle.ListClockEventTransEmpty}" rendered="#{clockEventTransController.items.rowCount == 0}"/>
             </h:form>
         </ui:define>
+
+        <ui:define name="left">
+            <p:outputPanel layout="block" id="weekly_panel">
+                <h:form id="weekly_form">
+                    <p:dataTable value="#{weeklyHoursController.
+                                          getDailyHoursByDate
+                                          (clockEventTransController.
+                                          current_date)}" 
+                                 var="weeklys"                
+                                 id="weekly_table">
+                        <f:facet name="header">
+                            <h:outputText value="Daily Hours"/>
+                        </f:facet>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Name"/>
+                            </f:facet>
+                            <h:outputText value="#{weeklys.employee}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Scheduled"/>
+                            </f:facet>
+                            <h:outputText value="#{weeklys.totalHours}">
+                                <f:convertNumber pattern="#0.00" />
+                            </h:outputText>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Worked"/>
+                            </f:facet>
+                            <h:outputText value="#{weeklyHoursController.
+                                                   getDailyWorkedHours
+                                                   (weeklys.employee, 
+                                                   clockEventTransController.
+                                                   current_date)}">
+                                <f:convertNumber pattern="#0.00" />
+                            </h:outputText>
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+            </p:outputPanel>
+            <p:sticky target="weekly_panel" /> 
+        </ui:define>
+
+
         <ui:define name="right">
 
             <p:outputPanel layout="block">
+                <h:form id="date_picker_form">
+                    <p:calendar value="#{clockEventTransController.current_date}"
+                                id="current_date"
+                                pattern="MM/dd/yyyy"
+                                mode="inline"
+                                required="false"  
+                                showButtonPanel="true"
+                                >
+                        <p:ajax   event="dateSelect" 
+                                  process="@this"
+                                  update=":dataForm:dataTable :weekly_form:weekly_table :editForm:edit_text"
+                                  />   
+                    </p:calendar>
+                </h:form>
+                <br />
                 <h:form styleClass="jsfcrud_list_form" id="editForm">
                     <p:commandLink styleClass="no-decor"                                      
                                    update="edit_text" 
@@ -103,7 +168,8 @@
                                    onclick="javascript:hideSelection('edit_div', false);">
                         <h:graphicImage value="resources/images/icons/Create.png" alt="create" />
                     </p:commandLink>
-                    <br />
+
+
                     <div id="edit_div" class="invisible">
                         <p:outputPanel id="edit_text" layout="block">
 
@@ -173,15 +239,17 @@
 
                             <p:commandButton value="Update" 
                                              rendered="#{not empty clockEventTransController.selected.employeeid.name}"
-                                             action="#{clockEventTransController.update}"
-                                             update="editForm, :dataForm:dataTable"
+                                             actionListener="#{clockEventTransController.update}"
+                                             action="#{clockEventTransController.updateCurrentEvents()}"
+                                             update="editForm, :dataForm:dataTable :weekly_form:weekly_table"
                                              onclick="javascript:hideSelection('edit_div', true);"/>
 
                             <p:commandButton value="Add" 
                                              rendered="#{(empty clockEventTransController.selected.pkid) 
                                                          or (clockEventTransController.selected.pkid eq 0)}"
                                              actionListener="#{clockEventTransController.create}"
-                                             update="editForm, :dataForm:dataTable"
+                                             action="#{clockEventTransController.updateCurrentEvents()}"
+                                             update="editForm, :dataForm:dataTable :weekly_form:weekly_table"
                                              onclick="javascript:hideSelection('edit_div', true);"/>
 
                         </p:outputPanel>

@@ -33,6 +33,11 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "ClockEventTrans.findByPkid", query = "SELECT c FROM ClockEventTrans c WHERE c.pkid = :pkid"),
     @NamedQuery(name = "ClockEventTrans.findLastEvent", query = "SELECT c FROM ClockEventTrans c WHERE c.employeeid = :id ORDER BY c.timestamp DESC"),
     @NamedQuery(name = "ClockEventTrans.findByTimestamp", query = "SELECT c FROM ClockEventTrans c WHERE c.timestamp = :timestamp"),
+     @NamedQuery(name = "ClockEventTrans.findByInterval",
+            query = "SELECT c FROM ClockEventTrans c "
+            + "WHERE c.timestamp >= :start "
+            + "AND c.timestamp <= :end "
+            + "ORDER BY c.timestamp ASC"),
     @NamedQuery(name = "ClockEventTrans.findByEmployeeAndInterval",
             query = "SELECT c FROM ClockEventTrans c "
             + "WHERE c.timestamp >= :start "

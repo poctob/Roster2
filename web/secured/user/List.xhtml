@@ -28,8 +28,11 @@
 
                 <p:clock />
                 <h:panelGrid columns="1">
-                    <p:panel id="clockInOutButtons">
+                    <p:panel id="clockInOutButtons" style="height: 80px;">
                         <p:commandButton value="Clock In" 
+                                         styleClass="clockButton"
+                                         style="width: 100%; height:70px;
+                                         background-color: greenyellow;"
                                          actionListener="#{clockEventTransController.prepareCreate()}"
                                          action="#{clockEventTransController.
                                                    ClockIn(employeeController.
@@ -39,6 +42,9 @@
                                                      currentEmployee)}"
                                          update="clockInOutButtons,lastEventPanel"/>
                         <p:commandButton value="Clock Out" 
+                                         style="width: 100%; height:70px;
+                                         background-color: darkorange;"
+                                         styleClass="clockButton"
                                          rendered="#{clockEventTransController.
                                                      isClockedIn(employeeController.
                                                      currentEmployee)}"
@@ -59,7 +65,7 @@
                         </h:panelGrid>
                     </p:panel>
                 </h:panelGrid>
-               
+
             </h:form>
 
             <p:dialog header="Select Clock Out Reason" widgetVar="coReason" resizable="false">  
@@ -299,38 +305,28 @@
                      toggleSpeed="500" 
                      > 
                 <h:form id="daily_form">
-                    <p:dataTable value="#{shiftController.getTodaysHours
-                                          (employeeController.selected)}" 
-                                 var="dailys"                
-                                 id="daily_table">
-                        <f:facet name="header">
-                            <h:outputText value="Today Hours"/>
-                        </f:facet>
-                        <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="Scheduled"/>
-                            </f:facet>
-                            <h:outputText value="#{dailys.scheduledHours}">
-                                <f:convertNumber pattern="#0.00" />
-                            </h:outputText>
-                        </p:column>
-                        <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="Worked"/>
-                            </f:facet>
-                            <h:outputText value="#{dailys.workedHours}">
-                                <f:convertNumber pattern="#0.00" />
-                            </h:outputText>
-                        </p:column>
-                        <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="Remaining"/>
-                            </f:facet>
-                            <h:outputText value="#{dailys.remainingHours}">
-                                <f:convertNumber pattern="#0.00" />
-                            </h:outputText>
-                        </p:column>
-                    </p:dataTable>
+                    <h:panelGrid columns="2" style="width:100%">  
+                        <h:outputText value="Scheduled" /> 
+                        <h:outputText value="#{weeklyHoursController.
+                                               getDailyHoursByEmployee
+                                               (employeeController.selected.name,
+                                               null)}">
+                            <f:convertNumber pattern="#0.00" />
+                        </h:outputText>
+                        <h:outputText value="Worked" />
+                        <h:outputText value="#{weeklyHoursController.getDailyWorkedHours
+                                               (employeeController.selected.name,
+                                               null)}">
+                            <f:convertNumber pattern="#0.00" />
+                        </h:outputText>
+                        <h:outputText value="Remaining" />
+                        <h:outputText value="#{weeklyHoursController.getDailyRemainingHours
+                                               (employeeController.selected.name,
+                                               null)}">
+                            <f:convertNumber pattern="#0.00" />
+                        </h:outputText>
+
+                    </h:panelGrid>                   
                 </h:form>
             </p:panel>
 
@@ -341,38 +337,28 @@
                      toggleSpeed="500" 
                      > 
                 <h:form id="weekly_form">
-                    <p:dataTable value="#{shiftController.getWeeklyHours
-                                          (employeeController.selected)}" 
-                                 var="weeklys"                
-                                 id="weekly_table">
-                        <f:facet name="header">
-                            <h:outputText value="Weekly Hours"/>
-                        </f:facet>
-                        <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="Scheduled"/>
-                            </f:facet>
-                            <h:outputText value="#{weeklys.scheduledHours}">
-                                <f:convertNumber pattern="#0.00" />
-                            </h:outputText>
-                        </p:column>
-                        <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="Worked"/>
-                            </f:facet>
-                            <h:outputText value="#{weeklys.workedHours}">
-                                <f:convertNumber pattern="#0.00" />
-                            </h:outputText>
-                        </p:column>
-                        <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="Remaining"/>
-                            </f:facet>
-                            <h:outputText value="#{weeklys.remainingHours}">
-                                <f:convertNumber pattern="#0.00" />
-                            </h:outputText>
-                        </p:column>
-                    </p:dataTable>
+                    <h:panelGrid columns="2" style="width:100%">  
+                        <h:outputText value="Scheduled" /> 
+                        <h:outputText value="#{weeklyHoursController.
+                                               getWeeklyHoursByEmployeeDouble
+                                               (employeeController.selected.name)}">
+                            <f:convertNumber pattern="#0.00" />
+                        </h:outputText>
+                        <h:outputText value="Worked" />
+                        <h:outputText value="#{weeklyHoursController.getWeeklyWorkedHours
+                                               (employeeController.selected.name
+                                               )}">
+                            <f:convertNumber pattern="#0.00" />
+                        </h:outputText>
+                        <h:outputText value="Remaining" />
+                        <h:outputText value="#{weeklyHoursController.getWeeklyRemainingHours
+                                               (employeeController.selected.name
+                                               )}">
+                            <f:convertNumber pattern="#0.00" />
+                        </h:outputText>
+
+                    </h:panelGrid>     
+
                 </h:form>
             </p:panel>
         </ui:define>

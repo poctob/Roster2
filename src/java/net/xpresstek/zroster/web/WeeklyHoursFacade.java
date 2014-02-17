@@ -40,6 +40,16 @@ public class WeeklyHoursFacade extends AbstractFacade<WeeklyHours> {
         return qry.getResultList();
     }
     
+    public List<WeeklyHours> findTotalForPeriodByEmployee(Date start, Date end, String empl) {
+        String query = "SELECT NEW net.xpresstek.zroster.ejb.WeeklyHours (v.employee, SUM(v.minutes))"
+                + " FROM ViewShifts v WHERE v.start >= :start AND v.end <= :end AND v.employee = :empl";
+        Query qry=getEntityManager().createQuery(query);
+        qry.setParameter("start", start);
+        qry.setParameter("end", end);
+        qry.setParameter("empl", empl);
+        return qry.getResultList();
+    }
+    
     public List<WeeklyHours> findByEmployee(String name) {
          TypedQuery<WeeklyHours> query = getEntityManager().
                 createNamedQuery("WeeklyHours.findByEmployee", WeeklyHours.class);
