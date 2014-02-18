@@ -101,11 +101,11 @@
         <ui:define name="left">
             <p:outputPanel layout="block" id="weekly_panel">
                 <h:form id="weekly_form">
-                    <p:dataTable value="#{weeklyHoursController.
-                                          getDailyHoursByDate
+                    <p:dataTable value="#{employeeController.
+                                          getCurrentEmployeeHours
                                           (clockEventTransController.
-                                          current_date)}" 
-                                 var="weeklys"                
+                                          currentEvents)}" 
+                                 var="ehours"                
                                  id="weekly_table">
                         <f:facet name="header">
                             <h:outputText value="Daily Hours"/>
@@ -114,13 +114,13 @@
                             <f:facet name="header">
                                 <h:outputText value="Name"/>
                             </f:facet>
-                            <h:outputText value="#{weeklys.employee}"/>
+                            <h:outputText value="#{ehours.employee.name}"/>
                         </p:column>
                         <p:column>
                             <f:facet name="header">
                                 <h:outputText value="Scheduled"/>
                             </f:facet>
-                            <h:outputText value="#{weeklys.totalHours}">
+                            <h:outputText value="#{ehours.dayScheduledHours}">
                                 <f:convertNumber pattern="#0.00" />
                             </h:outputText>
                         </p:column>
@@ -128,11 +128,7 @@
                             <f:facet name="header">
                                 <h:outputText value="Worked"/>
                             </f:facet>
-                            <h:outputText value="#{weeklyHoursController.
-                                                   getDailyWorkedHours
-                                                   (weeklys.employee, 
-                                                   clockEventTransController.
-                                                   current_date)}">
+                            <h:outputText value="#{ehours.dayWorkedHours}">
                                 <f:convertNumber pattern="#0.00" />
                             </h:outputText>
                         </p:column>

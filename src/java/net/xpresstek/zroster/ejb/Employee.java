@@ -63,7 +63,7 @@ public class Employee implements Serializable {
     @NotNull
     @Column(name = "IsActive")
     private boolean isActive;
-   // @Pattern(regexp = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message = "Invalid email")//if the field contains email address consider using this annotation to enforce field validation
+    // @Pattern(regexp = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message = "Invalid email")//if the field contains email address consider using this annotation to enforce field validation
     @Size(max = 320)
     @Column(name = "Email")
     private String email;
@@ -86,6 +86,8 @@ public class Employee implements Serializable {
     private Collection<ClockEventTrans> clockEventTransCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "employee")
     private Collection<S3cr3t> s3cr3tCollection;
+
+    
 
     public Employee() {
     }
@@ -125,7 +127,7 @@ public class Employee implements Serializable {
 
     public String getPhone() {
         return phone;
-    } 
+    }
 
     public void setPhone(String phone) {
         this.phone = phone;
@@ -234,7 +236,7 @@ public class Employee implements Serializable {
     public boolean isPositionAllowed(int position) {
         if (positionCollection != null && positionCollection.size() > 0) {
             for (Position pos : positionCollection) {
-                if (pos != null && pos.getPkID()==position) {
+                if (pos != null && pos.getPkID() == position) {
                     return true;
                 }
             }
@@ -264,5 +266,6 @@ public class Employee implements Serializable {
             }
         }
         return true;
-    }
+    }   
+
 }

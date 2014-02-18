@@ -2,7 +2,10 @@ package net.xpresstek.zroster.web;
 
 import com.gzlabs.utils.DateUtils;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import net.xpresstek.zroster.ejb.ClockEventTrans;
 import javax.ejb.EJB;
@@ -12,7 +15,6 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
-import javax.faces.model.DataModel;
 import javax.faces.model.SelectItem;
 import net.xpresstek.zroster.ejb.ClockEvent;
 import net.xpresstek.zroster.ejb.ClockOutReasons;
@@ -40,13 +42,14 @@ public class ClockEventTransController extends ControllerBase {
         str_dt += "00:00:00.0";
 
         current_date = DateUtils.StringToDate(str_dt);
-        updateCurrentEvents();
     }
 
     /**
      * @return currentEvents.
      */
     public List<ClockEventTrans> getCurrentEvents() {
+        
+        updateCurrentEvents();
         return currentEvents;
     }
 
@@ -117,30 +120,10 @@ public class ClockEventTransController extends ControllerBase {
         return availableEmployees;
     }
 
-    /*  @Override
-     public DataModel getItems() {
-     List<ClockEventTrans> items = ejbFacade.findAll();
-     ArrayList<String> names = new ArrayList<String>();
-     names.add("Select");
-     for (ClockEventTrans item : items) {
-     String name = item.getEmployeeid().getName();
-     if (!names.contains(name)) {
-     names.add(name);
-     }
-     }
-
-     availableEmployees = new SelectItem[names.size()];
-     for (int i = 0; i < names.size(); i++) {
-     availableEmployees[i] = new SelectItem(names.get(i), names.get(i));
-     }
-
-     return super.getItems();
-     }*/
     /**
      * Performs clock out event for specified employee.
      *
      * @param employee Employee to clock out.
-     * @param reason Clock out reason.
      */
     public void ClockOut(Employee employee) {
         current.setEmployeeid(employee);
@@ -234,7 +217,93 @@ public class ClockEventTransController extends ControllerBase {
                     - lastlogin.getTimestamp().getTime();
         }
         double sh = hours / (1000 * 60 * 60);
-        return Math.round(sh*4)/4f;
+        return Math.round(sh * 4) / 4f;
+    }
+
+    private double calculateNextDayRollover(ClockEventTrans eventtrans) {
+        double retval = 0;
+        if (eventtrans.getClockEventid().getName()
+                .equals(ClockEventFacade.CLOCK_OUT_NAME)) {
+            Calendar cal = new GregorianCalendar();
+            cal.setTime(eventtrans.getTimestamp());
+            cal.add(Calendar.DAY_OF_MONTH, -1);
+            Date yesterday = cal.getTime();
+
+            List<ClockEventTrans> clockevents
+                    = findClockEventsByEmployeeAndInterval(eventtrans.getEmployeeid(),
+                            TimeUtils.getDayStart(yesterday),
+                            TimeUtils.getDayEnd(yesterday));
+
+            if (clockevents != null && clockevents.size() > 0) {
+                ClockEventTrans lastevent = clockevents.get(clockevents.size() - 1);
+                if (lastevent != null
+                        && lastevent.getClockEventid().getName().
+                        equals(ClockEventFacade.CLOCK_IN_NAME)) {
+                    
+                     double millis =  TimeUtils.getDayEnd(yesterday).getTime()
+                                - lastevent.getTimestamp().getTime();
+                     
+                     millis+= (eventtrans.getTimestamp().getTime() -
+                             TimeUtils.getDayStart
+                             (eventtrans.getTimestamp()).getTime());
+
+                        retval += (millis / 1000) / 3600;
+
+                }
+            }
+
+        }
+        return retval;
+    }
+
+    /**
+     * Calculates worked hours for a specified employee and time period.
+     *
+     * @param employee Employee to calculate time for.
+     * @param start Start of a period
+     * @param end End of a period.
+     * @return Worked hours
+     */
+    public double calculateWorkedHours(Employee employee,
+            Date start,
+            Date end) {
+        List<ClockEventTrans> clockevents
+                = findClockEventsByEmployeeAndInterval(employee, start, end);
+
+        Collections.sort(clockevents);
+
+        double interval = 0;
+        ClockEventTrans eventtrans;
+        for (int i = 0; i < clockevents.size(); i++) {
+
+            eventtrans = clockevents.get(i);
+
+            if (i == 0)
+            {
+                interval += calculateNextDayRollover(eventtrans);
+            }
+
+            if (eventtrans != null
+                    && eventtrans.getClockEventid().getName().
+                    equals(ClockEventFacade.CLOCK_IN_NAME)) {
+
+                int next = i + 1;
+                if (next < clockevents.size()) {
+                    ClockEventTrans next_event = clockevents.get(next);
+                    if (next_event != null
+                            && next_event.getClockEventid().getName()
+                            .equals(ClockEventFacade.CLOCK_OUT_NAME)) {
+                        double millis = next_event.getTimestamp().getTime()
+                                - eventtrans.getTimestamp().getTime();
+
+                        interval += (millis / 1000) / 3600;
+                    }
+                }
+
+            }
+
+        }
+        return Math.round(interval * 4) / 4f;
     }
 
     /**

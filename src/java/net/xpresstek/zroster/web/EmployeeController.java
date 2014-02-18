@@ -1,10 +1,9 @@
 package net.xpresstek.zroster.web;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import net.xpresstek.zroster.ejb.Employee;
-
-
 
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -14,6 +13,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.faces.model.SelectItem;
+import net.xpresstek.zroster.ejb.ClockEventTrans;
+import net.xpresstek.zroster.ejb.EmployeeHours;
 import net.xpresstek.zroster.ejb.S3cr3t;
 import net.xpresstek.zroster.ejb.S3cr3tPK;
 import net.xpresstek.zroster.ejb.TimeOff;
@@ -27,7 +28,8 @@ public class EmployeeController extends ControllerBase {
     private Employee current;
     private String password;
     private List<Employee> filteredEmployees;
-    
+    private EmployeeHours employeeHours;
+
     /**
      * Filtering options
      */
@@ -46,7 +48,7 @@ public class EmployeeController extends ControllerBase {
     public void setFilteredEmployees(List<Employee> filteredEmployees) {
         this.filteredEmployees = filteredEmployees;
     }
-    
+
     public SelectItem[] getActiveOptions() {
         return activeOptions;
     }
@@ -55,19 +57,17 @@ public class EmployeeController extends ControllerBase {
         this.activeOptions = activeOptions;
     }
 
-    private void createFilterOptions()
-    {
-        activeOptions=new SelectItem[3];
-        activeOptions[0]=new SelectItem("true", "Active");
-        activeOptions[1]=new SelectItem("false", "Inactive");
-        activeOptions[2]=new SelectItem("", "All");
+    private void createFilterOptions() {
+        activeOptions = new SelectItem[3];
+        activeOptions[0] = new SelectItem("true", "Active");
+        activeOptions[1] = new SelectItem("false", "Inactive");
+        activeOptions[2] = new SelectItem("", "All");
     }
-    
-    public String getDefaultFilter()
-    {
+
+    public String getDefaultFilter() {
         return "true";
     }
-    
+
     public String getPassword() {
         return password;
     }
@@ -77,7 +77,7 @@ public class EmployeeController extends ControllerBase {
     }
 
     @Override
-    public void create() {        
+    public void create() {
         super.create();
         updatePassword();
     }
@@ -91,11 +91,11 @@ public class EmployeeController extends ControllerBase {
             ((S3cr3t) sc.getCurrent()).setS3cr3tPK(pk);
             sc.update();
         }
-        password="";
+        password = "";
     }
 
     @Override
-    public void update() {      
+    public void update() {
         super.update();
         super.recreateModel();
         updatePassword();
@@ -110,14 +110,12 @@ public class EmployeeController extends ControllerBase {
     Object getCurrent() {
         return current;
     }
-    
-    public Employee getCurrentEmployee()
-    {
+
+    public Employee getCurrentEmployee() {
         return current;
     }
-    
-    public void refresh()
-    {
+
+    public void refresh() {
         ejbFacade.refresh(current);
     }
 
@@ -137,11 +135,10 @@ public class EmployeeController extends ControllerBase {
         }
         return null;
     }
-    
-    public void prepareEdit(int id)
-    {
+
+    public void prepareEdit(int id) {
         setCurrent(getEmployee(id));
-        selectedItemIndex=id;
+        selectedItemIndex = id;
     }
 
     @Override
@@ -153,13 +150,13 @@ public class EmployeeController extends ControllerBase {
     void createNewCurrent() {
         current = new Employee();
     }
-    
-    public void updateTimeOff()
-    {
-        TimeOffController toc=TimeOffControllerConverter.getController();
-        List<TimeOff> tos=toc.findByEmployeeID(current);
+
+    public void updateTimeOff() {
+        TimeOffController toc = TimeOffControllerConverter.getController();
+        List<TimeOff> tos = toc.findByEmployeeID(current);
         current.setTimeOffCollection(tos);
     }
+
     public List<Employee> getAllItems() {
         return ejbFacade.findAll();
     }
@@ -194,6 +191,35 @@ public class EmployeeController extends ControllerBase {
         }
         return false;
     }
+
+    public EmployeeHours getEmployeeHours() {
+        return employeeHours;
+    }
+
+    public void setEmployeeHours(EmployeeHours employeeHours) {
+        this.employeeHours = employeeHours;
+    }
+
+    
+    public List<EmployeeHours> getCurrentEmployeeHours(List<ClockEventTrans> events)
+    {
+        List<EmployeeHours> eh = new ArrayList();
+        List<Employee> processed = new ArrayList();
+        for(ClockEventTrans event : events )
+        {
+            Employee employee=event.getEmployeeid();
+            if(!processed.contains(employee))
+            {
+                EmployeeHours ehours=new EmployeeHours(employee);
+                ehours.calculateHours(event.getTimestamp());
+                eh.add(ehours);
+                processed.add(employee);
+            }
+        }
+        return eh;
+    }
+
+   
 
     @FacesConverter(forClass = Employee.class, value = "employeeControllerConverter")
     public static class EmployeeControllerConverter implements Converter {

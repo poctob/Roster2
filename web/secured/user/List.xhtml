@@ -307,22 +307,21 @@
                 <h:form id="daily_form">
                     <h:panelGrid columns="2" style="width:100%">  
                         <h:outputText value="Scheduled" /> 
-                        <h:outputText value="#{weeklyHoursController.
-                                               getDailyHoursByEmployee
-                                               (employeeController.selected.name,
-                                               null)}">
+                        <h:outputText value="#{employeeController.
+                                               employeeHours.
+                                               dayScheduledHours}">
                             <f:convertNumber pattern="#0.00" />
                         </h:outputText>
                         <h:outputText value="Worked" />
-                        <h:outputText value="#{weeklyHoursController.getDailyWorkedHours
-                                               (employeeController.selected.name,
-                                               null)}">
+                        <h:outputText value="#{employeeController.
+                                               employeeHours.
+                                               dayWorkedHours}">
                             <f:convertNumber pattern="#0.00" />
                         </h:outputText>
                         <h:outputText value="Remaining" />
-                        <h:outputText value="#{weeklyHoursController.getDailyRemainingHours
-                                               (employeeController.selected.name,
-                                               null)}">
+                        <h:outputText value="#{employeeController.
+                                               employeeHours.
+                                               dayRemainingHours}">
                             <f:convertNumber pattern="#0.00" />
                         </h:outputText>
 
@@ -339,21 +338,21 @@
                 <h:form id="weekly_form">
                     <h:panelGrid columns="2" style="width:100%">  
                         <h:outputText value="Scheduled" /> 
-                        <h:outputText value="#{weeklyHoursController.
-                                               getWeeklyHoursByEmployeeDouble
-                                               (employeeController.selected.name)}">
+                        <h:outputText value="#{employeeController.
+                                               employeeHours.
+                                               weekScheduledHours}">
                             <f:convertNumber pattern="#0.00" />
                         </h:outputText>
                         <h:outputText value="Worked" />
-                        <h:outputText value="#{weeklyHoursController.getWeeklyWorkedHours
-                                               (employeeController.selected.name
-                                               )}">
+                        <h:outputText value="#{employeeController.
+                                               employeeHours.
+                                               weekWorkedHours}">
                             <f:convertNumber pattern="#0.00" />
                         </h:outputText>
                         <h:outputText value="Remaining" />
-                        <h:outputText value="#{weeklyHoursController.getWeeklyRemainingHours
-                                               (employeeController.selected.name
-                                               )}">
+                        <h:outputText value="#{employeeController.
+                                               employeeHours.
+                                               weekRemainingHours}">
                             <f:convertNumber pattern="#0.00" />
                         </h:outputText>
 

@@ -11,9 +11,9 @@
         <ui:define name="title">
             <h:outputText value="#{bundle.ListShiftTitle}"></h:outputText>
         </ui:define>
-  
+
         <ui:define name="content">    
-            
+
             <h:form id="table_form">
                 <p:growl id="growl" showDetail="true" life="3000" />  
 
@@ -69,7 +69,10 @@
                 </p:dataTable>
                 <p:remoteCommand name="doDelete" 
                                  actionListener="#{shiftController.deleteShift()}"
-                                 update=":table_form:shift_table :weekly_form:weekly_table :edit_form:edit_text" />         
+                                 update=":table_form:shift_table 
+                                 :weekly_form:weekly_table 
+                                 :edit_form:edit_text 
+                                 :daily_form:daily_table" />         
 
             </h:form>
 
@@ -86,14 +89,15 @@
                 </p:confirmDialog>  
 
                 <h:outputText escape="false" value="#{bundle.ListShiftEmpty}" rendered="#{shiftController.items.rowCount == 0}"/>
-                
+
             </h:form>
         </ui:define>
 
         <ui:define name="left">
             <p:outputPanel layout="block" id="weekly_panel">
                 <h:form id="weekly_form">
-                    <p:dataTable value="#{weeklyHoursController.getWeeklyHoursByDate(shiftController.current_date)}" 
+                    <p:dataTable value="#{shiftController.
+                                          currentEmployeeHours}"
                                  var="weeklys"                
                                  id="weekly_table">
                         <f:facet name="header">
@@ -103,20 +107,65 @@
                             <f:facet name="header">
                                 <h:outputText value="Name"/>
                             </f:facet>
-                            <h:outputText value="#{weeklys.employee}"/>
+                            <h:outputText value="#{weeklys.employee.name}"/>
                         </p:column>
                         <p:column>
                             <f:facet name="header">
-                                <h:outputText value="Hours"/>
+                                <h:outputText value="Scheduled"/>
                             </f:facet>
-                            <h:outputText value="#{weeklys.totalHours}">
+                            <h:outputText value="#{weeklys.weekScheduledHours}">
+                                <f:convertNumber pattern="#0.00" />
+                            </h:outputText>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Worked"/>
+                            </f:facet>
+                            <h:outputText value="#{weeklys.weekWorkedHours}">
+                                <f:convertNumber pattern="#0.00" />
+                            </h:outputText>
+                        </p:column>
+                    </p:dataTable>
+
+                </h:form>
+            </p:outputPanel>
+            <p:sticky target="weekly_panel" /> 
+
+            <p:outputPanel layout="block" id="daily_panel">
+                <h:form id="daily_form">
+                    <p:dataTable value="#{shiftController.
+                                          currentEmployeeHours}"
+                                 var="dailys"                
+                                 id="daily_table">
+                        <f:facet name="header">
+                            <h:outputText value="Daily Hours"/>
+                        </f:facet>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Name"/>
+                            </f:facet>
+                            <h:outputText value="#{dailys.employee.name}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Scheduled"/>
+                            </f:facet>
+                            <h:outputText value="#{dailys.dayScheduledHours}">
+                                <f:convertNumber pattern="#0.00" />
+                            </h:outputText>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Worked"/>
+                            </f:facet>
+                            <h:outputText value="#{dailys.dayWorkedHours}">
                                 <f:convertNumber pattern="#0.00" />
                             </h:outputText>
                         </p:column>
                     </p:dataTable>
                 </h:form>
             </p:outputPanel>
-            <p:sticky target="weekly_panel" /> 
+            <p:sticky target="daily_form" /> 
         </ui:define>
 
         <ui:define name="right">
@@ -132,7 +181,10 @@
                                 >
                         <p:ajax   event="dateSelect" 
                                   process="@this"
-                                  update=":table_form:shift_table :weekly_form:weekly_table :edit_form:edit_text"
+                                  update=":table_form:shift_table 
+                                  :weekly_form:weekly_table 
+                                  :edit_form:edit_text 
+                                  :daily_form:daily_table"
                                   />   
                     </p:calendar>
                 </h:form>
@@ -236,7 +288,10 @@
                                              action="#{shiftController.updateShift}"
                                              process="edit_form"
                                              id="editButton"
-                                             update=":table_form:shift_table :weekly_form:weekly_table :edit_form:edit_text"/>
+                                             update=":table_form:shift_table 
+                                             :weekly_form:weekly_table 
+                                             :edit_form:edit_text 
+                                             :daily_form:daily_table"/>
 
                             <p:commandButton value="Add"                                
                                              process="edit_form"
@@ -245,8 +300,9 @@
                                              rendered="#{(empty shiftController.current_pkid) or 
                                                          (shiftController.current_pkid eq 0)}"
                                              update=":table_form:shift_table 
-                                             :weekly_form:weekly_table 
+                                             :weekly_form:weekly_table                                              
                                              :edit_form:edit_text 
+                                             :daily_form:daily_table 
                                              :table_form:growl"/>                                    
                             <p:commandButton styleClass="no-decor" 
                                              value="Delete"  

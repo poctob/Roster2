@@ -15,9 +15,12 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import net.xpresstek.zroster.ejb.ClockEventTrans;
 import net.xpresstek.zroster.ejb.Employee;
+import net.xpresstek.zroster.ejb.EmployeeHours;
 import net.xpresstek.zroster.ejb.Position;
 import net.xpresstek.zroster.ejb.ShiftColumn;
+import net.xpresstek.zroster.web.ClockEventTransController.ClockEventTransControllerConverter;
 import net.xpresstek.zroster.web.ConfigurationController.ConfigurationControllerConverter;
 import net.xpresstek.zroster.web.EmployeeController.EmployeeControllerConverter;
 import net.xpresstek.zroster.web.PositionController.PositionControllerConverter;
@@ -62,6 +65,18 @@ public class ShiftController extends ControllerBase {
             shiftModel.addEvent(new DefaultScheduleEvent(title, s.getStart(), s.getEnd()));
         }
     }
+    
+     public List<EmployeeHours> getCurrentEmployeeHours()
+     {
+         ClockEventTransController transcontroller=
+                 ClockEventTransControllerConverter.getController();
+         transcontroller.setCurrent_date(current_date);
+         List<ClockEventTrans> events = transcontroller.getCurrentEvents();
+         
+         EmployeeController employeeController = 
+                 EmployeeControllerConverter.getController();
+         return employeeController.getCurrentEmployeeHours(events);
+     }
 
     public ScheduleModel getEventModel() {
         buildModel();
