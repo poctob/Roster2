@@ -30,9 +30,7 @@
                 <h:panelGrid columns="1">
                     <p:panel id="clockInOutButtons" style="height: 80px;">
                         <p:commandButton value="Clock In" 
-                                         styleClass="clockButton"
-                                         style="width: 100%; height:70px;
-                                         background-color: greenyellow;"
+                                         styleClass="clockInButton"                                        
                                          actionListener="#{clockEventTransController.prepareCreate()}"
                                          action="#{clockEventTransController.
                                                    ClockIn(employeeController.
@@ -42,9 +40,7 @@
                                                      currentEmployee)}"
                                          update="clockInOutButtons,lastEventPanel"/>
                         <p:commandButton value="Clock Out" 
-                                         style="width: 100%; height:70px;
-                                         background-color: darkorange;"
-                                         styleClass="clockButton"
+                                         styleClass="clockOutButton"
                                          rendered="#{clockEventTransController.
                                                      isClockedIn(employeeController.
                                                      currentEmployee)}"
@@ -68,6 +64,39 @@
 
             </h:form>
 
+            <p:dialog header="Approval Required" widgetVar="approvalDialog" resizable="false">  
+                <h:form id="approvalDialogForm">  
+
+                    <h:panelGrid columns="2" style="margin-bottom:10px">  
+                        <h:outputLabel for="approvers" value="Name:" />  
+                        <p:selectOneMenu value="#{clockEventTransController.currentApprover}" id="approvers">  
+                            <f:selectItems value="#{employeeController.timeApprovers}" /> 
+                            <f:converter converterId="employeeControllerConverter"/>
+                        </p:selectOneMenu>
+                        <h:outputLabel for="approverPassword" value="Password: " />  
+                        <p:password id="approverPassword"
+                                    value="#{clockEventTransController.approverPassword}"
+                                    required="true"
+                                    autocomplete ="false"
+                                    redisplay="false"/> 
+                    </h:panelGrid>  
+                    
+                     <p:commandButton value="Approve" 
+                                     id="approveSubmit"
+                                     update=":dataForm:growl :dataForm"
+                                     action="#{clockEventTransController.
+                                                   ClockIn(employeeController.
+                                                   currentEmployee)}"
+                                     oncomplete="PF('approvalDialog').hide();"
+                                     /> 
+
+                    <p:commandButton id="clockOutCancelButton" 
+                                     value="Cancel" 
+                                     oncomplete="PF('approvalDialog').hide();"/>  
+
+                </h:form>  
+            </p:dialog> 
+
             <p:dialog header="Select Clock Out Reason" widgetVar="coReason" resizable="false">  
                 <h:form id="coReasonForm">  
 
@@ -85,7 +114,10 @@
                                                ClockOut(employeeController.
                                                currentEmployee)}"
                                      oncomplete="PF('coReason').hide();"
-                                     update=":dataForm:lastEventPanel,:dataForm:clockInOutButtons"/> 
+                                     update=":dataForm:lastEventPanel 
+                                     :dataForm:clockInOutButtons 
+                                     :daily_form 
+                                     :weekly_form"/> 
 
                     <p:commandButton id="clockOutCancelButton" 
                                      value="Cancel" 

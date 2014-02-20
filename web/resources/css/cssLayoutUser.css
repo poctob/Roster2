@@ -98,10 +98,18 @@ div.visible
     text-align: left;
 }
 
-.clockButton.button
+.clockInButton
 {
-    width: 100%;
-    background-color: greenyellow;
+    width: 100% ; 
+    height:70px;
+    background-color: greenyellow !important;
+}
+
+.clockOutButton
+{
+    width: 100% ; 
+    height:70px;
+    background-color: darkorange !important;
 }
 
 #clockInOutButtons

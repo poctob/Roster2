@@ -16,11 +16,12 @@
                 <p:growl id="growl" showDetail="true" life="10000" />    
 
                 <p:accordionPanel dynamic="true" cache="true" id="dataAccordion">                   
-                    
-                   <ui:include src="tab.xhtml" />
-                   <ui:include src="../timeOffStatus/tab.xhtml" />
-                   <ui:include src="../privilege/tab.xhtml" />
-                   <ui:include src="../position/tab.xhtml" />                   
+
+                    <ui:include src="tab.xhtml" />
+                    <ui:include src="../timeOffStatus/tab.xhtml" />
+                    <ui:include src="../privilege/tab.xhtml" />
+                    <ui:include src="../position/tab.xhtml" />    
+                    <ui:include src="../clockOutReasons/tab.xhtml" />   
                 </p:accordionPanel>
                 <p:messages />
 
@@ -48,7 +49,7 @@
             </h:form>
         </ui:define>
         <ui:define name="right">
-          
+
         </ui:define>
     </ui:composition>
 

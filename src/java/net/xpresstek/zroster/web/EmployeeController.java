@@ -164,6 +164,11 @@ public class EmployeeController extends ControllerBase {
     public List<Employee> getActiveEmployees() {
         return ejbFacade.findActive();
     }
+    
+    public List<Employee> getTimeApprovers()
+    {
+        return ejbFacade.findByPrivilege("TIME APPROVAL");
+    }
 
     public List<Employee> getAllowedItems(int position, String start, String end) {
         if (position <= 0 || start == null || end == null) {
@@ -193,7 +198,22 @@ public class EmployeeController extends ControllerBase {
     }
 
     public EmployeeHours getEmployeeHours() {
+        if(employeeHours == null)
+        {
+            employeeHours=new EmployeeHours(current);      
+            employeeHours.calculateHours(null);
+        }
+        
         return employeeHours;
+    }
+    
+    public void updateEmployeeHours()
+    {
+        if(employeeHours == null)
+        {
+            employeeHours=new EmployeeHours(current);                      
+        }
+        employeeHours.calculateHours(null);
     }
 
     public void setEmployeeHours(EmployeeHours employeeHours) {
@@ -215,6 +235,25 @@ public class EmployeeController extends ControllerBase {
                 eh.add(ehours);
                 processed.add(employee);
             }
+        }
+        return eh;
+    }
+    
+    /**
+     * Calculates hours for all employees.
+     * @param date Date to calculate hours for
+     * @param active Get active only
+     * @return 
+     */
+    public List<EmployeeHours> getCurrentEmployeeHours(Date date, boolean active)
+    {
+        List<EmployeeHours> eh = new ArrayList();
+        List<Employee> employees = active?getActiveEmployees():getAllItems();
+        for(Employee employee : employees )
+        {
+                EmployeeHours ehours=new EmployeeHours(employee);
+                ehours.calculateHours(date);
+                eh.add(ehours);
         }
         return eh;
     }

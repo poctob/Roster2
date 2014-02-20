@@ -7,59 +7,57 @@
 
     <p:tab title="General Properties">
 
-        <p:dataTable value="#{configurationController.items}" 
-                     var="item1" 
-                     id="GeneralPropertiesDataTable" 
-                     paginator="true" rows="10"  
-                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-                     rowsPerPageTemplate="5,10,15"
-                     sortBy="#{item1.start}"
-                     sortOrder="descending"
-                     editable="true"                     
-                     >
-            <f:facet name="header">  
-                General Properties
-            </f:facet> 
+        <h:form id="ConfigurationDataForm">
+            <p:dataTable value="#{configurationController.items}" 
+                         var="item1" 
+                         id="GeneralPropertiesDataTable" 
+                         paginator="true" rows="10"  
+                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                         rowsPerPageTemplate="5,10,15"
+                         sortBy="#{item1.start}"
+                         sortOrder="descending"
+                         editable="true"                     
+                         >
+                <f:facet name="header">  
+                    General Properties
+                </f:facet> 
 
-            <p:ajax event="rowEdit" 
-                    listener="#{configurationController.onRowEdit}"  
-                    update=":dataForm:growl, GeneralPropertiesDataTable" />  
-            <p:ajax event="rowEditCancel" 
-                    listener="#{configurationController.onRowEditCancel}"  
-                    update=":dataForm:growl, GeneralPropertiesDataTable" />
+                <p:ajax event="rowEdit" 
+                        listener="#{configurationController.onRowEdit}"  
+                        update=":dataForm:growl, GeneralPropertiesDataTable" />  
+                <p:ajax event="rowEditCancel" 
+                        listener="#{configurationController.onRowEditCancel}"  
+                        update=":dataForm:growl, GeneralPropertiesDataTable" />
 
-            <p:column>
-                <f:facet name="header">#{config_bundle.ListConfigurationTitle_configID}</f:facet> 
-                <h:outputText value="#{item1.configID}"/>
-            </p:column>
+                <p:column>
+                    <f:facet name="header">#{config_bundle.ListConfigurationTitle_configID}</f:facet> 
+                    <h:outputText value="#{item1.configID}"/>
+                </p:column>
 
-            <p:column>
-                <f:facet name="header">#{config_bundle.ListConfigurationTitle_configValue}</f:facet>
-                <p:cellEditor>  
-                    <f:facet name="output"><h:outputText value="#{item1.configValue} " /></f:facet>  
-                    <f:facet name="input"><p:inputText value="#{item1.configValue}" style="width:96%"/></f:facet>  
-                </p:cellEditor>                
-            </p:column>  
+                <p:column>
+                    <f:facet name="header">#{config_bundle.ListConfigurationTitle_configValue}</f:facet>
+                    <p:cellEditor>  
+                        <f:facet name="output"><h:outputText value="#{item1.configValue} " /></f:facet>  
+                        <f:facet name="input"><p:inputText value="#{item1.configValue}" style="width:96%"/></f:facet>  
+                    </p:cellEditor>                
+                </p:column>  
 
-            <p:column style="width:6%">
-                <p:rowEditor />
-                <p:commandLink action="#{configurationController.prepareEdit}" 
-                               oncomplete="doDeleteGeneralConfiguration()"
-                               ajax="true" >
-                    <h:outputText styleClass="ui-menuitem-icon ui-icon ui-icon-close" />
-                    <p:confirm header="Confirmation" message="Are you sure you want to delete this item?" 
-                               icon="ui-icon-alert" />
-                </p:commandLink>
-            </p:column>
+                <p:column style="width:6%">
+                    <p:rowEditor />
+                    <p:commandLink actionListener="#{configurationController.prepareEdit}" 
+                                   action="#{configurationController.destroy}"
+                                   ajax="true" 
+                                   process=":dataForm:dataAccordion:ConfigurationDataForm"
+                                   update="GeneralPropertiesDataTable">
+                        <h:outputText styleClass="ui-menuitem-icon ui-icon ui-icon-close" />
+                        <p:confirm header="Confirmation" message="Are you sure you want to delete this item?" 
+                                   icon="ui-icon-alert" />
+                    </p:commandLink>
+                </p:column>
 
 
-        </p:dataTable>
-
-        <p:remoteCommand name="doDeleteGeneralConfiguration" 
-                         actionListener="#{configurationController.destroy}"
-                         update="GeneralPropertiesDataTable"
-                         /> 
-
+            </p:dataTable>
+        </h:form>
         <h:form id="GeneralPropertiesNewForm">
             <p:outputPanel layout="block">
 
@@ -79,7 +77,7 @@
                 </h:panelGrid>  
                 <p:commandButton value="Add"  
                                  action="#{configurationController.create}"
-                                 update="GeneralPropertiesNewForm, :dataForm:dataAccordion:GeneralPropertiesDataTable, :dataForm:growl"
+                                 update="GeneralPropertiesNewForm, :dataForm:dataAccordion:ConfigurationDataForm:GeneralPropertiesDataTable, :dataForm:growl"
                                  process="GeneralPropertiesNewForm"
                                  />
             </p:outputPanel>                          

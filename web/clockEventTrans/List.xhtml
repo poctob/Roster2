@@ -103,8 +103,8 @@
                 <h:form id="weekly_form">
                     <p:dataTable value="#{employeeController.
                                           getCurrentEmployeeHours
-                                          (clockEventTransController.
-                                          currentEvents)}" 
+                                          (clockEventTransController.current_date,
+                                          true)}" 
                                  var="ehours"                
                                  id="weekly_table">
                         <f:facet name="header">

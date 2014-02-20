@@ -18,9 +18,15 @@ import javax.faces.convert.FacesConverter;
 import javax.faces.model.SelectItem;
 import net.xpresstek.zroster.ejb.ClockEvent;
 import net.xpresstek.zroster.ejb.ClockOutReasons;
+import net.xpresstek.zroster.ejb.Configuration;
 import net.xpresstek.zroster.ejb.Employee;
+import net.xpresstek.zroster.ejb.Shift;
 import net.xpresstek.zroster.web.ClockEventController.ClockEventControllerConverter;
+import net.xpresstek.zroster.web.EmployeeController.EmployeeControllerConverter;
+import net.xpresstek.zroster.web.ShiftController.ShiftControllerConverter;
+import net.xpresstek.zroster.web.util.JsfUtil;
 import net.xpresstek.zroster.web.util.TimeUtils;
+import org.primefaces.context.RequestContext;
 
 @SessionScoped
 @Named("clockEventTransController")
@@ -31,6 +37,8 @@ public class ClockEventTransController extends ControllerBase {
     private SelectItem[] availableEmployees;
     private Date current_date;
     private List<ClockEventTrans> currentEvents;
+    private Employee currentApprover;
+    private String approverPassword;
     @EJB
     private net.xpresstek.zroster.web.ClockEventTransFacade ejbFacade;
 
@@ -48,7 +56,7 @@ public class ClockEventTransController extends ControllerBase {
      * @return currentEvents.
      */
     public List<ClockEventTrans> getCurrentEvents() {
-        
+
         updateCurrentEvents();
         return currentEvents;
     }
@@ -79,6 +87,24 @@ public class ClockEventTransController extends ControllerBase {
         return current_date;
     }
 
+    public Employee getCurrentApprover() {
+        return currentApprover;
+    }
+
+    public void setCurrentApprover(Employee currentApprover) {
+        this.currentApprover = currentApprover;
+    }
+
+    public void setApproverPassword(String approverPassword) {
+        this.approverPassword = approverPassword;
+    }
+
+    public String getApproverPassword() {
+        return "";
+    }
+    
+    
+
     /**
      *
      * @param current_date Date to set the current date to.
@@ -94,11 +120,64 @@ public class ClockEventTransController extends ControllerBase {
      * @param employee Employee to clock in.
      */
     public void ClockIn(Employee employee) {
-        current.setEmployeeid(employee);
-        ClockEventController controller
-                = ClockEventControllerConverter.getController();
-        current.setClockEventid(controller.getClockInId());
-        super.create();
+        if (isApproved(employee)) {
+
+            current.setEmployeeid(employee);
+            ClockEventController controller
+                    = ClockEventControllerConverter.getController();
+            current.setClockEventid(controller.getClockInId());
+            super.create();
+        }
+    }
+
+    private boolean isApproved(Employee employee) {
+        boolean retval = true;
+        if (isEarly(employee)) {
+            if (currentApprover == null || approverPassword == null) {
+                RequestContext context = RequestContext.getCurrentInstance();
+                JsfUtil.addErrorMessage("Approval Required!");
+                context.execute("approvalDialog.show();");
+                retval = false;
+            } else {
+                S3cr3tController sc = S3cr3tController.S3cr3tControllerConverter.
+                        getController();
+                retval = sc.isPasswordCorrect(currentApprover.getPkID(), approverPassword);
+                if(!retval)
+                {
+                    JsfUtil.addErrorMessage("Invalid Credentials");
+                }
+                currentApprover = null;
+                approverPassword = "";
+            }
+        }
+        return retval;
+    }
+
+    private boolean isEarly(Employee employee) {
+        boolean retval = true;
+        Calendar now = new GregorianCalendar();
+        ShiftController shiftController
+                = ShiftControllerConverter.getController();
+        List<Shift> shifts = shiftController.getByStartAndEmployee(employee.getPkID(), now.getTime());
+        Configuration conf
+                = (Configuration) ConfigurationController.ConfigurationControllerConverter.getController().
+                getObject("EarlyClockInMinutes");
+
+        int minutes = 0;
+        try {
+            minutes = Integer.parseInt(conf.getConfigValue());
+        } catch (NumberFormatException e) {
+            return false;
+        }
+
+        long millis = minutes * 60 * 1000;
+        for (Shift shift : shifts) {
+            long diff = shift.getStart().getTime() - now.getTimeInMillis();
+            if (diff > 0 && diff <= millis) {
+                return false;
+            }
+        }
+        return retval;
     }
 
     public SelectItem[] getAvailableEmployees() {
@@ -130,8 +209,11 @@ public class ClockEventTransController extends ControllerBase {
         ClockEventController controller
                 = ClockEventControllerConverter.getController();
         current.setClockEventid(controller.getClockOutId());
-        current.setClockOutReasonid(reason);
+        current.setClockOutReasonid(reason);        
         super.create();
+        
+        EmployeeController econtroller=EmployeeControllerConverter.getController();
+        econtroller.updateEmployeeHours();
     }
 
     /**
@@ -239,15 +321,14 @@ public class ClockEventTransController extends ControllerBase {
                 if (lastevent != null
                         && lastevent.getClockEventid().getName().
                         equals(ClockEventFacade.CLOCK_IN_NAME)) {
-                    
-                     double millis =  TimeUtils.getDayEnd(yesterday).getTime()
-                                - lastevent.getTimestamp().getTime();
-                     
-                     millis+= (eventtrans.getTimestamp().getTime() -
-                             TimeUtils.getDayStart
-                             (eventtrans.getTimestamp()).getTime());
 
-                        retval += (millis / 1000) / 3600;
+                    double millis = TimeUtils.getDayEnd(yesterday).getTime()
+                            - lastevent.getTimestamp().getTime();
+
+                    millis += (eventtrans.getTimestamp().getTime()
+                            - TimeUtils.getDayStart(eventtrans.getTimestamp()).getTime());
+
+                    retval += (millis / 1000) / 3600;
 
                 }
             }
@@ -278,8 +359,7 @@ public class ClockEventTransController extends ControllerBase {
 
             eventtrans = clockevents.get(i);
 
-            if (i == 0)
-            {
+            if (i == 0) {
                 interval += calculateNextDayRollover(eventtrans);
             }
 

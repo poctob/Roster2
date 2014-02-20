@@ -267,5 +267,17 @@ public class Employee implements Serializable {
         }
         return true;
     }   
+    
+    public boolean hasPrivilege(String pName)
+    {
+        for(Privilege p : privilegeCollection)
+        {
+            if(p.getName().equals(pName))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }

@@ -4,6 +4,7 @@
  */
 package net.xpresstek.zroster.web;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
@@ -25,5 +26,19 @@ public class EmployeeFacade extends AbstractFacade<Employee> {
                 createNamedQuery("Employee.findByIsActive", Employee.class);
         query.setParameter("isActive", true);
         return query.getResultList();
+    }
+
+    public List<Employee> findByPrivilege(String privilege) {
+         List<Employee> active=findActive();
+         List<Employee> retval = new ArrayList();
+         for(Employee employee : active)
+         {
+             if(employee.hasPrivilege(privilege))
+             {
+                 retval.add(employee);
+             }
+         }
+         
+         return retval;
     }
 }

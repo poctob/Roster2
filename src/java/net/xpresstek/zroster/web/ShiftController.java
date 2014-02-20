@@ -65,18 +65,27 @@ public class ShiftController extends ControllerBase {
             shiftModel.addEvent(new DefaultScheduleEvent(title, s.getStart(), s.getEnd()));
         }
     }
-    
-     public List<EmployeeHours> getCurrentEmployeeHours()
-     {
-         ClockEventTransController transcontroller=
-                 ClockEventTransControllerConverter.getController();
-         transcontroller.setCurrent_date(current_date);
-         List<ClockEventTrans> events = transcontroller.getCurrentEvents();
-         
-         EmployeeController employeeController = 
-                 EmployeeControllerConverter.getController();
-         return employeeController.getCurrentEmployeeHours(events);
-     }
+
+    public List<EmployeeHours> getCurrentEmployeeHours() {
+        ClockEventTransController transcontroller
+                = ClockEventTransControllerConverter.getController();
+        transcontroller.setCurrent_date(current_date);
+        List<ClockEventTrans> events = transcontroller.getCurrentEvents();
+
+        EmployeeController employeeController
+                = EmployeeControllerConverter.getController();
+        return employeeController.getCurrentEmployeeHours(events);
+    }
+
+    /**
+     * Calculates scheduled and worked hours for all active employees.
+     * @return List of the employee hours.
+     */
+    public List<EmployeeHours> getActiveEmployeeHours() {
+        EmployeeController employeeController
+                = EmployeeControllerConverter.getController();
+        return employeeController.getCurrentEmployeeHours(current_date, true);
+    }
 
     public ScheduleModel getEventModel() {
         buildModel();
@@ -131,8 +140,8 @@ public class ShiftController extends ControllerBase {
     public List<ShiftColumn> getShiftColumns() {
 
         if (columns == null || columns.isEmpty()) {
-            List<Position> pos =
-                    PositionControllerConverter.getController().getAllItems();
+            List<Position> pos
+                    = PositionControllerConverter.getController().getAllItems();
 
             columns = new ArrayList();
 
@@ -212,11 +221,11 @@ public class ShiftController extends ControllerBase {
     }
 
     public List<Employee> getAvailableEmployees() {
-        List<Employee> empl =
-                EmployeeControllerConverter.getController().
+        List<Employee> empl
+                = EmployeeControllerConverter.getController().
                 getAllowedItems(current.getPositionID(),
-                DateUtils.DateToString(current.getStart()),
-                DateUtils.DateToString(current.getEnd()));
+                        DateUtils.DateToString(current.getStart()),
+                        DateUtils.DateToString(current.getEnd()));
         if (empl == null) {
             return null;
         }
@@ -252,8 +261,6 @@ public class ShiftController extends ControllerBase {
         }
         return false;
     }
-
- 
 
     public void processShiftClick(String position, String time) {
         int i;

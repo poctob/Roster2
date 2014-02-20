@@ -6,7 +6,6 @@ package net.xpresstek.zroster.ejb;
 
 import com.gzlabs.utils.DateUtils;
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
