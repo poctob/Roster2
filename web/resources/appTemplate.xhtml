@@ -30,7 +30,15 @@
 
         <div id="top">
             <ui:insert name="top">
-                <p:messages />
+                <h:form id="time_off_poll"> 
+                    <p:messages id="messages" 
+                                showDetail="true" 
+                                closable="true" />  
+                    <p:remoteCommand name="checkMessages" 
+                                     autoRun="true" 
+                                     action="#{timeOffController.checkForPendingRequests}" 
+                                     update = "messages"/>                      
+                </h:form>
                 <h:form id="LogoutForm">
                     <p:commandLink value="Log Out"
                                    id="submitLogout"

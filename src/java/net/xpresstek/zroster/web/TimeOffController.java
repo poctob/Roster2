@@ -24,10 +24,12 @@ import net.xpresstek.zroster.ejb.TimeOff;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import javax.faces.event.ActionEvent;
 import net.xpresstek.zroster.ejb.Employee;
 import net.xpresstek.zroster.ejb.TimeOffStatus;
 
@@ -149,6 +151,14 @@ public class TimeOffController extends ControllerBase {
         }
         Collections.sort(activeTimeOffs, Collections.reverseOrder());
         return activeTimeOffs;
+    }
+    
+    public void checkForPendingRequests()
+    {
+        FacesContext.getCurrentInstance().
+                addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
+                        "Time Off Requests Pending", 
+                        "You have pending time off requests!")); 
     }
 
     /**
