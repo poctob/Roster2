@@ -65,14 +65,17 @@
             </h:form>
 
             <p:dialog header="Approval Required" widgetVar="approvalDialog" resizable="false">  
-                <h:form id="approvalDialogForm">  
+                <h:form id="approvalDialogForm" styleClass="jsfcrud_list_form">  
 
-                    <h:panelGrid columns="2" style="margin-bottom:10px">  
+                    <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">  
                         <h:outputLabel for="approvers" value="Name:" />  
-                        <p:selectOneMenu value="#{clockEventTransController.currentApprover}" id="approvers">  
+                        <h:selectOneMenu 
+                            value="#{clockEventTransController.currentApprover}" 
+                            id="approvers"
+                            >  
                             <f:selectItems value="#{employeeController.timeApprovers}" /> 
                             <f:converter converterId="employeeControllerConverter"/>
-                        </p:selectOneMenu>
+                        </h:selectOneMenu>
                         <h:outputLabel for="approverPassword" value="Password: " />  
                         <p:password id="approverPassword"
                                     value="#{clockEventTransController.approverPassword}"
@@ -102,9 +105,9 @@
 
                     <h:panelGrid columns="2" style="margin-bottom:10px">  
                         <h:outputLabel for="reasons" value="Clock Out Reason:" />  
-                        <p:selectOneMenu value="#{clockEventTransController.reason}" id="reasons">  
+                        <h:selectOneMenu value="#{clockEventTransController.reason}" id="reasons">  
                             <f:selectItems value="#{clockOutReasonsController.itemsAvailableSelectOne}" /> 
-                        </p:selectOneMenu>
+                        </h:selectOneMenu>
                     </h:panelGrid>  
 
                     <p:commandButton id="clockOutSubmitButton" 
