@@ -117,5 +117,9 @@ div.visible
     height: 200px;
 }
 
+.ui-selectonemenu label.ui-selectonemenu-label{
+   width:100% !important;
+}
+
 
 

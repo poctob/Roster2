@@ -10,7 +10,11 @@
         <h:outputStylesheet name="css/jsfcrud.css"/>
     </h:head>
     <h:body>              
-         <p:outputPanel layout="block">
+        <p:notificationBar position="top" effect="slide" widgetVar="bar" styleClass="top">  
+            <h:outputText value="Loading...Please wait..." style="color:#FFCC00;font-size:36px;" />  
+        </p:notificationBar>  
+        
+        <p:outputPanel layout="block">
             <h:form styleClass="jsfcrud_list_form" id="loginForm">
                 <p:growl id="growl" showDetail="true" life="3000" />
                 <h:panelGrid columns="2" cellpadding="5">  
@@ -30,6 +34,8 @@
                                      id="submit"
                                      update="growl"
                                      action="#{logInBean.login}"
+                                     onstart="PF('bar').show()"
+                                     oncomplete="PF('bar').hide()"
                                      /> 
                     <p:commandButton value="Clear" id="clear">
                         <p:ajax update="loginForm" resetValues="true" />
@@ -43,7 +49,7 @@
                 </p:messages> 
             </h:form>
         </p:outputPanel>
-        
+
     </h:body>
 
 

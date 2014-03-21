@@ -133,7 +133,9 @@ public class TimeOffController extends ControllerBase {
     }
 
     public List<TimeOff> findByEmployeeID(Employee empl) {
-        return ejbFacade.findByEmployeeID(empl);
+         List<TimeOff> all_items = ejbFacade.findByEmployeeID(empl);
+         Collections.sort(all_items, Collections.reverseOrder());
+         return all_items;
     }
 
     public List<TimeOff> getActiveTimeOffs() {

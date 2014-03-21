@@ -181,20 +181,19 @@
                                  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
                                  rowsPerPageTemplate="5,10,15"
                                  >
-                        <p:column sortBy="#{toitem.start}" headerText="#{bundle.ListTimeOffTitle_start}">                  
+                        <p:column headerText="#{bundle.ListTimeOffTitle_start}">                  
                             <h:outputText value="#{toitem.start}">
                                 <f:convertDateTime pattern="MM/dd/yyyy hh:mm a" />
                             </h:outputText>
                         </p:column>
 
-                        <p:column sortBy="${toitem.end}" headerText="#{bundle.ListTimeOffTitle_end}">                      
+                        <p:column headerText="#{bundle.ListTimeOffTitle_end}">                      
                             <h:outputText value="#{toitem.end}">
                                 <f:convertDateTime pattern="MM/dd/yyyy hh:mm a" />
                             </h:outputText>
                         </p:column>
 
-                        <p:column sortBy="${toitem.timeOffStatusid.name}" 
-                                  headerText="#{bundle.ListTimeOffTitle_timeOffStatusName}">                        
+                        <p:column headerText="#{bundle.ListTimeOffTitle_timeOffStatusName}">                        
                             <h:outputText value="#{toitem.timeOffStatusid.name}"/>
                         </p:column>  
 

@@ -10,3 +10,7 @@ root {
     display: block;
 }
 
+.ui-selectonemenu label.ui-selectonemenu-label{
+   width:100% !important;
+}
+
