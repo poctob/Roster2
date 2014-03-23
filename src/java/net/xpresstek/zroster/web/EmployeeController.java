@@ -100,7 +100,7 @@ public class EmployeeController extends ControllerBase {
 
     private void updatePassword() {
         if (password != null && password.length() > 0) {
-            S3cr3tController sc = S3cr3tControllerConverter.getController();
+            S3cr3tController sc = ControllerFactory.getS3cr3tController();
             sc.prepareCreate();
             S3cr3tPK pk = new S3cr3tPK(current.getPkID(), password, null);
             ((S3cr3t) sc.getCurrent()).setEmployee(current);
@@ -287,12 +287,6 @@ public class EmployeeController extends ControllerBase {
             EmployeeController controller = (EmployeeController) facesContext.getApplication().getELResolver().
                     getValue(facesContext.getELContext(), null, "employeeController");
             return controller.getEmployee(getKey(value));
-        }
-
-        public static EmployeeController getController() {
-            FacesContext fc = FacesContext.getCurrentInstance();
-            return (EmployeeController) fc.getApplication().getELResolver().
-                    getValue(fc.getELContext(), null, "employeeController");
         }
 
         java.lang.Integer getKey(String value) {

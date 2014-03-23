@@ -115,14 +115,7 @@ public class S3cr3tController extends ControllerBase {
             S3cr3tController controller = (S3cr3tController) facesContext.getApplication().getELResolver().
                     getValue(facesContext.getELContext(), null, "s3cr3tController");
             return controller.getS3cr3t(getKey(value));
-        }
-        
-        public static S3cr3tController getController()
-        {
-            FacesContext fc=FacesContext.getCurrentInstance();
-            return (S3cr3tController) fc.getApplication().getELResolver().
-                    getValue(fc.getELContext(), null, "s3cr3tController");
-        }
+        }                
 
         Integer getKey(String value) {
             net.xpresstek.zroster.ejb.S3cr3tPK key;

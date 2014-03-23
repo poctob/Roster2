@@ -124,12 +124,6 @@ public class ConfigurationController extends ControllerBase {
             return controller.getConfiguration(getKey(value));
         }
 
-        public static ConfigurationController getController()
-        {
-            FacesContext facesContext=FacesContext.getCurrentInstance();
-            return (ConfigurationController)facesContext.getApplication().getELResolver().
-                    getValue(facesContext.getELContext(), null, "configurationController");
-        }
         java.lang.String getKey(String value) {
             java.lang.String key;
             key = value;

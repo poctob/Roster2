@@ -29,9 +29,9 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
-import javax.faces.event.ActionEvent;
 import net.xpresstek.zroster.ejb.Employee;
 import net.xpresstek.zroster.ejb.TimeOffStatus;
+import net.xpresstek.zroster.web.util.MailUtil;
 
 @Named("timeOffController")
 @SessionScoped
@@ -106,12 +106,34 @@ public class TimeOffController extends ControllerBase {
     }
 
     public void prepareCreate(Employee empl, TimeOffStatus to) {
-        prepareCreate();
+        super.prepareCreate();
         if (current != null) {
             current.setEmployeeid(empl);
             current.setTimeOffStatusid(to);
+           
         }
     }
+    
+    @Override
+    public void create()
+    {
+        super.create();
+         if(current.getTimeOffStatusid().equals(ControllerFactory.getTimeOffStatusController().
+                getDefaultStatus()))
+            {
+                if(!MailUtil.sendNewTimeOffRequestEmail(current.getEmployeeid().getName(),
+                        current.getStart(), current.getEnd()))
+                {
+                    FacesContext.getCurrentInstance().
+                        addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                                "Time Off Request", 
+                                "Unable to send notification email!")); 
+                }
+            }
+         
+         
+    }
+ 
     
     public void createOrUpdate()
     {
@@ -153,12 +175,27 @@ public class TimeOffController extends ControllerBase {
         return activeTimeOffs;
     }
     
+    /**
+     * Checks if there are pending time off requests.  Displays a message if 
+     * some are found.
+     */
     public void checkForPendingRequests()
     {
-        FacesContext.getCurrentInstance().
-                addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
-                        "Time Off Requests Pending", 
-                        "You have pending time off requests!")); 
+        TimeOffStatus pending = 
+               ControllerFactory.getTimeOffStatusController().
+                getDefaultStatus();
+        
+        if(pending != null)
+        {
+            if(ejbFacade.findByStatus(pending).size() > 0)
+            {
+        
+                FacesContext.getCurrentInstance().
+                        addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
+                                "Time Off Requests Pending", 
+                                "You have pending time off requests!")); 
+            }
+        }
     }
 
     /**

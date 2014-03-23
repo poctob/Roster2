@@ -22,6 +22,7 @@ import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
 import net.xpresstek.zroster.ejb.Employee;
 import net.xpresstek.zroster.ejb.TimeOff;
+import net.xpresstek.zroster.ejb.TimeOffStatus;
 
 /**
  *
@@ -37,6 +38,14 @@ public class TimeOffFacade extends AbstractFacade<TimeOff> {
         TypedQuery<TimeOff> query = getEntityManager().
                 createNamedQuery("TimeOff.findByEmployeeID", TimeOff.class);
         query.setParameter("employee_id", empl);
+        return query.getResultList();
+    }
+     
+     public List<TimeOff> findByStatus(TimeOffStatus status) {
+        TypedQuery<TimeOff> query = getEntityManager().
+                createNamedQuery("TimeOff.findByStatus", TimeOff.class);
+        query.setParameter("timeOffStatusid", status);
+        query.setParameter("start", new Date());
         return query.getResultList();
     }
      

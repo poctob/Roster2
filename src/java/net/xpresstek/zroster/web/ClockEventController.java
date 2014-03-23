@@ -101,13 +101,6 @@ public class ClockEventController extends ControllerBase {
                     getValue(facesContext.getELContext(), null, "clockEventController");
             return controller.getClockEvent(getKey(value));
         }
-        
-        public static ClockEventController getController()
-        {
-            FacesContext fc = FacesContext.getCurrentInstance();
-            return (ClockEventController) fc.getApplication().getELResolver().
-                    getValue(fc.getELContext(), null, "clockEventController");
-        }
 
         java.lang.Integer getKey(String value) {
             java.lang.Integer key;

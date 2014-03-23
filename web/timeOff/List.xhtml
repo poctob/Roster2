@@ -171,7 +171,7 @@
                             <p:commandButton value="Add" 
                                              rendered="#{empty timeOffController.selected.start}"
                                              action="#{timeOffController.create}"
-                                             update="editForm, :dataForm:dataTable, :dataForm:growl"
+                                             update="editForm, :dataForm:dataTable, :dataForm:growl :time_off_poll:messages"
                                              onclick="javascript:hideSelection('edit_div', true);"/>
                         </p:outputPanel>
                     </div>

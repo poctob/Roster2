@@ -70,7 +70,7 @@ public class ClockEventTransFacade extends AbstractFacade<ClockEventTrans> {
      */
     public ClockEventTrans getLastClockIn(Employee employee_id, ClockEventTrans clock_out) {
         ClockEvent clockin
-                = ClockEventControllerConverter.getController().getClockInId();
+                = ControllerFactory.getClockEventController().getClockInId();
         TypedQuery<ClockEventTrans> query = getEntityManager().
                 createNamedQuery("ClockEventTrans.findLastClockIn",
                         ClockEventTrans.class);

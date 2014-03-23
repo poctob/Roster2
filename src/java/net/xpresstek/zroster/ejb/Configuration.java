@@ -30,7 +30,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author apavlune
+ * Configuration bean
  */
 @Entity
 @Table(name = "Configuration")
@@ -40,6 +40,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Configuration.findByConfigID", query = "SELECT c FROM Configuration c WHERE c.configID = :configID"),
     @NamedQuery(name = "Configuration.findByConfigValue", query = "SELECT c FROM Configuration c WHERE c.configValue = :configValue")})
 public class Configuration implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -51,25 +52,53 @@ public class Configuration implements Serializable {
     @Column(name = "ConfigValue")
     private String configValue;
 
+    /**
+     * Default constructor
+     */
     public Configuration() {
     }
 
+    /**
+     * Overloaded constructor sets configuration id
+     *
+     * @param configID
+     */
     public Configuration(String configID) {
         this.configID = configID;
     }
 
+    /**
+     * Configuration id getter
+     *
+     * @return configuration id
+     */
     public String getConfigID() {
         return configID;
     }
 
+    /**
+     * Configuration id getter
+     *
+     * @param configID
+     */
     public void setConfigID(String configID) {
-        this.configID = configID;
+        if (configID != null && configID.length() > 0) {
+            this.configID = configID;
+        }
     }
 
+    /**
+     * Configuration value getter
+     * @return configuration value
+     */
     public String getConfigValue() {
         return configValue;
     }
 
+    /**
+     * Configuration value setter
+     * @param configValue
+     */
     public void setConfigValue(String configValue) {
         this.configValue = configValue;
     }
@@ -98,5 +127,4 @@ public class Configuration implements Serializable {
     public String toString() {
         return "net.xpresstek.zroster.ejb.Configuration[ configID=" + configID + " ]";
     }
-    
 }

@@ -84,12 +84,12 @@ public class ShiftController extends ControllerBase {
 
     public List<EmployeeHours> getCurrentEmployeeHours() {
         ClockEventTransController transcontroller
-                = ClockEventTransControllerConverter.getController();
+                = ControllerFactory.getClockEventTransController();
         transcontroller.setCurrent_date(current_date);
         List<ClockEventTrans> events = transcontroller.getCurrentEvents();
 
         EmployeeController employeeController
-                = EmployeeControllerConverter.getController();
+                = ControllerFactory.getEmployeeController();
         return employeeController.getCurrentEmployeeHours(events);
     }
 
@@ -99,7 +99,7 @@ public class ShiftController extends ControllerBase {
      */
     public List<EmployeeHours> getActiveEmployeeHours() {
         EmployeeController employeeController
-                = EmployeeControllerConverter.getController();
+                = ControllerFactory.getEmployeeController();
         return employeeController.getCurrentEmployeeHours(current_date, true);
     }
 
@@ -157,7 +157,7 @@ public class ShiftController extends ControllerBase {
 
         if (columns == null || columns.isEmpty()) {
             List<Position> pos
-                    = PositionControllerConverter.getController().getAllItems();
+                    = ControllerFactory.getPositionController().getAllItems();
 
             columns = new ArrayList();
 
@@ -220,7 +220,7 @@ public class ShiftController extends ControllerBase {
     public List getStartTimes() {
         String strdate = DateUtils.DateToString(current_date);
         strdate = strdate.substring(0, 10);
-        return ConfigurationControllerConverter.getController().getTimeSlotsDate(strdate);
+        return ControllerFactory.getConfigurationController().getTimeSlotsDate(strdate);
     }
 
     public List getEndTimes() {
@@ -238,7 +238,7 @@ public class ShiftController extends ControllerBase {
 
     public List<Employee> getAvailableEmployees() {
         List<Employee> empl
-                = EmployeeControllerConverter.getController().
+                = ControllerFactory.getEmployeeController().
                 getAllowedItems(current.getPositionID(),
                         DateUtils.DateToString(current.getStart()),
                         DateUtils.DateToString(current.getEnd()));

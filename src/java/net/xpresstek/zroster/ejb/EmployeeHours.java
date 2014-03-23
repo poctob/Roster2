@@ -16,12 +16,12 @@
  */
 package net.xpresstek.zroster.ejb;
 
-import com.gzlabs.utils.DateUtils;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import net.xpresstek.zroster.web.ClockEventTransController;
+import net.xpresstek.zroster.web.ControllerFactory;
 import net.xpresstek.zroster.web.WeeklyHoursController;
 import net.xpresstek.zroster.web.WeeklyHoursFacade;
 import net.xpresstek.zroster.web.util.TimeUtils;
@@ -70,7 +70,7 @@ public class EmployeeHours {
         Calendar start = TimeUtils.getWeekStart(false, cal);
         Calendar end = TimeUtils.getWeekEnd(false, cal);
         ClockEventTransController econtroller
-                = ClockEventTransController.ClockEventTransControllerConverter.getController();
+                = ControllerFactory.getClockEventTransController();
 
         return econtroller.calculateWorkedHours(employee,
                 start.getTime(), end.getTime());
@@ -91,8 +91,7 @@ public class EmployeeHours {
         Calendar end = TimeUtils.getWeekEnd(false, cal);
 
         WeeklyHoursFacade weeklyFacade
-                = WeeklyHoursController.WeeklyHoursControllerConverter.
-                getController().
+                = ControllerFactory.getWeeklyHoursController().
                 getWeeklyHoursFacade();
 
         List<WeeklyHours> hours = weeklyFacade.findTotalForPeriodByEmployee(
@@ -118,8 +117,7 @@ public class EmployeeHours {
     public double calculateDailyWorkedHours(Date date) {
 
         ClockEventTransController econtroller
-                = ClockEventTransController.
-                        ClockEventTransControllerConverter.getController();
+                = ControllerFactory.getClockEventTransController();
 
         return econtroller.calculateWorkedHours(employee,
                 TimeUtils.getDayStart(date),
@@ -137,7 +135,7 @@ public class EmployeeHours {
         double retval = 0;
 
         WeeklyHoursFacade weeklyFacade
-                = WeeklyHoursController.WeeklyHoursControllerConverter.getController().
+                = ControllerFactory.getWeeklyHoursController().
                 getWeeklyHoursFacade();
 
         List<WeeklyHours> hours = weeklyFacade.findTotalForPeriodByEmployee(

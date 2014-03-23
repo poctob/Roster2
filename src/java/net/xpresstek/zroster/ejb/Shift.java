@@ -32,6 +32,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
+import net.xpresstek.zroster.web.ControllerFactory;
 import net.xpresstek.zroster.web.EmployeeController.EmployeeControllerConverter;
 import net.xpresstek.zroster.web.PositionController.PositionControllerConverter;
 
@@ -192,12 +193,12 @@ public class Shift implements Serializable {
     }
 
     public Employee getEmployeeObject() {
-        return EmployeeControllerConverter.getController().
+        return ControllerFactory.getEmployeeController().
                 getEmployee(employeeID);
     }
 
     public Position getPositionObject() {
-        return PositionControllerConverter.getController().
+        return ControllerFactory.getPositionController().
                 getPosition(positionID);
     }
 

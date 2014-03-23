@@ -34,18 +34,17 @@ import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- *
- * @author apavlune
+ * Clock Event Trans entity class
  */
 @Entity
-        @Table(name = "ClockEventTrans")
-        @XmlRootElement
-        @NamedQueries({
+@Table(name = "ClockEventTrans")
+@XmlRootElement
+@NamedQueries({
     @NamedQuery(name = "ClockEventTrans.findAll", query = "SELECT c FROM ClockEventTrans c ORDER BY c.timestamp DESC"),
     @NamedQuery(name = "ClockEventTrans.findByPkid", query = "SELECT c FROM ClockEventTrans c WHERE c.pkid = :pkid"),
     @NamedQuery(name = "ClockEventTrans.findLastEvent", query = "SELECT c FROM ClockEventTrans c WHERE c.employeeid = :id ORDER BY c.timestamp DESC"),
     @NamedQuery(name = "ClockEventTrans.findByTimestamp", query = "SELECT c FROM ClockEventTrans c WHERE c.timestamp = :timestamp"),
-     @NamedQuery(name = "ClockEventTrans.findByInterval",
+    @NamedQuery(name = "ClockEventTrans.findByInterval",
             query = "SELECT c FROM ClockEventTrans c "
             + "WHERE c.timestamp >= :start "
             + "AND c.timestamp <= :end "
@@ -58,12 +57,10 @@ import javax.xml.bind.annotation.XmlRootElement;
             + "ORDER BY c.timestamp ASC"),
     @NamedQuery(name = "ClockEventTrans.findByClockOutReasonid", query = "SELECT c FROM ClockEventTrans c WHERE c.clockOutReasonid = :clockOutReasonid"),
     @NamedQuery(name = "ClockEventTrans.findLastClockIn", query = "SELECT c FROM ClockEventTrans c "
-        + "WHERE c.employeeid = :employee "
-        + "AND c.pkid < :outpkid "
-        + "AND c.clockEventid = :eventid "
-        + "ORDER BY c.timestamp DESC")})
-
-
+            + "WHERE c.employeeid = :employee "
+            + "AND c.pkid < :outpkid "
+            + "AND c.clockEventid = :eventid "
+            + "ORDER BY c.timestamp DESC")})
 public class ClockEventTrans implements Serializable, Comparable<ClockEventTrans> {
 
     private static final long serialVersionUID = 1L;
@@ -85,56 +82,129 @@ public class ClockEventTrans implements Serializable, Comparable<ClockEventTrans
     @ManyToOne(optional = false)
     private Employee employeeid;
 
+    /**
+     * Default constructor does nothing.
+     */
     public ClockEventTrans() {
     }
 
+    /**
+     * Overloaded constructor, sets pkid
+     *
+     * @param pkid
+     */
     public ClockEventTrans(Integer pkid) {
+
         this.pkid = pkid;
     }
 
+    /**
+     * Overloaded constructor, sets primary key and timestamp
+     *
+     * @param pkid
+     * @param timestamp
+     */
     public ClockEventTrans(Integer pkid, Date timestamp) {
         this.pkid = pkid;
         this.timestamp = timestamp;
     }
 
+    /**
+     * Primary key getter
+     *
+     * @return pkid
+     */
     public Integer getPkid() {
         return pkid;
     }
 
+    /**
+     * Primary key setter
+     *
+     * @param pkid
+     */
     public void setPkid(Integer pkid) {
-        this.pkid = pkid;
+        if (pkid != null && pkid > 0) {
+            this.pkid = pkid;
+        }
     }
 
+    /**
+     * Timestamp getter
+     *
+     * @return Returns timestamp
+     */
     public Date getTimestamp() {
         return timestamp;
     }
 
+    /**
+     * Timestamp setter
+     *
+     * @param timestamp
+     */
     public void setTimestamp(Date timestamp) {
-        this.timestamp = timestamp;
+        if (timestamp != null) {
+            this.timestamp = timestamp;
+        }
     }
 
+    /**
+     * Clock out reason getter
+     *
+     * @return
+     */
     public ClockOutReasons getClockOutReasonid() {
         return clockOutReasonid;
     }
 
+    /**
+     * Clock out reason setter
+     *
+     * @param clockOutReasonid
+     */
     public void setClockOutReasonid(ClockOutReasons clockOutReasonid) {
         this.clockOutReasonid = clockOutReasonid;
     }
 
+    /**
+     * Clock event id getter
+     *
+     * @return clock event id
+     */
     public ClockEvent getClockEventid() {
         return clockEventid;
     }
 
+    /**
+     * Clock event id setter
+     *
+     * @param clockEventid
+     */
     public void setClockEventid(ClockEvent clockEventid) {
-        this.clockEventid = clockEventid;
+        if (clockEventid != null && clockEventid.getPkid() > 0) {
+            this.clockEventid = clockEventid;
+        }
     }
 
+    /**
+     * Employee id getter
+     *
+     * @return employee id
+     */
     public Employee getEmployeeid() {
         return employeeid;
     }
 
+    /**
+     * Employee id setter
+     *
+     * @param employeeid
+     */
     public void setEmployeeid(Employee employeeid) {
-        this.employeeid = employeeid;
+        if (employeeid != null && employeeid.getPkID() > 0) {
+            this.employeeid = employeeid;
+        }
     }
 
     @Override

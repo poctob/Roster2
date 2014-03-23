@@ -140,7 +140,7 @@ public class ClockEventTransController extends ControllerBase {
 
             current.setEmployeeid(employee);
             ClockEventController controller
-                    = ClockEventControllerConverter.getController();
+                    = ControllerFactory.getClockEventController();
             current.setClockEventid(controller.getClockInId());
             super.create();
         }
@@ -155,8 +155,7 @@ public class ClockEventTransController extends ControllerBase {
                 context.execute("approvalDialog.show();");
                 retval = false;
             } else {
-                S3cr3tController sc = S3cr3tController.S3cr3tControllerConverter.
-                        getController();
+                S3cr3tController sc = ControllerFactory.getS3cr3tController();
                 retval = sc.isPasswordCorrect(currentApprover.getPkID(), approverPassword);
                 if(!retval)
                 {
@@ -176,7 +175,7 @@ public class ClockEventTransController extends ControllerBase {
                 = ShiftControllerConverter.getController();
         List<Shift> shifts = shiftController.getByStartAndEmployee(employee.getPkID(), now.getTime());
         Configuration conf
-                = (Configuration) ConfigurationController.ConfigurationControllerConverter.getController().
+                = (Configuration) ControllerFactory.getConfigurationController().
                 getObject("EarlyClockInMinutes");
 
         int minutes = 0;
@@ -223,12 +222,13 @@ public class ClockEventTransController extends ControllerBase {
     public void ClockOut(Employee employee) {
         current.setEmployeeid(employee);
         ClockEventController controller
-                = ClockEventControllerConverter.getController();
+                = ControllerFactory.getClockEventController();
         current.setClockEventid(controller.getClockOutId());
         current.setClockOutReasonid(reason);        
         super.create();
         
-        EmployeeController econtroller=EmployeeControllerConverter.getController();
+        EmployeeController econtroller=
+                ControllerFactory.getEmployeeController();
         econtroller.updateEmployeeHours();
     }
 
@@ -305,8 +305,7 @@ public class ClockEventTransController extends ControllerBase {
 
     public double calculateShiftHours(ClockEventTrans item) {
         double hours = 0;
-        ClockEvent clockout = ClockEventControllerConverter.
-                getController().getClockOutId();
+        ClockEvent clockout = ControllerFactory.getClockEventController().getClockOutId();
 
         if (item != null && item.getClockEventid().getPkid() == clockout.getPkid()) {
             ClockEventTrans lastlogin = ejbFacade.getLastClockIn(item.getEmployeeid(),
@@ -446,12 +445,6 @@ public class ClockEventTransController extends ControllerBase {
             ClockEventTransController controller = (ClockEventTransController) facesContext.getApplication().getELResolver().
                     getValue(facesContext.getELContext(), null, "clockEventTransController");
             return controller.getClockEventTrans(getKey(value));
-        }
-
-        public static ClockEventTransController getController() {
-            FacesContext fc = FacesContext.getCurrentInstance();
-            return (ClockEventTransController) fc.getApplication().getELResolver().
-                    getValue(fc.getELContext(), null, "clockEventTransController");
         }
 
         java.lang.Integer getKey(String value) {

@@ -21,6 +21,7 @@ import java.util.Collection;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import net.xpresstek.zroster.web.ControllerFactory;
 import net.xpresstek.zroster.web.EmployeeController;
 import net.xpresstek.zroster.web.EmployeeController.EmployeeControllerConverter;
 import net.xpresstek.zroster.web.S3cr3tController;
@@ -87,8 +88,8 @@ public class LogInBean implements Serializable{
 
         if (user != null && password != null) {
             loggedIn = true;
-            S3cr3tController sc = S3cr3tControllerConverter.getController();
-            EmployeeController ec = EmployeeControllerConverter.getController();
+            S3cr3tController sc = ControllerFactory.getS3cr3tController();
+            EmployeeController ec = ControllerFactory.getEmployeeController();
             Employee e = ec.getEmployeeByName(user);
             if (sc.isPasswordCorrect(e.getPkID(), password)) {
                 FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("username", user);

@@ -96,13 +96,7 @@ public class PositionController extends ControllerBase {
                     getValue(facesContext.getELContext(), null, "positionController");
             return controller.getPosition(getKey(value));
         }
-        
-        public static PositionController getController()
-        {
-            FacesContext fc=FacesContext.getCurrentInstance();
-            return (PositionController) fc.getApplication().getELResolver().
-                    getValue(fc.getELContext(), null, "positionController");
-        }
+                
 
         java.lang.Integer getKey(String value) {
             java.lang.Integer key;

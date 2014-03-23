@@ -99,7 +99,13 @@ div.visible
 }
 
 .ui-selectonemenu label.ui-selectonemenu-label{
-   width:100% !important;
+    width:100% !important;
 }
 
 
+.ui-selectonemenu-label{
+    width:100% !important;
+}
+.ui-selectonemenu{
+    width:100% !important;
+}

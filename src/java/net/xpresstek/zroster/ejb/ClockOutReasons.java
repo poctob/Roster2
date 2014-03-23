@@ -31,7 +31,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author apavlune
+ * Clock Out Reasons entity class
  */
 @Entity
 @Table(name = "ClockOutReasons")
@@ -41,6 +41,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "ClockOutReasons.findByPkid", query = "SELECT c FROM ClockOutReasons c WHERE c.pkid = :pkid"),
     @NamedQuery(name = "ClockOutReasons.findByName", query = "SELECT c FROM ClockOutReasons c WHERE c.name = :name")})
 public class ClockOutReasons implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,27 +52,59 @@ public class ClockOutReasons implements Serializable {
     @Column(name = "Name")
     private String name;
 
+    /**
+     * Default constructor
+     */
     public ClockOutReasons() {
     }
 
+    /**
+     * Overloaded constructor, sets primary key
+     *
+     * @param pkid Primary key
+     */
     public ClockOutReasons(Integer pkid) {
         this.pkid = pkid;
     }
 
+    /**
+     * Primary key getter
+     *
+     * @return primary key
+     */
     public Integer getPkid() {
         return pkid;
     }
 
+    /**
+     * Primary key setter
+     *
+     * @param pkid
+     */
     public void setPkid(Integer pkid) {
-        this.pkid = pkid;
+        if (pkid != null && pkid > 0) {
+            this.pkid = pkid;
+        }
     }
 
+    /**
+     * Name getter
+     *
+     * @return clock out reason name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Name setter
+     *
+     * @param name
+     */
     public void setName(String name) {
-        this.name = name;
+        if (name != null & name.length() > 0) {
+            this.name = name;
+        }
     }
 
     @Override
@@ -98,5 +131,4 @@ public class ClockOutReasons implements Serializable {
     public String toString() {
         return name;
     }
-    
 }

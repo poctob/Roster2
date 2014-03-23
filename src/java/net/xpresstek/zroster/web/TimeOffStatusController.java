@@ -23,12 +23,10 @@ import net.xpresstek.zroster.ejb.TimeOffStatus;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
-import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
-import org.primefaces.event.RowEditEvent;
 
 @Named("timeOffStatusController")
 @SessionScoped
@@ -55,6 +53,10 @@ public class TimeOffStatusController extends ControllerBase {
         return (TimeOffStatus) getObject(id);
     }
 
+    /**
+     * Retrieves default status, normally it is pending.
+     * @return Default status if it is found, null if not.
+     */
     public TimeOffStatus getDefaultStatus() {
         ResourceBundle bundle = ResourceBundle.getBundle("Bundle");
         List<TimeOffStatus> tos = ejbFacade.findByName(bundle.getString("TimeOffStatusDefaultStatus"));

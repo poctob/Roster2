@@ -141,13 +141,7 @@ public class WeeklyHoursController extends ControllerBase {
             WeeklyHoursController controller = (WeeklyHoursController) facesContext.getApplication().getELResolver().
                     getValue(facesContext.getELContext(), null, "weeklyHoursController");
             return controller.getWeeklyHours(value);
-        }
-        
-         public static WeeklyHoursController getController() {
-            FacesContext fc = FacesContext.getCurrentInstance();
-            return (WeeklyHoursController) fc.getApplication().getELResolver().
-                    getValue(fc.getELContext(), null, "weeklyHoursController");
-        }
+        }                
 
         @Override
         public String getAsString(FacesContext facesContext, UIComponent component, Object object) {

@@ -30,7 +30,6 @@ import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import net.xpresstek.zroster.ejb.Configuration;
 import net.xpresstek.zroster.ejb.Shift;
-import net.xpresstek.zroster.web.ConfigurationController.ConfigurationControllerConverter;
 import net.xpresstek.zroster.web.ShiftController.ShiftControllerConverter;
 import net.xpresstek.zroster.web.util.HttpUtil;
 import org.json.simple.JSONValue;
@@ -99,7 +98,7 @@ public class UploadController implements Serializable {
     public String getUrl() {
         if (url == null || url.length() == 0) {
             Configuration conf =
-                    (Configuration) ConfigurationControllerConverter.getController().
+                    (Configuration) ControllerFactory.getConfigurationController().
                     getObject("UploadHost");
 
             url = conf.getConfigValue();
@@ -114,7 +113,7 @@ public class UploadController implements Serializable {
     public String getDb_user() {
         if (db_user == null || db_user.length() == 0) {
             Configuration conf =
-                    (Configuration) ConfigurationControllerConverter.getController().
+                    (Configuration) ControllerFactory.getConfigurationController().
                     getObject("UploadUser");
 
             db_user = conf.getConfigValue();
@@ -129,7 +128,7 @@ public class UploadController implements Serializable {
     public String getDb_pass() {
         if (db_pass == null || db_pass.length() == 0) {
             Configuration conf =
-                    (Configuration) ConfigurationControllerConverter.getController().
+                    (Configuration) ControllerFactory.getConfigurationController().
                     getObject("UploadPassword");
 
             db_pass = conf.getConfigValue();

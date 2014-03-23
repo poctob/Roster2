@@ -50,7 +50,9 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "TimeOff.findBeforeNow", query = "SELECT t FROM TimeOff t WHERE t.start < :start"),
     @NamedQuery(name = "TimeOff.findAfterAndNow", query = "SELECT t FROM TimeOff t WHERE t.start >= :start"),
     @NamedQuery(name = "TimeOff.findByEmployeeID", query = "SELECT t FROM TimeOff t WHERE t.employeeid = :employee_id"),
-    @NamedQuery(name = "TimeOff.findByEnd", query = "SELECT t FROM TimeOff t WHERE t.end = :end")})
+    @NamedQuery(name = "TimeOff.findByEnd", query = "SELECT t FROM TimeOff t WHERE t.end = :end"),
+    @NamedQuery(name = "TimeOff.findByStatus", query = "SELECT t FROM TimeOff t"
+        + " WHERE t.timeOffStatusid = :timeOffStatusid AND t.start >= :start")})
 public class TimeOff implements Serializable, Comparable {
 
     private static final long serialVersionUID = 1L;
