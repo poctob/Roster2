@@ -131,7 +131,7 @@ public class UploadController implements Serializable {
                     (Configuration) ControllerFactory.getConfigurationController().
                     getObject("UploadPassword");
 
-            db_pass = conf.getConfigValue();
+            db_pass = conf.getConfigValueRaw();
         }
         return db_pass;
     }
