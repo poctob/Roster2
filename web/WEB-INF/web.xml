@@ -28,10 +28,10 @@
     
     <error-page>
         <exception-type>javax.faces.application.ViewExpiredException</exception-type>
-        <location>/faces/index.xhtml</location>
+        <location>/faces/expired.xhtml</location>
     </error-page>
     
     <session-config>
-        <session-timeout>60</session-timeout>
+        <session-timeout>-1</session-timeout>
     </session-config>
 </web-app>

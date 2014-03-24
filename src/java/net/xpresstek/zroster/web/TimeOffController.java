@@ -121,14 +121,19 @@ public class TimeOffController extends ControllerBase {
          if(current.getTimeOffStatusid().equals(ControllerFactory.getTimeOffStatusController().
                 getDefaultStatus()))
             {
-                if(!MailUtil.sendNewTimeOffRequestEmail(current.getEmployeeid().getName(),
+                MailUtil.sendNewTimeOffRequestEmail(
+                        current.getEmployeeid().getName(),
+                        current.getStart(), 
+                        current.getEnd());
+                
+               /* if(!MailUtil.sendNewTimeOffRequestEmail(current.getEmployeeid().getName(),
                         current.getStart(), current.getEnd()))
                 {
                     FacesContext.getCurrentInstance().
                         addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
                                 "Time Off Request", 
                                 "Unable to send notification email!")); 
-                }
+                }*/
             }
          
          

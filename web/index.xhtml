@@ -36,6 +36,7 @@
                                      action="#{logInBean.login}"
                                      onstart="PF('bar').show()"
                                      oncomplete="PF('bar').hide()"
+                                     ajax="false"
                                      /> 
                     <p:commandButton value="Clear" id="clear">
                         <p:ajax update="loginForm" resetValues="true" />

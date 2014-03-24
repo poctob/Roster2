@@ -88,10 +88,28 @@ public class Configuration implements Serializable {
     }
 
     /**
-     * Configuration value getter
+     * Configuration value getter with password mask.
      * @return configuration value
      */
     public String getConfigValue() {
+        
+        if(configID !=null)
+        {
+            String lower = configID.toLowerCase();
+            if(lower.contains("password"))
+            {
+                return "";
+            }
+        }
+        return configValue;
+    }
+    
+   /**
+     * Configuration value getter, raw value.
+     * @return configuration value
+     */
+    public String getConfigValueRaw()
+    {
         return configValue;
     }
 

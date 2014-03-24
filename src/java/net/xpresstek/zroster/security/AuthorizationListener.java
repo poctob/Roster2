@@ -25,12 +25,14 @@ import javax.servlet.http.HttpSession;
 
 public class AuthorizationListener implements PhaseListener {
 
+    @Override
     public void afterPhase(PhaseEvent event) {
 
         FacesContext facesContext = event.getFacesContext();
         String currentPage = facesContext.getViewRoot().getViewId();
 
         boolean isLoginPage = (currentPage.lastIndexOf("index.xhtml") > -1);
+        boolean isRedirectPage = (currentPage.lastIndexOf("expired.xhtml") > -1);
         HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(false);
 
         if (session == null) {
@@ -39,7 +41,7 @@ public class AuthorizationListener implements PhaseListener {
         } else {
             Object currentUser = session.getAttribute("username");
 
-            if (!isLoginPage && (currentUser == null || currentUser == "")) {
+            if (!isRedirectPage && !isLoginPage && (currentUser == null || currentUser == "")) {
                 NavigationHandler nh = facesContext.getApplication().getNavigationHandler();
                 nh.handleNavigation(facesContext, null, "loginPage");
             }

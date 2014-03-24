@@ -27,6 +27,9 @@
     </h:head>
 
     <h:body>
+        <p:idleMonitor timeout="600000">  
+            <p:ajax event="idle" listener="#{idleController.idleListener}" />  
+        </p:idleMonitor> 
 
         <div id="top">
             <ui:insert name="top">
