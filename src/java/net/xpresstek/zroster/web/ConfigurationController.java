@@ -21,7 +21,9 @@ import net.xpresstek.zroster.ejb.Configuration;
 
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -31,56 +33,104 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
-
 @Named("configurationController")
 @SessionScoped
 public class ConfigurationController extends ControllerBase {
 
-    private static final String TIMESTART="ShiftStart";
-    private static final String TIMEEND="ShiftEnd";
-    private static final String INTERVAL="ShiftInterval";
-    
+    private static final String TIMESTART = "ShiftStart";
+    private static final String TIMEEND = "ShiftEnd";
+    private static final String INTERVAL = "ShiftInterval";
     private Configuration current;
     @EJB
     private ConfigurationFacade ejbFacade;
 
     public ConfigurationController() {
     }
-    
-    public List getTimeSlots()
-    {        
-        Configuration conf=ejbFacade.find(TIMESTART);
-        if(conf==null)
-        {
+
+    public List getTimeSlots() {
+        Configuration conf = ejbFacade.find(TIMESTART);
+        if (conf == null) {
             return null;
         }
-        String start=conf.getConfigValue();
-        conf=ejbFacade.find(TIMEEND);
-        if(conf==null)
-        {
+        String start = conf.getConfigValue();
+        conf = ejbFacade.find(TIMEEND);
+        if (conf == null) {
             return null;
         }
-        String end=conf.getConfigValue();
-        conf=ejbFacade.find(INTERVAL);
-        if(conf==null)
-        {
+        String end = conf.getConfigValue();
+        conf = ejbFacade.find(INTERVAL);
+        if (conf == null) {
             return null;
         }
-        String interval=conf.getConfigValue();
-        
-        return DateUtils.getTimeSpan(start, end, interval);
+        String interval = conf.getConfigValue();
+
+        return getTimeSpan(start, end, interval);
     }
-    
-    public List getTimeSlotsDate (String date)
-    {
-        List time_strings=getTimeSlots();
-        ArrayList<Date> retval=new ArrayList();
-        for(Object str : time_strings)
-        {
-            if(str!=null)
-            {
-                String fulldate=date+" "+(String)str+":00.0";
-                Date dt=DateUtils.StringToDate(fulldate);
+
+    /**
+     * Generates a list of strings that represent a period between two dates
+     * calculated by using specified interval.
+     *
+     * @param start Start date.
+     * @param end End date.
+     * @param inter Interval
+     * @return List of string with time periods.
+     */
+    public static ArrayList<Object> getTimeSpan(String start, String end, String inter) {
+
+        ArrayList<Object> retval = new ArrayList<>();
+        int start_time = safeParseInt(start);
+        int end_time = safeParseInt(end);
+        int interval = safeParseInt(inter);
+        
+        if (start_time < end_time && interval > 0) {
+            Calendar cal = new GregorianCalendar();
+            cal.setTime(new Date());
+            cal.set(Calendar.HOUR_OF_DAY, start_time);
+            cal.set(Calendar.MINUTE, 0);
+            retval.add(cal.get(Calendar.HOUR_OF_DAY) + ":00");
+            String zminute = "00";
+            int hofd = cal.get(Calendar.HOUR_OF_DAY);
+            int phofd=cal.get(Calendar.DAY_OF_MONTH);
+            while (hofd < end_time) {
+                cal.add(Calendar.MINUTE, interval);
+                if(cal.get(Calendar.DAY_OF_MONTH)>phofd)
+                {
+                    retval.add("23:59");
+                    break;
+                }
+
+                retval.add(cal.get(Calendar.HOUR_OF_DAY) + ":" + (cal.get(Calendar.MINUTE) == 0 ? zminute : cal.get(Calendar.MINUTE)));
+                hofd = cal.get(Calendar.HOUR_OF_DAY);
+            }
+        }
+        return retval;
+    }
+
+    /**
+     * Safe parsing of an integer from string
+     *
+     * @param input Input string to parse.
+     * @return parsed integer or 0
+     */
+    private static int safeParseInt(String input) {
+        if (input != null) {
+            try {
+                return Integer.parseInt(input);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return 0;
+    }
+
+    public List getTimeSlotsDate(String date) {
+        List time_strings = getTimeSlots();
+        ArrayList<Date> retval = new ArrayList();
+        for (Object str : time_strings) {
+            if (str != null) {
+                String fulldate = date + " " + (String) str + ":00.0";
+                Date dt = DateUtils.StringToDate(fulldate);
                 retval.add(dt);
             }
         }
@@ -88,22 +138,22 @@ public class ConfigurationController extends ControllerBase {
     }
 
     public Configuration getConfiguration(java.lang.String id) {
-        return (Configuration)getObject(id);
+        return (Configuration) getObject(id);
     }
 
     @Override
     Object getCurrent() {
-       return current;
+        return current;
     }
 
     @Override
     void setCurrent(Object obj) {
-         current=(Configuration)obj;
+        current = (Configuration) obj;
     }
 
     @Override
     void createNewCurrent() {
-        current=new Configuration();
+        current = new Configuration();
     }
 
     @Override

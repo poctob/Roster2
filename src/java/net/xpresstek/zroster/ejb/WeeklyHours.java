@@ -19,6 +19,7 @@ package net.xpresstek.zroster.ejb;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -71,7 +72,7 @@ public class WeeklyHours implements Serializable {
     public BigDecimal getTotalHours() {
         BigDecimal minutes=new BigDecimal(totalMinutes.longValue());
         BigDecimal div=new BigDecimal("60.00");
-        BigDecimal result=minutes.divide(div);
+        BigDecimal result=minutes.divide(div, 2, RoundingMode.HALF_UP);
         return result;
     }
     public void setTotalMinutes(BigInteger totalMinutes) {
