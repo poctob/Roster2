@@ -16,6 +16,7 @@
  */
 package net.xpresstek.zroster.web;
 
+import java.util.List;
 import javax.ejb.EJB;
 import net.xpresstek.zroster.ejb.Privilege;
 
@@ -25,6 +26,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import net.xpresstek.zroster.ejb.ConfigurationDataManager;
 
 
 @Named("privilegeController")
@@ -47,11 +49,24 @@ public class PrivilegeController extends ControllerBase {
         return current;
     }
     
-    public Privilege getPrivilege(Integer id) {
+    private Privilege getPrivilege(Integer id) {
         return (Privilege)getObject(id);
+    }    
+
+    /**
+     * Fetches all privilege items.
+     * @return 
+     */
+    public List<Privilege> getAllItems()
+    {        
+        if(ejbFacade != null)
+        {
+            return ejbFacade.findAll();
+        }
+        return null;
     }
     
-
+    
     @Override
     void setCurrent(Object obj) {
         current=(Privilege)obj;
@@ -60,6 +75,11 @@ public class PrivilegeController extends ControllerBase {
     @Override
     void createNewCurrent() {
         current=new Privilege();
+    }
+
+    @Override
+    public List findAll() {
+        return ConfigurationDataManager.getInstance().getPrivilege();
     }
 
     @FacesConverter(forClass = Privilege.class, value = "privilegeControllerConverter")

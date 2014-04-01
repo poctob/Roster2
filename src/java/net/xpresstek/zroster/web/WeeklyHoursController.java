@@ -17,6 +17,7 @@
 package net.xpresstek.zroster.web;
 
 import com.gzlabs.utils.DateUtils;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -57,11 +58,7 @@ public class WeeklyHoursController extends ControllerBase {
     AbstractFacade getFacade() {
         return ejbFacade;
     }
-    
-    public WeeklyHoursFacade getWeeklyHoursFacade()
-    {
-        return ejbFacade;
-    }
+
 
     @Override
     Object getCurrent() {
@@ -127,6 +124,19 @@ public class WeeklyHoursController extends ControllerBase {
                 TimeUtils.getDayStart(date),
                 TimeUtils.getDayEnd(date));
 
+    }
+
+    public List<WeeklyHours> findTotalForPeriod(Date dayStart, Date dayEnd) {
+         List<WeeklyHours> retval = new ArrayList();
+         if (ejbFacade != null) {
+             retval = ejbFacade.findTotalForPeriod(dayStart, dayEnd);
+         }
+         return retval;
+    }
+
+    @Override
+    public List findAll() {
+        return ejbFacade.findAll();
     }
 
 

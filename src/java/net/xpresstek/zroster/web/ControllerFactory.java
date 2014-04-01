@@ -34,6 +34,10 @@ public class ControllerFactory {
         return (PositionController) getController("positionController");
     }
 
+    public static PrivilegeController getPrivilegeController() {
+        return (PrivilegeController) getController("privilegeController");
+    }
+
     public static S3cr3tController getS3cr3tController() {
         return (S3cr3tController) getController("s3cr3tController");
     }
@@ -42,13 +46,20 @@ public class ControllerFactory {
         return (ClockEventController) getController("clockEventController");
     }
 
-    public static WeeklyHoursController getWeeklyHoursController()
-    {
+    public static WeeklyHoursController getWeeklyHoursController() {
         return (WeeklyHoursController) getController("weeklyHoursController");
     }
-    
-    public static TimeOffStatusController getTimeOffStatusController()
-    {
+
+    public static TimeOffStatusController getTimeOffStatusController() {
         return (TimeOffStatusController) getController("timeOffStatusController");
     }
+
+    public static TimeOffController getTimeOffController() {
+        return (TimeOffController) getController("timeOffController");
+    }
+
+    public static ClockOutReasonsController getClockOutReasonsController() {
+        return (ClockOutReasonsController) getController("clockOutReasonsController");
+    }
+
 }

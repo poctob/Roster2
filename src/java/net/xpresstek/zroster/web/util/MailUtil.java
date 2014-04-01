@@ -15,9 +15,7 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import net.xpresstek.zroster.ejb.Configuration;
-import net.xpresstek.zroster.web.ConfigurationController;
-import net.xpresstek.zroster.web.ControllerFactory;
+import net.xpresstek.zroster.ejb.ConfigurationDataManager;
 
 /**
  *
@@ -25,13 +23,8 @@ import net.xpresstek.zroster.web.ControllerFactory;
  */
 public class MailUtil {
 
-    protected static String getConfigProperty(String id) {
-        ConfigurationController cont
-                = ControllerFactory.getConfigurationController();
-
-        Configuration conf
-                = (Configuration) cont.getConfiguration(id);
-        return conf.getConfigValueRaw();
+    protected static String getConfigProperty(String id) {      
+        return ConfigurationDataManager.getInstance().getConfigValue(id, true);
     }
 
     public static void  sendNewTimeOffRequestEmail(String name,

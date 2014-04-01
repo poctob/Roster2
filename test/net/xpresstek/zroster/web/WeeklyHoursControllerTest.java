@@ -88,8 +88,8 @@ public class WeeklyHoursControllerTest {
         System.out.println("getWeeklyHoursFacade");
         WeeklyHoursController instance = new WeeklyHoursController();
         WeeklyHoursFacade expResult = null;
-        WeeklyHoursFacade result = instance.getWeeklyHoursFacade();
-        assertEquals(expResult, result);
+//        WeeklyHoursFacade result = instance.getWeeklyHoursFacade();
+       // assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }

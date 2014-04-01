@@ -57,7 +57,7 @@ public class EmployeeHoursTest {
         System.out.println("calculateHours");
         Date date = null;
         EmployeeHours instance = null;
-        instance.calculateHours(date);
+//        instance.calculateHours(date);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
@@ -71,8 +71,8 @@ public class EmployeeHoursTest {
         Date date = null;
         EmployeeHours instance = null;
         double expResult = 0.0;
-        double result = instance.calculateDailyWorkedHours(date);
-        assertEquals(expResult, result, 0.0);
+     //   double result = instance.calculateDailyWorkedHours(date);
+    //    assertEquals(expResult, result, 0.0);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }

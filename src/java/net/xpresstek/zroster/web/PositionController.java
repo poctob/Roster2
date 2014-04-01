@@ -26,6 +26,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import net.xpresstek.zroster.ejb.ConfigurationDataManager;
 
 @Named("positionController")
 @SessionScoped
@@ -48,26 +49,10 @@ public class PositionController extends ControllerBase {
         return current;
     }
 
-    public Position getPosition(Integer id) {
+    private Position getPosition(Integer id) {
         return (Position) getObject(id);
     }
-    
-    public Position getPositionByName(String name)
-    {
-        if(name==null)
-        {
-            return null;
-        }
-        List<Position> pos=getAllItems();
-        for(Position p : pos)
-        {
-            if(p.getName().equals(name))
-            {
-                return p;
-            }
-        }
-        return null;
-    }
+
 
     @Override
     void setCurrent(Object obj) {
@@ -82,6 +67,11 @@ public class PositionController extends ControllerBase {
     public List<Position> getAllItems()
     {
         return ejbFacade.findAll();
+    }
+
+    @Override
+    public List findAll() {
+        return ConfigurationDataManager.getInstance().getPosition();
     }
 
     @FacesConverter(forClass = Position.class, value = "positionControllerConverter")

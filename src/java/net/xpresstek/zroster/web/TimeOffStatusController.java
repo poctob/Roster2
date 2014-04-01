@@ -17,7 +17,6 @@
 package net.xpresstek.zroster.web;
 
 import java.util.List;
-import java.util.ResourceBundle;
 import net.xpresstek.zroster.ejb.TimeOffStatus;
 
 import javax.ejb.EJB;
@@ -27,6 +26,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import net.xpresstek.zroster.ejb.ConfigurationDataManager;
 
 @Named("timeOffStatusController")
 @SessionScoped
@@ -43,30 +43,27 @@ public class TimeOffStatusController extends ControllerBase {
     AbstractFacade getFacade() {
         return ejbFacade;
     }
+    
+     /**
+     * Fetches all configuration items.
+     * @return 
+     */
+    public List<TimeOffStatus> getAllItems()
+    {        
+        if(ejbFacade != null)
+        {
+            return ejbFacade.findAll();
+        }
+        return null;
+    }
 
     @Override
     Object getCurrent() {
         return current;
     }
 
-    public TimeOffStatus getTimeOffStatus(Integer id) {
+    private TimeOffStatus getTimeOffStatus(Integer id) {
         return (TimeOffStatus) getObject(id);
-    }
-
-    /**
-     * Retrieves default status, normally it is pending.
-     * @return Default status if it is found, null if not.
-     */
-    public TimeOffStatus getDefaultStatus() {
-        ResourceBundle bundle = ResourceBundle.getBundle("Bundle");
-        List<TimeOffStatus> tos = ejbFacade.findByName(bundle.getString("TimeOffStatusDefaultStatus"));
-
-        if (tos.size() > 0) {
-            return tos.get(0);
-        } else {
-            return null;
-        }
-
     }
 
     public void prepareEdit(int id) {
@@ -82,6 +79,11 @@ public class TimeOffStatusController extends ControllerBase {
     @Override
     void createNewCurrent() {
         current = new TimeOffStatus();
+    }
+
+    @Override
+    public List findAll() {
+        return ConfigurationDataManager.getInstance().getTimeOffStatus();
     }
 
     @FacesConverter(forClass = TimeOffStatus.class)

@@ -17,7 +17,6 @@
 package net.xpresstek.zroster.web;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import net.xpresstek.zroster.ejb.Employee;
 
@@ -29,13 +28,11 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.faces.model.SelectItem;
-import net.xpresstek.zroster.ejb.ClockEventTrans;
+import net.xpresstek.zroster.ejb.ClockEventDataManager;
 import net.xpresstek.zroster.ejb.EmployeeHours;
 import net.xpresstek.zroster.ejb.S3cr3t;
 import net.xpresstek.zroster.ejb.S3cr3tPK;
 import net.xpresstek.zroster.ejb.TimeOff;
-import net.xpresstek.zroster.web.S3cr3tController.S3cr3tControllerConverter;
-import net.xpresstek.zroster.web.TimeOffController.TimeOffControllerConverter;
 
 @Named("employeeController")
 @SessionScoped
@@ -45,6 +42,7 @@ public class EmployeeController extends ControllerBase {
     private String password;
     private List<Employee> filteredEmployees;
     private EmployeeHours employeeHours;
+    private final ClockEventDataManager eventDM;
 
     /**
      * Filtering options
@@ -55,6 +53,7 @@ public class EmployeeController extends ControllerBase {
 
     public EmployeeController() {
         createFilterOptions();
+        eventDM = ClockEventDataManager.getInstance();
     }
 
     public List<Employee> getFilteredEmployees() {
@@ -162,7 +161,7 @@ public class EmployeeController extends ControllerBase {
     }
 
     public void updateTimeOff() {
-        TimeOffController toc = TimeOffControllerConverter.getController();
+        TimeOffController toc = ControllerFactory.getTimeOffController();
         List<TimeOff> tos = toc.findByEmployeeID(current);
         current.setTimeOffCollection(tos);
     }
@@ -198,39 +197,32 @@ public class EmployeeController extends ControllerBase {
             int position,
             String start,
             String end) {
-        if (e != null
+        return e != null
                 && e.getIsActive()
                 && e.isPositionAllowed(position)
-                && e.isTimeAllowed(start, end)) {
-            return true;
-        }
-        return false;
+                && e.isTimeAllowed(start, end);
     }
 
     public EmployeeHours getEmployeeHours() {
-        if(employeeHours == null)
-        {
-            employeeHours=new EmployeeHours(current);      
-            employeeHours.calculateHours(null);
-        }
-        
-        return employeeHours;
+             
+        return eventDM.getEmployeeHours(current);
     }
     
     public void updateEmployeeHours()
     {
-        if(employeeHours == null)
-        {
-            employeeHours=new EmployeeHours(current);                      
-        }
-        employeeHours.calculateHours(null);
+        eventDM.updateData();
     }
 
     public void setEmployeeHours(EmployeeHours employeeHours) {
         this.employeeHours = employeeHours;
     }
 
-    
+    @Override
+    public List findAll() {
+        return getAllItems();
+    }
+
+    /*
     public List<EmployeeHours> getCurrentEmployeeHours(List<ClockEventTrans> events)
     {
         List<EmployeeHours> eh = new ArrayList();
@@ -247,28 +239,7 @@ public class EmployeeController extends ControllerBase {
             }
         }
         return eh;
-    }
-    
-    /**
-     * Calculates hours for all employees.
-     * @param date Date to calculate hours for
-     * @param active Get active only
-     * @return 
-     */
-    public List<EmployeeHours> getCurrentEmployeeHours(Date date, boolean active)
-    {
-        List<EmployeeHours> eh = new ArrayList();
-        List<Employee> employees = active?getActiveEmployees():getAllItems();
-        for(Employee employee : employees )
-        {
-                EmployeeHours ehours=new EmployeeHours(employee);
-                ehours.calculateHours(date);
-                eh.add(ehours);
-        }
-        return eh;
-    }
-
-   
+    }*/      
 
     @FacesConverter(forClass = Employee.class, value = "employeeControllerConverter")
     public static class EmployeeControllerConverter implements Converter {

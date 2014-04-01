@@ -51,7 +51,7 @@
                         </h:outputText>
                     </p:column>
 
-                    <p:column sortBy="clockOutReasonid.name" headerText="#{bundle.TimeClockOutReason}">                        
+                    <p:column sortBy="clockOutReasonid.name" headerText="#{bundle.TimeClockOutReason}">           
                         <h:outputText value="#{item.clockOutReasonid.name}"/>
                     </p:column>
 
@@ -98,44 +98,89 @@
             </h:form>
         </ui:define>
 
-        <ui:define name="left">
-            <p:outputPanel layout="block" id="weekly_panel">
+         <ui:define name="left">           
+
+
                 <h:form id="weekly_form">
-                    <p:dataTable value="#{employeeController.
-                                          getCurrentEmployeeHours
-                                          (clockEventTransController.current_date,
-                                          true)}" 
-                                 var="ehours"                
-                                 id="weekly_table">
-                        <f:facet name="header">
-                            <h:outputText value="Daily Hours"/>
-                        </f:facet>
-                        <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="Name"/>
-                            </f:facet>
-                            <h:outputText value="#{ehours.employee.name}"/>
-                        </p:column>
-                        <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="Scheduled"/>
-                            </f:facet>
-                            <h:outputText value="#{ehours.dayScheduledHours}">
-                                <f:convertNumber pattern="#0.00" />
-                            </h:outputText>
-                        </p:column>
-                        <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="Worked"/>
-                            </f:facet>
-                            <h:outputText value="#{ehours.dayWorkedHours}">
-                                <f:convertNumber pattern="#0.00" />
-                            </h:outputText>
-                        </p:column>
-                    </p:dataTable>
+                    <p:panel  header="Weekly Hours"  
+                              id="tglpanel1" 
+                              toggleable="true" 
+                              toggleTitle="Weekly Hours" 
+                              toggleSpeed="500"
+                              widgetVar="tglPanel1Widget">
+                        <p:dataTable value="#{shiftController.
+                                              getActiveEmployeeHours()}"
+                                     var="weeklys"                
+                                     id="weekly_table">
+
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Name"/>
+                                </f:facet>
+                                <h:outputText value="#{weeklys.employee.name}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Scheduled"/>
+                                </f:facet>
+                                <h:outputText value="#{weeklys.weekScheduledHours}">
+                                    <f:convertNumber pattern="#0.00" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Worked"/>
+                                </f:facet>
+                                <h:outputText value="#{weeklys.weekWorkedHours}">
+                                    <f:convertNumber pattern="#0.00" />
+                                </h:outputText>
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>
                 </h:form>
-            </p:outputPanel>
-            <p:sticky target="weekly_panel" /> 
+
+                <h:form id="daily_form">
+                    <p:panel id="tglpanel2" 
+                             header="Daily Hours" 
+                             toggleable="true" 
+                             toggleTitle="Daily Hours" 
+                             toggleSpeed="500"
+                             collapsed="true"
+                             
+                             widgetVar="tglPanel2Widget">
+                        <p:dataTable value="#{shiftController.
+                                              getActiveEmployeeHours()}"
+                                     var="dailys"                
+                                     id="daily_table">
+    
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Name"/>
+                                </f:facet>
+                                <h:outputText value="#{dailys.employee.name}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Scheduled"/>
+                                </f:facet>
+                                <h:outputText value="#{dailys.dayScheduledHours}">
+                                    <f:convertNumber pattern="#0.00" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Worked"/>
+                                </f:facet>
+                                <h:outputText value="#{dailys.dayWorkedHours}">
+                                    <f:convertNumber pattern="#0.00" />
+                                </h:outputText>
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>
+                </h:form>
+
+
+           
         </ui:define>
 
 
@@ -152,7 +197,7 @@
                                 >
                         <p:ajax   event="dateSelect" 
                                   process="@this"
-                                  update=":dataForm:dataTable :weekly_form:weekly_table :editForm:edit_text"
+                                  update=":dataForm:dataTable :weekly_form:weekly_table :editForm:edit_text :daily_form:daily_table"
                                   />   
                     </p:calendar>
                 </h:form>

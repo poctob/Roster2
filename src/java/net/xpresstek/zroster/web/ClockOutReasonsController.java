@@ -25,6 +25,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import net.xpresstek.zroster.ejb.ConfigurationDataManager;
 
 @Named("clockOutReasonsController")
 @SessionScoped
@@ -66,8 +67,13 @@ public class ClockOutReasonsController extends ControllerBase {
         current = new ClockOutReasons();
     }   
 
-    public ClockOutReasons getClockOutReasons(Integer id) {
+    private ClockOutReasons getClockOutReasons(Integer id) {
         return (ClockOutReasons) getObject(id);
+    }
+
+    @Override
+    public List findAll() {
+        return ConfigurationDataManager.getInstance().getClockOutReasons();
     }
 
     @FacesConverter(forClass = ClockOutReasons.class)

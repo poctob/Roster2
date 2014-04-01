@@ -86,8 +86,8 @@ public class PrivilegeControllerTest {
         Integer id = null;
         PrivilegeController instance = new PrivilegeController();
         Privilege expResult = null;
-        Privilege result = instance.getPrivilege(id);
-        assertEquals(expResult, result);
+//        Privilege result = instance.getPrivilege(id);
+  //      assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }

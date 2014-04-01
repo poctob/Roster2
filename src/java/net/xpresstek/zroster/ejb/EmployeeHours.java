@@ -16,16 +16,6 @@
  */
 package net.xpresstek.zroster.ejb;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-import net.xpresstek.zroster.web.ClockEventTransController;
-import net.xpresstek.zroster.web.ControllerFactory;
-import net.xpresstek.zroster.web.WeeklyHoursController;
-import net.xpresstek.zroster.web.WeeklyHoursFacade;
-import net.xpresstek.zroster.web.util.TimeUtils;
-
 /**
  *
  * @author apavlune
@@ -43,115 +33,6 @@ public class EmployeeHours {
 
     public EmployeeHours(Employee employee) {
         this.employee = employee;
-    }
-
-    public void calculateHours(Date date) {
-        Date current_date = new Date();
-        if (date != null) {
-            current_date = date;
-        }
-
-        setWeekWorkedHours(calculateWeeklyWorkedHours(current_date));
-        setWeekScheduledHours(calculateWeeklyScheduledHours(current_date));
-        setDayScheduledHours(calculateDailyScheduledHours(current_date));
-        setDayWorkedHours(calculateDailyWorkedHours(current_date));
-    }
-
-    /**
-     * Calculates worked hours for a specified week.
-     *
-     * @param date Date to check.
-     * @return Total worked hours for the week.
-     */
-    private double calculateWeeklyWorkedHours(Date date) {
-
-        Calendar cal = new GregorianCalendar();
-        cal.setTime(date);
-        Calendar start = TimeUtils.getWeekStart(false, cal);
-        Calendar end = TimeUtils.getWeekEnd(false, cal);
-        ClockEventTransController econtroller
-                = ControllerFactory.getClockEventTransController();
-
-        return econtroller.calculateWorkedHours(employee,
-                start.getTime(), end.getTime());
-    }
-
-    /**
-     * Calculates scheduled hours for a this week.
-     *
-     * @return Total worked hours for the day. List of the total worked hours
-     * for this week.
-     */
-    private double calculateWeeklyScheduledHours(Date date) {
-
-        double retval = 0;
-        Calendar cal = new GregorianCalendar();
-        cal.setTime(date);
-        Calendar start = TimeUtils.getWeekStart(false, cal);
-        Calendar end = TimeUtils.getWeekEnd(false, cal);
-
-        WeeklyHoursFacade weeklyFacade
-                = ControllerFactory.getWeeklyHoursController().
-                getWeeklyHoursFacade();
-
-        List<WeeklyHours> hours = weeklyFacade.findTotalForPeriodByEmployee(
-                start.getTime(), end.getTime(),
-                employee.getName());
-
-        for (WeeklyHours h : hours) {
-            if (h.getEmployee() != null
-                    && h.getTotalMinutes() != null
-                    && h.getTotalHours() != null) {
-                retval += h.getTotalHours().doubleValue();
-            }
-        }
-        return Math.round(retval * 4) / 4f;
-    }
-
-    /**
-     * Calculates worked hours for a specified date.
-     *
-     * @param date Date to check.
-     * @return Total worked hours for a specified date.
-     */
-    public double calculateDailyWorkedHours(Date date) {
-
-        ClockEventTransController econtroller
-                = ControllerFactory.getClockEventTransController();
-
-        return econtroller.calculateWorkedHours(employee,
-                TimeUtils.getDayStart(date),
-                TimeUtils.getDayEnd(date));
-    }
-
-    /**
-     * Calculates daily scheduled hours for current employee.
-     *
-     * @param date Date to check.
-     * @return List of the total scheduled hours for a specified date.
-     */
-    private double calculateDailyScheduledHours(Date date) {
-
-        double retval = 0;
-
-        WeeklyHoursFacade weeklyFacade
-                = ControllerFactory.getWeeklyHoursController().
-                getWeeklyHoursFacade();
-
-        List<WeeklyHours> hours = weeklyFacade.findTotalForPeriodByEmployee(
-                TimeUtils.getDayStart(date),
-                TimeUtils.getDayEnd(date),
-                employee.getName());
-
-        for (WeeklyHours h : hours) {
-            if (h.getEmployee() != null
-                    && h.getTotalMinutes() != null
-                    && h.getTotalHours() != null) {
-                retval += h.getTotalHours().doubleValue();
-            }
-        }
-        return Math.round(retval * 4) / 4f;
-
     }
 
     /**

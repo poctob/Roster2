@@ -101,6 +101,11 @@ public class S3cr3tController extends ControllerBase {
         return (S3cr3t) getObject(id);
     }
 
+    @Override
+    public List findAll() {
+        return ejbFacade.findAll();
+    }
+
     @FacesConverter(forClass = S3cr3t.class)
     public static class S3cr3tControllerConverter implements Converter {
 

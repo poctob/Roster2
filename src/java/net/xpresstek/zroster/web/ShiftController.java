@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
@@ -32,7 +33,8 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
-import net.xpresstek.zroster.ejb.ClockEventTrans;
+import net.xpresstek.zroster.ejb.ClockEventDataManager;
+import net.xpresstek.zroster.ejb.ConfigurationDataManager;
 import net.xpresstek.zroster.ejb.Employee;
 import net.xpresstek.zroster.ejb.EmployeeHours;
 import net.xpresstek.zroster.ejb.Position;
@@ -49,6 +51,8 @@ public class ShiftController extends ControllerBase {
     private Date current_date;
     private int current_pkid;
     private ScheduleModel shiftModel;
+    private final ClockEventDataManager eventDM;
+    private final ConfigurationDataManager configurationDM;
     @EJB
     private net.xpresstek.zroster.web.ShiftFacade ejbFacade;
     private List<ShiftColumn> columns;
@@ -62,6 +66,13 @@ public class ShiftController extends ControllerBase {
         current_date = DateUtils.StringToDate(str_dt);
 
         current_pkid = 0;
+        
+        eventDM = ClockEventDataManager.getInstance();
+        eventDM.setCurrentDate(current_date);
+        eventDM.updateData();
+        
+        configurationDM = ConfigurationDataManager.getInstance();
+        configurationDM.registerListeners();
         prepareCreate();
     }
 
@@ -69,6 +80,10 @@ public class ShiftController extends ControllerBase {
     AbstractFacade getFacade() {
         return ejbFacade;
     }
+    
+     public List getTimeSlots() {
+         return configurationDM.getTimeSlots();
+     }
 
     private void buildModel() {
         List<Shift> shifts = ejbFacade.findAll();
@@ -79,13 +94,8 @@ public class ShiftController extends ControllerBase {
         }
     }
 
-    public List<EmployeeHours> getCurrentEmployeeHours() {
-        ClockEventTransController transcontroller = ControllerFactory.getClockEventTransController();
-        transcontroller.setCurrent_date(current_date);
-        List<ClockEventTrans> events = transcontroller.getCurrentEvents();
-
-        EmployeeController employeeController = ControllerFactory.getEmployeeController();
-        return employeeController.getCurrentEmployeeHours(events);
+    public List<EmployeeHours> getCurrentEmployeeHours() {        
+        return eventDM.getEmployeeHours();
     }
 
     /**
@@ -93,9 +103,8 @@ public class ShiftController extends ControllerBase {
      *
      * @return List of the employee hours.
      */
-    public List<EmployeeHours> getActiveEmployeeHours() {
-        EmployeeController employeeController = ControllerFactory.getEmployeeController();
-        return employeeController.getCurrentEmployeeHours(current_date, true);
+    public List<EmployeeHours> getActiveEmployeeHours() {       
+        return eventDM.getActiveEmployeeHours();
     }
 
     public ScheduleModel getEventModel() {
@@ -132,6 +141,7 @@ public class ShiftController extends ControllerBase {
 
     public void setCurrent_date(Date current_date) {
         this.current_date = current_date;
+        eventDM.setCurrentDate(current_date);       
         reset();
     }
 
@@ -190,6 +200,7 @@ public class ShiftController extends ControllerBase {
         columns = null;
         current_pkid = 0;
         prepareCreate();
+        eventDM.updateData();
         return null;
     }
 
@@ -225,7 +236,7 @@ public class ShiftController extends ControllerBase {
     public List getStartTimes() {
         String strdate = DateUtils.DateToString(current_date);
         strdate = strdate.substring(0, 10);
-        return ControllerFactory.getConfigurationController().getTimeSlotsDate(strdate);
+        return configurationDM.getTimeSlotsDate(strdate);
     }
 
     public List getEndTimes() {
@@ -273,7 +284,7 @@ public class ShiftController extends ControllerBase {
                     return true;
                 } else if (s.size() == 1) {
                     Shift shift = s.get(0);
-                    if (shift.getPkid() == current.getPkid()) {
+                    if (Objects.equals(shift.getPkid(), current.getPkid())) {
                         return true;
                     }
                 }
@@ -298,6 +309,11 @@ public class ShiftController extends ControllerBase {
     @Override
     Object getCurrent() {
         return current;
+    }
+
+    @Override
+    public List findAll() {
+        return getAllItems();
     }
 
     @FacesConverter(forClass = Shift.class)

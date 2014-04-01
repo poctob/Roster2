@@ -16,6 +16,7 @@
  */
 package net.xpresstek.zroster.web;
 
+import java.util.List;
 import javax.faces.model.DataModel;
 import javax.faces.model.SelectItem;
 import org.junit.After;
@@ -366,6 +367,11 @@ public class ControllerBaseTest {
         }
 
         public void createNewCurrent() {
+        }
+
+        @Override
+        public List findAll() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
     }
     

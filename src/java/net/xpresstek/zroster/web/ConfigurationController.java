@@ -16,14 +16,8 @@
  */
 package net.xpresstek.zroster.web;
 
-import com.gzlabs.utils.DateUtils;
 import net.xpresstek.zroster.ejb.Configuration;
 
-
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -32,113 +26,45 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import net.xpresstek.zroster.ejb.ConfigurationDataManager;
+import net.xpresstek.zroster.web.util.DataChangeEventListener;
 
 @Named("configurationController")
 @SessionScoped
 public class ConfigurationController extends ControllerBase {
 
-    private static final String TIMESTART = "ShiftStart";
-    private static final String TIMEEND = "ShiftEnd";
-    private static final String INTERVAL = "ShiftInterval";
     private Configuration current;
     @EJB
     private ConfigurationFacade ejbFacade;
 
-    public ConfigurationController() {
-    }
-
-    public List getTimeSlots() {
-        Configuration conf = ejbFacade.find(TIMESTART);
-        if (conf == null) {
-            return null;
-        }
-        String start = conf.getConfigValue();
-        conf = ejbFacade.find(TIMEEND);
-        if (conf == null) {
-            return null;
-        }
-        String end = conf.getConfigValue();
-        conf = ejbFacade.find(INTERVAL);
-        if (conf == null) {
-            return null;
-        }
-        String interval = conf.getConfigValue();
-
-        return getTimeSpan(start, end, interval);
-    }
-
-    /**
-     * Generates a list of strings that represent a period between two dates
-     * calculated by using specified interval.
-     *
-     * @param start Start date.
-     * @param end End date.
-     * @param inter Interval
-     * @return List of string with time periods.
-     */
-    public static ArrayList<Object> getTimeSpan(String start, String end, String inter) {
-
-        ArrayList<Object> retval = new ArrayList<>();
-        int start_time = safeParseInt(start);
-        int end_time = safeParseInt(end);
-        int interval = safeParseInt(inter);
+    public ConfigurationController() {    
         
-        if (start_time < end_time && interval > 0) {
-            Calendar cal = new GregorianCalendar();
-            cal.setTime(new Date());
-            cal.set(Calendar.HOUR_OF_DAY, start_time);
-            cal.set(Calendar.MINUTE, 0);
-            retval.add(cal.get(Calendar.HOUR_OF_DAY) + ":00");
-            String zminute = "00";
-            int hofd = cal.get(Calendar.HOUR_OF_DAY);
-            int phofd = hofd;            
-            while (hofd < end_time) {
-                cal.add(Calendar.MINUTE, interval);
-                hofd = cal.get(Calendar.HOUR_OF_DAY);
-                if(hofd<phofd)
-                {
-                    retval.add("23:59");
-                    break;
-                }
-                
-                retval.add(cal.get(Calendar.HOUR_OF_DAY) + ":" + (cal.get(Calendar.MINUTE) == 0 ? zminute : cal.get(Calendar.MINUTE)));
-                phofd = hofd;
-            }
-        }
-        return retval;
     }
 
     /**
-     * Safe parsing of an integer from string
+     * Fetches all configuration items.
      *
-     * @param input Input string to parse.
-     * @return parsed integer or 0
+     * @return
      */
-    private static int safeParseInt(String input) {
-        if (input != null) {
-            try {
-                return Integer.parseInt(input);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+    public List<Configuration> getAllItems() {
+        if (ejbFacade != null) {
+            return ejbFacade.findAll();
         }
-        return 0;
+        return null;
     }
-
-    public List getTimeSlotsDate(String date) {
-        List time_strings = getTimeSlots();
-        ArrayList<Date> retval = new ArrayList();
-        for (Object str : time_strings) {
-            if (str != null) {
-                String fulldate = date + " " + (String) str + ":00.0";
-                Date dt = DateUtils.StringToDate(fulldate);
-                retval.add(dt);
-            }
-        }
-        return retval;
+    
+    public void addDataChangeListener(DataChangeEventListener l)
+    {
+        ejbFacade.addListener(l);
     }
+    
+    @Override
+    public List findAll() {
+        return ConfigurationDataManager.getInstance().getConfiguration();
+    }
+   
 
-    public Configuration getConfiguration(java.lang.String id) {
+    private Configuration getConfiguration(java.lang.String id) {
         return (Configuration) getObject(id);
     }
 
@@ -161,6 +87,7 @@ public class ConfigurationController extends ControllerBase {
     AbstractFacade getFacade() {
         return ejbFacade;
     }
+  
 
     @FacesConverter(forClass = Configuration.class)
     public static class ConfigurationControllerConverter implements Converter {

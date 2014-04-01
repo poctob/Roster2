@@ -87,8 +87,8 @@ public class PositionControllerTest {
         Integer id = null;
         PositionController instance = new PositionController();
         Position expResult = null;
-        Position result = instance.getPosition(id);
-        assertEquals(expResult, result);
+//        Position result = instance.getPosition(id);
+  //      assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
@@ -102,8 +102,8 @@ public class PositionControllerTest {
         String name = "";
         PositionController instance = new PositionController();
         Position expResult = null;
-        Position result = instance.getPositionByName(name);
-        assertEquals(expResult, result);
+      //  Position result = instance.getPositionByName(name);
+        //assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }

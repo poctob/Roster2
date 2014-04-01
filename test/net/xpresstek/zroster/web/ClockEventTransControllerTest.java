@@ -62,8 +62,8 @@ public class ClockEventTransControllerTest {
         System.out.println("getCurrentEvents");
         ClockEventTransController instance = new ClockEventTransController();
         List<ClockEventTrans> expResult = null;
-        List<ClockEventTrans> result = instance.getCurrentEvents();
-        assertEquals(expResult, result);
+//        List<ClockEventTrans> result = instance.getCurrentEvents();
+//        assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
@@ -76,7 +76,7 @@ public class ClockEventTransControllerTest {
         System.out.println("setCurrentEvents");
         List<ClockEventTrans> currentEvents = null;
         ClockEventTransController instance = new ClockEventTransController();
-        instance.setCurrentEvents(currentEvents);
+     //   instance.setCurrentEvents(currentEvents);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
@@ -88,7 +88,7 @@ public class ClockEventTransControllerTest {
     public void testUpdateCurrentEvents() {
         System.out.println("updateCurrentEvents");
         ClockEventTransController instance = new ClockEventTransController();
-        instance.updateCurrentEvents();
+//        instance.updateCurrentEvents();
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
@@ -354,8 +354,8 @@ public class ClockEventTransControllerTest {
         Date end = null;
         ClockEventTransController instance = new ClockEventTransController();
         double expResult = 0.0;
-        double result = instance.calculateWorkedHours(employee, start, end);
-        assertEquals(expResult, result, 0.0);
+//        double result = instance.calculateWorkedHours(employee, start, end);
+    //    assertEquals(expResult, result, 0.0);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
@@ -371,8 +371,8 @@ public class ClockEventTransControllerTest {
         Date end = null;
         ClockEventTransController instance = new ClockEventTransController();
         List<ClockEventTrans> expResult = null;
-        List<ClockEventTrans> result = instance.findClockEventsByEmployeeAndInterval(employee, start, end);
-        assertEquals(expResult, result);
+    //    List<ClockEventTrans> result = instance.findClockEventsByEmployeeAndInterval(employee, start, end);
+      //  assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }

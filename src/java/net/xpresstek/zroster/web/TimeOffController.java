@@ -29,6 +29,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import net.xpresstek.zroster.ejb.ConfigurationDataManager;
 import net.xpresstek.zroster.ejb.Employee;
 import net.xpresstek.zroster.ejb.TimeOffStatus;
 import net.xpresstek.zroster.web.util.MailUtil;
@@ -118,25 +119,14 @@ public class TimeOffController extends ControllerBase {
     public void create()
     {
         super.create();
-         if(current.getTimeOffStatusid().equals(ControllerFactory.getTimeOffStatusController().
-                getDefaultStatus()))
+        ConfigurationDataManager cdm = ConfigurationDataManager.getInstance();
+         if(current.getTimeOffStatusid().equals(cdm.getDefaultStatus()))
             {
                 MailUtil.sendNewTimeOffRequestEmail(
                         current.getEmployeeid().getName(),
                         current.getStart(), 
                         current.getEnd());
-                
-               /* if(!MailUtil.sendNewTimeOffRequestEmail(current.getEmployeeid().getName(),
-                        current.getStart(), current.getEnd()))
-                {
-                    FacesContext.getCurrentInstance().
-                        addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                                "Time Off Request", 
-                                "Unable to send notification email!")); 
-                }*/
-            }
-         
-         
+            }                
     }
  
     
@@ -187,8 +177,7 @@ public class TimeOffController extends ControllerBase {
     public void checkForPendingRequests()
     {
         TimeOffStatus pending = 
-               ControllerFactory.getTimeOffStatusController().
-                getDefaultStatus();
+               ConfigurationDataManager.getInstance().getDefaultStatus();
         
         if(pending != null)
         {
@@ -220,6 +209,11 @@ public class TimeOffController extends ControllerBase {
     @Override
     void createNewCurrent() {
         current = new TimeOff();
+    }
+
+    @Override
+    public List findAll() {
+        return ejbFacade.findAll();
     }
 
     @FacesConverter(forClass = TimeOff.class)

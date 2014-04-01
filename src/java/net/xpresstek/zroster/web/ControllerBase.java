@@ -17,6 +17,7 @@
 package net.xpresstek.zroster.web;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.ResourceBundle;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -82,20 +83,22 @@ public abstract class ControllerBase implements Serializable {
     abstract void setCurrent(Object obj);
 
     abstract void createNewCurrent();
+    
+    public abstract List findAll();
 
     public DataModel getItems() {
         if (items == null) {
-            items =  new ListDataModel(getFacade().findAll());
+            items =  new ListDataModel(findAll());
         }
         return items;
     }
 
     public SelectItem[] getItemsAvailableSelectMany() {
-        return JsfUtil.getSelectItems(getFacade().findAll(), false);
+        return JsfUtil.getSelectItems(findAll(), false);
     }
 
     public SelectItem[] getItemsAvailableSelectOne() {
-        return JsfUtil.getSelectItems(getFacade().findAll(), true);
+        return JsfUtil.getSelectItems(findAll(), true);
     }
 
     public Object getObject(Integer id) {

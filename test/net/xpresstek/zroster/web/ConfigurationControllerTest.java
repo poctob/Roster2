@@ -58,8 +58,8 @@ public class ConfigurationControllerTest {
         System.out.println("getTimeSlots");
         ConfigurationController instance = new ConfigurationController();
         List expResult = null;
-        List result = instance.getTimeSlots();
-        assertEquals(expResult, result);
+//        List result = instance.getTimeSlots();
+  //      assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
@@ -73,8 +73,8 @@ public class ConfigurationControllerTest {
         String date = "";
         ConfigurationController instance = new ConfigurationController();
         List expResult = null;
-        List result = instance.getTimeSlotsDate(date);
-        assertEquals(expResult, result);
+      //  List result = instance.getTimeSlotsDate(date);
+        //assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
@@ -88,8 +88,8 @@ public class ConfigurationControllerTest {
         String id = "";
         ConfigurationController instance = new ConfigurationController();
         Configuration expResult = null;
-        Configuration result = instance.getConfiguration(id);
-        assertEquals(expResult, result);
+//        Configuration result = instance.getConfiguration(id);
+  //      assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }

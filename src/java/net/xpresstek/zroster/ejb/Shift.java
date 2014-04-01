@@ -174,10 +174,7 @@ public class Shift implements Serializable {
             return false;
         }
         Shift other = (Shift) object;
-        if ((this.pkid == null && other.pkid != null) || (this.pkid != null && !this.pkid.equals(other.pkid))) {
-            return false;
-        }
-        return true;
+        return (this.pkid != null || other.pkid == null) && (this.pkid == null || this.pkid.equals(other.pkid));
     }
 
     @Override
@@ -206,7 +203,7 @@ public class Shift implements Serializable {
     }
 
     public Position getPositionObject() {
-        return ControllerFactory.getPositionController().
+        return ConfigurationDataManager.getInstance().
                 getPosition(positionID);
     }
 

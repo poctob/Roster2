@@ -431,8 +431,8 @@ public class EmployeeControllerTest {
         List<ClockEventTrans> events = null;
         EmployeeController instance = new EmployeeController();
         List<EmployeeHours> expResult = null;
-        List<EmployeeHours> result = instance.getCurrentEmployeeHours(events);
-        assertEquals(expResult, result);
+//        List<EmployeeHours> result = instance.getCurrentEmployeeHours(events);
+      //  assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
@@ -447,8 +447,8 @@ public class EmployeeControllerTest {
         boolean active = false;
         EmployeeController instance = new EmployeeController();
         List<EmployeeHours> expResult = null;
-        List<EmployeeHours> result = instance.getCurrentEmployeeHours(date, active);
-        assertEquals(expResult, result);
+      //  List<EmployeeHours> result = instance.getCurrentEmployeeHours(date, active);
+     //   assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }

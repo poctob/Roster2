@@ -89,6 +89,11 @@ public class ClockEventController extends ControllerBase {
         return (ClockEvent) getObject(id);
     }
 
+    @Override
+    public List findAll() {
+        return getAllItems();
+    }
+
     @FacesConverter(forClass = ClockEvent.class)
     public static class ClockEventControllerConverter implements Converter {
 

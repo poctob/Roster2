@@ -86,8 +86,8 @@ public class TimeOffStatusControllerTest {
         Integer id = null;
         TimeOffStatusController instance = new TimeOffStatusController();
         TimeOffStatus expResult = null;
-        TimeOffStatus result = instance.getTimeOffStatus(id);
-        assertEquals(expResult, result);
+//        TimeOffStatus result = instance.getTimeOffStatus(id);
+     //   assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
@@ -100,8 +100,8 @@ public class TimeOffStatusControllerTest {
         System.out.println("getDefaultStatus");
         TimeOffStatusController instance = new TimeOffStatusController();
         TimeOffStatus expResult = null;
-        TimeOffStatus result = instance.getDefaultStatus();
-        assertEquals(expResult, result);
+    //    TimeOffStatus result = instance.getDefaultStatus();
+      //  assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
