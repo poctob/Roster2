@@ -142,14 +142,8 @@ public class EmployeeController extends ControllerBase {
     public Employee getEmployeeByName(String name) {
         if (name == null) {
             return null;
-        }
-        List<Employee> pos = getAllItems();
-        for (Employee p : pos) {
-            if (p.getName().equals(name)) {
-                return p;
-            }
-        }
-        return null;
+        }       
+        return ejbFacade.findByName(name);
     }
 
     public void prepareEdit(int id) {

@@ -91,17 +91,18 @@ public class ConfigurationController extends ControllerBase {
             retval.add(cal.get(Calendar.HOUR_OF_DAY) + ":00");
             String zminute = "00";
             int hofd = cal.get(Calendar.HOUR_OF_DAY);
-            int phofd=cal.get(Calendar.DAY_OF_MONTH);
+            int phofd = hofd;            
             while (hofd < end_time) {
                 cal.add(Calendar.MINUTE, interval);
-                if(cal.get(Calendar.DAY_OF_MONTH)>phofd)
+                hofd = cal.get(Calendar.HOUR_OF_DAY);
+                if(hofd<phofd)
                 {
                     retval.add("23:59");
                     break;
                 }
-
+                
                 retval.add(cal.get(Calendar.HOUR_OF_DAY) + ":" + (cal.get(Calendar.MINUTE) == 0 ? zminute : cal.get(Calendar.MINUTE)));
-                hofd = cal.get(Calendar.HOUR_OF_DAY);
+                phofd = hofd;
             }
         }
         return retval;

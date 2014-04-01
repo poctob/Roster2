@@ -39,6 +39,13 @@ public class EmployeeFacade extends AbstractFacade<Employee> {
         query.setParameter("isActive", true);
         return query.getResultList();
     }
+    
+     public Employee findByName(String name) {
+        TypedQuery<Employee> query = getEntityManager().
+                createNamedQuery("Employee.findByName", Employee.class);
+        query.setParameter("name", name);
+        return query.getSingleResult();
+    }
 
     public List<Employee> findByPrivilege(String privilege) {
          List<Employee> active=findActive();

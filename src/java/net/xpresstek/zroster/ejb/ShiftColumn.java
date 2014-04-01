@@ -30,7 +30,11 @@ public class ShiftColumn {
     Position position;
 
     public ShiftColumn(List<Shift> shifts, Position position) {
-        this.shifts = shifts;
+        this.shifts = new ArrayList();
+        for(Shift s: shifts)
+        {
+            this.shifts.add(new Shift(s));
+        }
         this.position = position;
     }
 

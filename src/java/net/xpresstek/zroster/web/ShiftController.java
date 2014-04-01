@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Iterator;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -79,23 +80,21 @@ public class ShiftController extends ControllerBase {
     }
 
     public List<EmployeeHours> getCurrentEmployeeHours() {
-        ClockEventTransController transcontroller
-                = ControllerFactory.getClockEventTransController();
+        ClockEventTransController transcontroller = ControllerFactory.getClockEventTransController();
         transcontroller.setCurrent_date(current_date);
         List<ClockEventTrans> events = transcontroller.getCurrentEvents();
 
-        EmployeeController employeeController
-                = ControllerFactory.getEmployeeController();
+        EmployeeController employeeController = ControllerFactory.getEmployeeController();
         return employeeController.getCurrentEmployeeHours(events);
     }
 
     /**
      * Calculates scheduled and worked hours for all active employees.
+     *
      * @return List of the employee hours.
      */
     public List<EmployeeHours> getActiveEmployeeHours() {
-        EmployeeController employeeController
-                = ControllerFactory.getEmployeeController();
+        EmployeeController employeeController = ControllerFactory.getEmployeeController();
         return employeeController.getCurrentEmployeeHours(current_date, true);
     }
 
@@ -152,17 +151,27 @@ public class ShiftController extends ControllerBase {
     public List<ShiftColumn> getShiftColumns() {
 
         if (columns == null || columns.isEmpty()) {
-            List<Position> pos
-                    = ControllerFactory.getPositionController().getAllItems();
-
+            List<Position> pos = ControllerFactory.getPositionController().getAllItems();
+            List<Shift> shifts = ejbFacade.findByStart1AndStart2(current_date);
             columns = new ArrayList();
 
             for (Position p : pos) {
-                List<Shift> shifts = ejbFacade.
-                        findByPositionIdAndStart(p.getPkID(), current_date);
-                //  if (shifts != null && shifts.size() > 0) {
-                columns.add(new ShiftColumn(shifts, p));
-                //    }
+
+                Iterator<Shift> iter = shifts.iterator();
+                List<Shift> a_shifts=new ArrayList();
+                while (iter.hasNext()) {
+                    Shift s=iter.next();
+                   if (s.getPositionID() == p.getPkID()) {
+                        a_shifts.add(s);                        
+                        iter.remove();
+                    }
+                }
+                
+                if(a_shifts.size() > 0)
+                {
+                    columns.add(new ShiftColumn(a_shifts, p));
+                    a_shifts.clear();
+                }
             }
         }
         return columns;
@@ -233,11 +242,10 @@ public class ShiftController extends ControllerBase {
     }
 
     public List<Employee> getAvailableEmployees() {
-        List<Employee> empl
-                = ControllerFactory.getEmployeeController().
+        List<Employee> empl = ControllerFactory.getEmployeeController().
                 getAllowedItems(current.getPositionID(),
-                        DateUtils.DateToString(current.getStart()),
-                        DateUtils.DateToString(current.getEnd()));
+                DateUtils.DateToString(current.getStart()),
+                DateUtils.DateToString(current.getEnd()));
         if (empl == null) {
             return null;
         }

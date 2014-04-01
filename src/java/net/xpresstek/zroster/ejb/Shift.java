@@ -33,8 +33,6 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 import net.xpresstek.zroster.web.ControllerFactory;
-import net.xpresstek.zroster.web.EmployeeController.EmployeeControllerConverter;
-import net.xpresstek.zroster.web.PositionController.PositionControllerConverter;
 
 /**
  *
@@ -52,6 +50,7 @@ import net.xpresstek.zroster.web.PositionController.PositionControllerConverter;
     @NamedQuery(name = "Shift.findFromStart", query = "SELECT s FROM Shift s WHERE s.start >= :start"),
     @NamedQuery(name = "Shift.findByPeriod", query = "SELECT s FROM Shift s WHERE s.start >= :start AND s.end <= :end"),
     @NamedQuery(name = "Shift.findByPositionIDAndStart", query = "SELECT s FROM Shift s WHERE s.positionID = :positionID AND s.start >= :start1 AND s.start < :start2"),
+    @NamedQuery(name = "Shift.findByStart1AndStart2", query = "SELECT s FROM Shift s WHERE s.start >= :start1 AND s.start < :start2"),
     @NamedQuery(name = "Shift.findByEmployeeIDAndStart", query =
             "SELECT s FROM Shift s WHERE s.employeeID = :employeeID AND "
             + "((s.start = :start1 AND s.end = :start2) OR "
@@ -110,6 +109,15 @@ public class Shift implements Serializable {
         this.positionID = positionID;
         this.start = start;
         this.end = end;
+    }
+    
+    public Shift(Shift source)
+    {
+        this.pkid = source.pkid;
+        this.employeeID = source.employeeID;
+        this.positionID = source.positionID;
+        this.start = source.start;
+        this.end = source.end;
     }
 
     public Integer getPkid() {
