@@ -106,6 +106,11 @@ public class ClockEventDataManager implements Serializable{
             
             Calendar current_cal= new GregorianCalendar();
             current_cal.setTime(current_date);
+            
+            if(current_cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)
+            {
+                current_cal.add(Calendar.DAY_OF_MONTH, -1);
+            }
             Calendar week_start = TimeUtils.getWeekStart(false, current_cal);
             Calendar week_end = TimeUtils.getWeekEnd(false, current_cal);
             weeklyHours = whc.findTotalForPeriod(week_start.getTime(),
@@ -219,6 +224,7 @@ public class ClockEventDataManager implements Serializable{
      * Calculates worked hours for a specified employee and time period.
      *
      * @param employee Employee to calculate time for.
+     * @param events
      * @return Worked hours
      */
     public double calculateWorkedHours(Employee employee,

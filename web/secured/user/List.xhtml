@@ -106,7 +106,7 @@
                     <h:panelGrid columns="2" style="margin-bottom:10px">  
                         <h:outputLabel for="reasons" value="Clock Out Reason:" />  
                         <h:selectOneMenu value="#{clockEventTransController.reason}" id="reasons">  
-                            <f:selectItems value="#{clockOutReasonsController.itemsAvailableSelectOne}" /> 
+                            <f:selectItems value="#{clockOutReasonsController.allItems}" /> 
                         </h:selectOneMenu>
                     </h:panelGrid>  
 
@@ -225,7 +225,7 @@
                                      value="New"                                  
                                      action="#{timeOffController.prepareCreate
                                                (employeeController.selected, 
-                                               timeOffStatusController.defaultStatus)}"
+                                               null)}"
                                      update=":editDialogForm"
                                      oncomplete="PF('to_dlg').show()"/>
                 </h:form>    

@@ -16,12 +16,8 @@
  */
 package net.xpresstek.zroster.web;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.ejb.Stateless;
 import net.xpresstek.zroster.ejb.Configuration;
-import net.xpresstek.zroster.web.util.DataChangeEventListener;
-import net.xpresstek.zroster.web.util.DataChangedEvent;
 
 /**
  *
@@ -30,28 +26,11 @@ import net.xpresstek.zroster.web.util.DataChangedEvent;
 @Stateless
 public class ConfigurationFacade extends AbstractFacade<Configuration> {
 
-    private List <DataChangeEventListener> listeners;
+    
     public ConfigurationFacade() {
         
-        super(Configuration.class);
-        
-        listeners = new ArrayList();
+        super(Configuration.class);                
     }
     
-    public void addListener(DataChangeEventListener l)
-    {
-        listeners.add(l);
-    }
-    
-    @Override
-     public void edit(Configuration entity) {
-         
-        DataChangedEvent event=new DataChangedEvent(this);
-        for(DataChangeEventListener l : listeners)
-        {
-            l.updateData(event);
-        }
-        super.edit(entity);
-    }
     
 }

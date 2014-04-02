@@ -24,6 +24,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
+import net.xpresstek.zroster.web.util.DataChangeEventListener;
 import net.xpresstek.zroster.web.util.JsfUtil;
 import org.primefaces.event.RowEditEvent;
 
@@ -181,4 +182,14 @@ public abstract class ControllerBase implements Serializable {
         FacesMessage msg = new FacesMessage("Edit Canceled","Edit Canceled");
         FacesContext.getCurrentInstance().addMessage(null, msg);
     }
+    
+    /**
+     * Adds a datachange listener to the facade.
+     * @param l Listener to add.
+     */
+    public void addDataChangeListener(DataChangeEventListener l)
+    {
+        getFacade().addDataChangeListener(l);
+    }
+    
 }

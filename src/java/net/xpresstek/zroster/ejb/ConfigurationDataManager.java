@@ -26,11 +26,18 @@ import java.util.List;
 import java.util.ResourceBundle;
 import javax.enterprise.context.SessionScoped;
 import net.xpresstek.zroster.web.ClockOutReasonsController;
+import net.xpresstek.zroster.web.ClockOutReasonsFacade;
 import net.xpresstek.zroster.web.ConfigurationController;
+import net.xpresstek.zroster.web.ConfigurationFacade;
 import net.xpresstek.zroster.web.ControllerFactory;
+import net.xpresstek.zroster.web.EmployeeController;
+import net.xpresstek.zroster.web.EmployeeFacade;
 import net.xpresstek.zroster.web.PositionController;
+import net.xpresstek.zroster.web.PositionFacade;
 import net.xpresstek.zroster.web.PrivilegeController;
+import net.xpresstek.zroster.web.PrivilegeFacade;
 import net.xpresstek.zroster.web.TimeOffStatusController;
+import net.xpresstek.zroster.web.TimeOffStatusFacade;
 import net.xpresstek.zroster.web.util.DataChangeEventListener;
 import net.xpresstek.zroster.web.util.DataChangedEvent;
 
@@ -38,7 +45,6 @@ import net.xpresstek.zroster.web.util.DataChangedEvent;
  *
  * @author Alex Pavlunenko <alexp at xpresstek.net>
  */
-
 @SessionScoped
 public class ConfigurationDataManager implements Serializable, DataChangeEventListener {
 
@@ -47,7 +53,10 @@ public class ConfigurationDataManager implements Serializable, DataChangeEventLi
     private List<TimeOffStatus> timeOffStatus;
     private List<Privilege> privilege;
     private List<Position> position;
+    private List<Employee> employee;
     private List<ClockOutReasons> clockOutReasons;
+    
+    private boolean admin;
 
     private static final String TIMESTART = "ShiftStart";
     private static final String TIMEEND = "ShiftEnd";
@@ -63,13 +72,6 @@ public class ConfigurationDataManager implements Serializable, DataChangeEventLi
 
         return instance;
     }
-    
-    public void registerListeners()
-    {
-        ConfigurationController configurationController
-                = ControllerFactory.getConfigurationController();
-        configurationController.addDataChangeListener(this);
-    }
 
     private ConfigurationDataManager() {
         configuration = new ArrayList();
@@ -77,7 +79,28 @@ public class ConfigurationDataManager implements Serializable, DataChangeEventLi
         privilege = new ArrayList();
         position = new ArrayList();
         clockOutReasons = new ArrayList();
-        updateData();
+        employee = new ArrayList();
+        admin = false;
+    }
+    
+    public void setAdmin()
+    {
+        admin=true;
+    }
+    
+    public boolean isAdmin()
+    {
+        return admin;
+    }
+    
+    public void clearData()
+    {
+        configuration.clear();
+        timeOffStatus.clear();
+        privilege.clear();
+        position.clear();
+        clockOutReasons.clear();
+        employee.clear();
     }
 
     public List<Configuration> getConfiguration() {
@@ -96,31 +119,84 @@ public class ConfigurationDataManager implements Serializable, DataChangeEventLi
         return position;
     }
 
+    public List<Employee> getEmployee() {
+        return employee;
+    }
+
     public List<ClockOutReasons> getClockOutReasons() {
         return clockOutReasons;
     }
 
-    public void updateData() {
+    public void registerListeners() {
         ConfigurationController configurationController
                 = ControllerFactory.getConfigurationController();
-        configuration = configurationController.getAllItems();
-
-        TimeOffStatusController timeOffStatusController
-                = ControllerFactory.getTimeOffStatusController();
-        timeOffStatus = timeOffStatusController.getAllItems();
+        configurationController.addDataChangeListener(this);
 
         PrivilegeController privilegeController
                 = ControllerFactory.getPrivilegeController();
-        privilege = privilegeController.getAllItems();
+        privilegeController.addDataChangeListener(this);
 
+        TimeOffStatusController timeOffStatusController
+                = ControllerFactory.getTimeOffStatusController();
+        timeOffStatusController.addDataChangeListener(this);
+
+        PositionController positionController
+                = ControllerFactory.getPositionController();
+        positionController.addDataChangeListener(this);
+
+        ClockOutReasonsController clockOutReasonsController
+                = ControllerFactory.getClockOutReasonsController();
+        clockOutReasonsController.addDataChangeListener(this);
+
+        EmployeeController employeeController
+                = ControllerFactory.getEmployeeController();
+        employeeController.addDataChangeListener(this);
+    }
+
+    public void updateAllData() {
+        updateConfigurationData();
+        updatePrivilegeData();
+        updateTimeOffStatusData();
+        updatePositionsData();
+        updateClockOutReasonsData();
+        updateEmployeeData();
+    }
+
+    public void updateConfigurationData() {
+        ConfigurationController configurationController
+                = ControllerFactory.getConfigurationController();
+        configuration = configurationController.getAllItems();
+    }
+
+    private void updatePrivilegeData() {
+        PrivilegeController privilegeController
+                = ControllerFactory.getPrivilegeController();
+        privilege = privilegeController.getAllItems();
+    }
+
+    public void updateTimeOffStatusData() {
+        TimeOffStatusController timeOffStatusController
+                = ControllerFactory.getTimeOffStatusController();
+        timeOffStatus = timeOffStatusController.getAllItems();
+    }
+
+    private void updatePositionsData() {
         PositionController positionController
                 = ControllerFactory.getPositionController();
         position = positionController.getAllItems();
 
+    }
+
+    private void updateClockOutReasonsData() {
         ClockOutReasonsController clockOutReasonsController
                 = ControllerFactory.getClockOutReasonsController();
         clockOutReasons = clockOutReasonsController.getAllItems();
+    }
 
+    private void updateEmployeeData() {
+        EmployeeController employeeController
+                = ControllerFactory.getEmployeeController();
+        employee = employeeController.getAllItems();
     }
 
     public List getTimeSlots() {
@@ -254,9 +330,59 @@ public class ConfigurationDataManager implements Serializable, DataChangeEventLi
         return null;
     }
 
+    public Employee getEmployee(Integer id) {
+
+        for (Employee p : employee) {
+            if (p.getPkID().equals(id)) {
+                return p;
+            }
+        }
+        return null;
+    }
+
+    public List<Employee> getAllowedItems(int position, String start, String end) {
+        if (position <= 0 || start == null || end == null) {
+            return null;
+        }
+
+        List<Employee> employees = new ArrayList();
+        for (Employee e : employee) {
+            if (isEmployeeAllowed(e, position, start, end)) {
+                employees.add(e);
+            }
+        }
+        return employees;
+    }
+
+    public boolean isEmployeeAllowed(Employee e,
+            int position,
+            String start,
+            String end) {
+        return e != null
+                && e.getIsActive()
+                && e.isPositionAllowed(position)
+                && e.isTimeAllowed(start, end);
+    }
+
     @Override
     public void updateData(DataChangedEvent event) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+        Object obj = event.getSource();
+
+        if (obj instanceof ConfigurationFacade) {
+            updateConfigurationData();
+        } else if (obj instanceof PrivilegeFacade) {
+            updatePrivilegeData();
+        } else if (obj instanceof PositionFacade) {
+            updatePositionsData();
+        } else if (obj instanceof EmployeeFacade) {
+            updateEmployeeData();
+        } else if (obj instanceof TimeOffStatusFacade) {
+            updateTimeOffStatusData();
+        } else if (obj instanceof ClockOutReasonsFacade) {
+            updateClockOutReasonsData();
+        }
+
     }
 
 }

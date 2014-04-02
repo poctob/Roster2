@@ -61,5 +61,9 @@ public class ControllerFactory {
     public static ClockOutReasonsController getClockOutReasonsController() {
         return (ClockOutReasonsController) getController("clockOutReasonsController");
     }
+    
+     public static ShiftController getShiftController() {
+        return (ShiftController) getController("shiftController");
+    }
 
 }

@@ -38,7 +38,6 @@ import net.xpresstek.zroster.ejb.ClockOutReasons;
 import net.xpresstek.zroster.ejb.Configuration;
 import net.xpresstek.zroster.ejb.Employee;
 import net.xpresstek.zroster.ejb.Shift;
-import net.xpresstek.zroster.web.ShiftController.ShiftControllerConverter;
 import net.xpresstek.zroster.web.util.JsfUtil;
 import net.xpresstek.zroster.web.util.TimeUtils;
 import org.primefaces.context.RequestContext;
@@ -173,7 +172,7 @@ public class ClockEventTransController extends ControllerBase {
         boolean retval = true;
         Calendar now = new GregorianCalendar();
         ShiftController shiftController
-                = ShiftControllerConverter.getController();
+                = ControllerFactory.getShiftController();
         List<Shift> shifts = shiftController.getByStartAndEmployee(employee.getPkID(), now.getTime());
         Configuration conf;
         conf = (Configuration) ControllerFactory.getConfigurationController().
@@ -230,9 +229,7 @@ public class ClockEventTransController extends ControllerBase {
         current.setClockOutReasonid(reason);
         super.create();
 
-        EmployeeController econtroller
-                = ControllerFactory.getEmployeeController();
-        econtroller.updateEmployeeHours();
+        ClockEventDataManager.getInstance().updateData();
     }
 
     /**

@@ -24,7 +24,7 @@
                         value="#{logInBean.user}"
                         required="true">  
                         <f:selectItem itemLabel="Select Name" itemValue="" />  
-                        <f:selectItems value="#{employeeController.activeEmployees}" />  
+                        <f:selectItems value="#{employeeController.activeEmployeesDirect}" />  
                     </p:selectOneMenu>   
                     <h:outputText value="Password: " />  
                     <p:password id="password"

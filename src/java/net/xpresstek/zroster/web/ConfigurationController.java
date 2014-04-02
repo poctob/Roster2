@@ -27,7 +27,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import net.xpresstek.zroster.ejb.ConfigurationDataManager;
-import net.xpresstek.zroster.web.util.DataChangeEventListener;
 
 @Named("configurationController")
 @SessionScoped
@@ -51,19 +50,13 @@ public class ConfigurationController extends ControllerBase {
             return ejbFacade.findAll();
         }
         return null;
-    }
-    
-    public void addDataChangeListener(DataChangeEventListener l)
-    {
-        ejbFacade.addListener(l);
-    }
+    }    
     
     @Override
     public List findAll() {
         return ConfigurationDataManager.getInstance().getConfiguration();
     }
    
-
     private Configuration getConfiguration(java.lang.String id) {
         return (Configuration) getObject(id);
     }

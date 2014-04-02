@@ -72,7 +72,6 @@ public class ShiftController extends ControllerBase {
         eventDM.updateData();
         
         configurationDM = ConfigurationDataManager.getInstance();
-        configurationDM.registerListeners();
         prepareCreate();
     }
 
@@ -96,6 +95,11 @@ public class ShiftController extends ControllerBase {
 
     public List<EmployeeHours> getCurrentEmployeeHours() {        
         return eventDM.getEmployeeHours();
+    }
+    
+    public List<Position> getPositions()
+    {
+        return configurationDM.getPosition();
     }
 
     /**
@@ -161,7 +165,7 @@ public class ShiftController extends ControllerBase {
     public List<ShiftColumn> getShiftColumns() {
 
         if (columns == null || columns.isEmpty()) {
-            List<Position> pos = ControllerFactory.getPositionController().getAllItems();
+            List<Position> pos = configurationDM.getPosition();
             List<Shift> shifts = ejbFacade.findByStart1AndStart2(current_date);
             columns = new ArrayList();
 
@@ -253,7 +257,7 @@ public class ShiftController extends ControllerBase {
     }
 
     public List<Employee> getAvailableEmployees() {
-        List<Employee> empl = ControllerFactory.getEmployeeController().
+        List<Employee> empl = configurationDM.
                 getAllowedItems(current.getPositionID(),
                 DateUtils.DateToString(current.getStart()),
                 DateUtils.DateToString(current.getEnd()));
@@ -273,7 +277,7 @@ public class ShiftController extends ControllerBase {
 
     public boolean checkCurrentEmployee() {
         if (current_pkid > 0 && current != null) {
-            if (EmployeeController.isEmployeeAllowed(current.getEmployeeObject(),
+            if (configurationDM.isEmployeeAllowed(current.getEmployeeObject(),
                     current.getPositionID(),
                     DateUtils.DateToString(current.getStart()),
                     DateUtils.DateToString(current.getEnd()))) {

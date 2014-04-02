@@ -40,6 +40,10 @@ public class LogInBean implements Serializable{
     private String password;
     private boolean loggedIn = false;
     private FacesMessage msg = null;
+    
+    private final ConfigurationDataManager configurationDM
+            = ConfigurationDataManager.getInstance();
+        
 
     public String getUser() {
         return user;
@@ -120,11 +124,14 @@ public class LogInBean implements Serializable{
         {
             retval=EMPLOYEE_PAGE;
             Collection<Privilege> priv=employee.getPrivilegeCollection();
+            configurationDM.registerListeners();
             for(Privilege p : priv)
             {
                 if(p.isAdministrator())
                 {
                     retval=ADMINISTRATOR_PAGE;
+                    configurationDM.updateAllData();
+                    configurationDM.setAdmin();
                     break;
                 }
             }

@@ -188,7 +188,8 @@
                                 pattern="MM/dd/yyyy"
                                 mode="inline"
                                 required="true"                                    
-                                requiredMessage="#{bundle.CreateShiftRequiredMessage_start}"                              
+                                requiredMessage="#{bundle.CreateShiftRequiredMessage_start}"  
+                                locale="en_US"
                                 >
                         <p:ajax   event="dateSelect" 
                                   process="@this"
@@ -215,7 +216,7 @@
                                                  requiredMessage="#{bundle.CreateShiftRequiredMessage_positionID}"
                                                  >
                                     <f:selectItem itemLabel="---"/>
-                                    <f:selectItems value="#{positionController.allItems}"
+                                    <f:selectItems value="#{shiftController.positions}"
                                                    var="pos"
                                                    itemValue="#{pos.pkID}"
                                                    itemLabel="#{pos.name}"/>

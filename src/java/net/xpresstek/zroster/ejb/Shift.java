@@ -198,8 +198,7 @@ public class Shift implements Serializable {
     }
 
     public Employee getEmployeeObject() {
-        return ControllerFactory.getEmployeeController().
-                getEmployee(employeeID);
+        return ConfigurationDataManager.getInstance().getEmployee(employeeID);
     }
 
     public Position getPositionObject() {

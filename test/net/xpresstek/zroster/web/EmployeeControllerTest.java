@@ -236,8 +236,8 @@ public class EmployeeControllerTest {
         Integer id = null;
         EmployeeController instance = new EmployeeController();
         Employee expResult = null;
-        Employee result = instance.getEmployee(id);
-        assertEquals(expResult, result);
+//        Employee result = instance.getEmployee(id);
+  //      assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
@@ -360,8 +360,8 @@ public class EmployeeControllerTest {
         String end = "";
         EmployeeController instance = new EmployeeController();
         List<Employee> expResult = null;
-        List<Employee> result = instance.getAllowedItems(position, start, end);
-        assertEquals(expResult, result);
+//        List<Employee> result = instance.getAllowedItems(position, start, end);
+  //      assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
@@ -377,8 +377,8 @@ public class EmployeeControllerTest {
         String start = "";
         String end = "";
         boolean expResult = false;
-        boolean result = EmployeeController.isEmployeeAllowed(e, position, start, end);
-        assertEquals(expResult, result);
+     //   boolean result = EmployeeController.isEmployeeAllowed(e, position, start, end);
+       // assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
@@ -404,7 +404,7 @@ public class EmployeeControllerTest {
     public void testUpdateEmployeeHours() {
         System.out.println("updateEmployeeHours");
         EmployeeController instance = new EmployeeController();
-        instance.updateEmployeeHours();
+      //  instance.updateEmployeeHours();
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }

@@ -29,6 +29,7 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.faces.model.SelectItem;
 import net.xpresstek.zroster.ejb.ClockEventDataManager;
+import net.xpresstek.zroster.ejb.ConfigurationDataManager;
 import net.xpresstek.zroster.ejb.EmployeeHours;
 import net.xpresstek.zroster.ejb.S3cr3t;
 import net.xpresstek.zroster.ejb.S3cr3tPK;
@@ -134,7 +135,7 @@ public class EmployeeController extends ControllerBase {
         ejbFacade.refresh(current);
     }
 
-    public Employee getEmployee(Integer id) {
+    private Employee getEmployee(Integer id) {
         return (Employee) getObject(id);
     }
 
@@ -171,46 +172,30 @@ public class EmployeeController extends ControllerBase {
     }
 
     public List<Employee> getActiveEmployees() {
+        List<Employee> allitems = findAll();
+        List<Employee> retval = new ArrayList();
+        for(Employee e : allitems)
+        {
+            if(e.getIsActive())
+            {
+                retval.add(e);
+            }
+        }
+        return retval;
+    }
+    
+    public List<Employee> getActiveEmployeesDirect() {        
         return ejbFacade.findActive();
     }
     
     public List<Employee> getTimeApprovers()
     {
         return ejbFacade.findByPrivilege("TIME APPROVAL");
-    }
-
-    public List<Employee> getAllowedItems(int position, String start, String end) {
-        if (position <= 0 || start == null || end == null) {
-            return null;
-        }
-
-        List<Employee> employees = new ArrayList();
-        for (Employee e : ejbFacade.findAll()) {
-            if (isEmployeeAllowed(e, position, start, end)) {
-                employees.add(e);
-            }
-        }
-        return employees;
-    }
-
-    public static boolean isEmployeeAllowed(Employee e,
-            int position,
-            String start,
-            String end) {
-        return e != null
-                && e.getIsActive()
-                && e.isPositionAllowed(position)
-                && e.isTimeAllowed(start, end);
-    }
+    }    
 
     public EmployeeHours getEmployeeHours() {
              
         return eventDM.getEmployeeHours(current);
-    }
-    
-    public void updateEmployeeHours()
-    {
-        eventDM.updateData();
     }
 
     public void setEmployeeHours(EmployeeHours employeeHours) {
@@ -219,27 +204,9 @@ public class EmployeeController extends ControllerBase {
 
     @Override
     public List findAll() {
-        return getAllItems();
+        return ConfigurationDataManager.getInstance().getEmployee();
     }
-
-    /*
-    public List<EmployeeHours> getCurrentEmployeeHours(List<ClockEventTrans> events)
-    {
-        List<EmployeeHours> eh = new ArrayList();
-        List<Employee> processed = new ArrayList();
-        for(ClockEventTrans event : events )
-        {
-            Employee employee=event.getEmployeeid();
-            if(!processed.contains(employee))
-            {
-                EmployeeHours ehours=new EmployeeHours(employee);
-                ehours.calculateHours(event.getTimestamp());
-                eh.add(ehours);
-                processed.add(employee);
-            }
-        }
-        return eh;
-    }*/      
+ 
 
     @FacesConverter(forClass = Employee.class, value = "employeeControllerConverter")
     public static class EmployeeControllerConverter implements Converter {

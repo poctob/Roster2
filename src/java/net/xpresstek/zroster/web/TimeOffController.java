@@ -109,8 +109,21 @@ public class TimeOffController extends ControllerBase {
     public void prepareCreate(Employee empl, TimeOffStatus to) {
         super.prepareCreate();
         if (current != null) {
+            TimeOffStatus status = null;
+            if(to == null)
+            {
+                ConfigurationDataManager configDM = 
+                        ConfigurationDataManager.getInstance();
+                
+                configDM.updateTimeOffStatusData();                
+                status = configDM.getDefaultStatus();
+            }
+            else
+            {
+                status = to;                
+            }
             current.setEmployeeid(empl);
-            current.setTimeOffStatusid(to);
+            current.setTimeOffStatusid(status);
            
         }
     }
@@ -119,14 +132,24 @@ public class TimeOffController extends ControllerBase {
     public void create()
     {
         super.create();
+        sendNotification();    
+    }
+    
+    private void sendNotification()
+    {
         ConfigurationDataManager cdm = ConfigurationDataManager.getInstance();
-         if(current.getTimeOffStatusid().equals(cdm.getDefaultStatus()))
+          if(current.getTimeOffStatusid().equals(cdm.getDefaultStatus()))
             {
+                cdm.updateConfigurationData();
                 MailUtil.sendNewTimeOffRequestEmail(
                         current.getEmployeeid().getName(),
                         current.getStart(), 
                         current.getEnd());
-            }                
+                if(!cdm.isAdmin())
+                {
+                    cdm.clearData();
+                }
+            }     
     }
  
     
@@ -140,6 +163,7 @@ public class TimeOffController extends ControllerBase {
         {
             super.create();
         }
+        sendNotification();
     }
     public void prepareEdit(int id)
     {
