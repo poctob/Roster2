@@ -131,8 +131,7 @@ public class ClockEventDataManager implements Serializable{
         employeeHours.clear();
         List<Employee> employees
                 = ControllerFactory.
-                getEmployeeController().
-                getActiveEmployees();
+                getEmployeeController().getActiveEmployeesDirect();
 
         for (Employee employee : employees) {
             EmployeeHours eh = new EmployeeHours(employee);
@@ -145,6 +144,7 @@ public class ClockEventDataManager implements Serializable{
 
     }
 
+
     /**
      * Calculates worked hours for a current week.
      *
@@ -152,11 +152,6 @@ public class ClockEventDataManager implements Serializable{
      * @return Total worked hours for the week.
      */
     private double calculateWeeklyWorkedHours(Employee employee) {
-
-        Calendar cal = new GregorianCalendar();
-        cal.setTime(current_date);
-        Calendar start = TimeUtils.getWeekStart(false, cal);
-        Calendar end = TimeUtils.getWeekEnd(false, cal);
 
         return calculateWorkedHours(employee,
                weekEvents);
@@ -304,6 +299,10 @@ public class ClockEventDataManager implements Serializable{
      * @return Employee hours
      */
     public EmployeeHours getEmployeeHours(Employee e) {
+        if(employeeHours.isEmpty())
+        {
+            updateData();
+        }
         for (EmployeeHours eh : employeeHours) {
             if (eh.getEmployee().getPkID().equals(e.getPkID())) {
                 return eh;

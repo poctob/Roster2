@@ -322,6 +322,10 @@ public class ConfigurationDataManager implements Serializable, DataChangeEventLi
 
     public Position getPosition(Integer id) {
 
+        if(position.isEmpty())
+        {
+            updatePositionsData();
+        }
         for (Position p : position) {
             if (p.getPkID().equals(id)) {
                 return p;
