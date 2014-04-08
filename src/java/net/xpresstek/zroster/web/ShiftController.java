@@ -173,6 +173,7 @@ public class ShiftController extends ControllerBase {
 
                 Iterator<Shift> iter = shifts.iterator();
                 List<Shift> a_shifts=new ArrayList();
+      
                 while (iter.hasNext()) {
                     Shift s=iter.next();
                    if (s.getPositionID() == p.getPkID()) {
@@ -181,11 +182,9 @@ public class ShiftController extends ControllerBase {
                     }
                 }
                 
-                if(a_shifts.size() > 0)
-                {
-                    columns.add(new ShiftColumn(a_shifts, p));
-                    a_shifts.clear();
-                }
+                columns.add(new ShiftColumn(a_shifts, p));                 
+                a_shifts.clear();
+                
             }
         }
         return columns;
