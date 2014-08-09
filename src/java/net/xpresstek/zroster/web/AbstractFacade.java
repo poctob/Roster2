@@ -44,7 +44,7 @@ public abstract class AbstractFacade<T> {
     /**
      * Persistence unit
      */
-    @PersistenceContext(unitName = "Roster2PU")
+    @PersistenceContext(unitName = "ZRosterPU")
 
     /**
      * Entity manager

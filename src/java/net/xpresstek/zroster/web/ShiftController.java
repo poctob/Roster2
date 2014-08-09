@@ -308,6 +308,16 @@ public class ShiftController extends ControllerBase {
         Date dt_start = DateUtils.getWeekStart(false, start).getTime();
         return ejbFacade.findByStart(dt_start);
     }
+    
+     public List<Shift> getItemsFromTwoWeeks() {
+        Calendar start = new GregorianCalendar();
+        start.set(Calendar.HOUR_OF_DAY, 0);
+        start.set(Calendar.MINUTE, 0);
+        start.set(Calendar.SECOND, 0);
+        start.add(Calendar.DAY_OF_MONTH,-7);
+        Date dt_start = DateUtils.getWeekStart(false, start).getTime();
+        return ejbFacade.findByStart(dt_start);
+    }
 
     @Override
     Object getCurrent() {

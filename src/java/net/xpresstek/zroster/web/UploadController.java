@@ -65,15 +65,19 @@ public class UploadController implements Serializable {
         List l1 = new LinkedList();
 
         ShiftController sc = ShiftControllerConverter.getController();
-        List<Shift> shifts = sc.getItemsFromTheWeekStart();
+        List<Shift> shifts = sc.getItemsFromTwoWeeks();
         progress = 10;
         for (Shift s : shifts) {
-            Map map = new HashMap();
-            map.put("employee", s.getEmployeeObject().getName());
-            map.put("position", s.getPositionObject().getName());
-            map.put("start", DateUtils.DateToString(s.getStart()));
-            map.put("end", DateUtils.DateToString(s.getEnd()));
-            l1.add(map);
+
+            if (s.getEmployeeObject() != null && s.getPositionObject() != null
+                    && s.getStart() != null && s.getEnd() != null) {
+                Map map = new HashMap();
+                map.put("employee", s.getEmployeeObject().getName());
+                map.put("position", s.getPositionObject().getName());
+                map.put("start", DateUtils.DateToString(s.getStart()));
+                map.put("end", DateUtils.DateToString(s.getEnd()));
+                l1.add(map);
+            }
         }
         progress = 20;
         hm.put("data", JSONValue.toJSONString(l1));
@@ -83,22 +87,21 @@ public class UploadController implements Serializable {
             progress = 100;
         } catch (Exception ex) {
             Logger.getLogger(UploadController.class.getName()).
-                    log(Level.SEVERE, null, ex);   
-             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage
-                (FacesMessage.SEVERITY_ERROR, "Upload Failed", "Upload Failed"));
-             error=true;
+                    log(Level.SEVERE, null, ex);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Upload Failed", "Upload Failed"));
+            error = true;
         } finally {
             url = null;
             db_user = null;
             db_pass = null;
-            error=false;
+            error = false;
         }
     }
 
     public String getUrl() {
         if (url == null || url.length() == 0) {
-            Configuration conf =
-                    (Configuration) ControllerFactory.getConfigurationController().
+            Configuration conf
+                    = (Configuration) ControllerFactory.getConfigurationController().
                     getObject("UploadHost");
 
             url = conf.getConfigValue();
@@ -112,8 +115,8 @@ public class UploadController implements Serializable {
 
     public String getDb_user() {
         if (db_user == null || db_user.length() == 0) {
-            Configuration conf =
-                    (Configuration) ControllerFactory.getConfigurationController().
+            Configuration conf
+                    = (Configuration) ControllerFactory.getConfigurationController().
                     getObject("UploadUser");
 
             db_user = conf.getConfigValue();
@@ -127,8 +130,8 @@ public class UploadController implements Serializable {
 
     public String getDb_pass() {
         if (db_pass == null || db_pass.length() == 0) {
-            Configuration conf =
-                    (Configuration) ControllerFactory.getConfigurationController().
+            Configuration conf
+                    = (Configuration) ControllerFactory.getConfigurationController().
                     getObject("UploadPassword");
 
             db_pass = conf.getConfigValueRaw();
@@ -154,17 +157,12 @@ public class UploadController implements Serializable {
     }
 
     public void onComplete() {
-        if(error)
-        {
-             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage
-                (FacesMessage.SEVERITY_ERROR, "Upload Failed", "Upload Failed"));
+        if (error) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Upload Failed", "Upload Failed"));
+        } else {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Upload Completed", "Upload Completed"));
         }
-        else
-        {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage
-                    (FacesMessage.SEVERITY_INFO, "Upload Completed", "Upload Completed"));
-        }
-        error=false;
+        error = false;
         progress = 0;
     }
 }
